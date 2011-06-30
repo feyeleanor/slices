@@ -17,6 +17,21 @@ func (s Slice) Cap() int {
 	return cap(s)
 }
 
+func (s *Slice) Cut(i, j int) {
+	a := *s
+	n := len(a)
+	m := n - (j - i)
+
+	copy(a[i:m], a[j:n])
+	for k := m; k < n; k++ {
+		var zero interface{}
+		if _, ok := a[k].(Slice); ok {
+			a[k] = zero
+		}
+	}
+	*s = a[0:m]
+}
+
 func (s Slice) At(i int) interface{} {
 	return s[i]
 }
@@ -126,6 +141,10 @@ func (s *Slice) PrependSlice(o Slice) {
 	copy(n, o)
 	copy(n[o.Len():], *s)
 	*s = n
+}
+
+func (s Slice) Subslice(start, end int) interface{} {
+	return s[start:end]
 }
 
 func (s Slice) Repeat(count int) Slice {

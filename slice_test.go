@@ -85,6 +85,21 @@ func TestSliceLen(t *testing.T) {
 	ConfirmLength(SList(0, 1, SList(2, SList(3, 4, 5)), sxp, SList(6, 7, 8, 9)), 5)
 }
 
+func TestSliceCut(t *testing.T) {
+	ConfirmCut := func(s *Slice, start, end int, r *Slice) {
+		if s.Cut(start, end); !r.Equal(s) {
+			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
+		}
+	}
+
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 0, 1, SList(1, 2, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 1, 2, SList(0, 2, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 2, 3, SList(0, 1, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 3, 4, SList(0, 1, 2, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 4, 5, SList(0, 1, 2, 3, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 5, 6, SList(0, 1, 2, 3, 4))
+}
+
 func TestSliceEach(t *testing.T) {
 	c := SList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	count := 0
@@ -238,8 +253,7 @@ func TestSliceAppendSlice(t *testing.T) {
 
 func TestSlicePrepend(t *testing.T) {
 	ConfirmPrepend := func(s *Slice, v interface{}, r *Slice) {
-		s.Prepend(v)
-		if !r.Equal(s) {
+		if s.Prepend(v); !r.Equal(s) {
 			t.Fatalf("Prepend(%v) should be %v but is %v", v, r, s)
 		}
 	}
@@ -251,8 +265,7 @@ func TestSlicePrepend(t *testing.T) {
 
 func TestSlicePrependSlice(t *testing.T) {
 	ConfirmPrependSlice := func(s, v, r *Slice) {
-		s.PrependSlice(*v)
-		if !r.Equal(s) {
+		if s.PrependSlice(*v); !r.Equal(s) {
 			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
 		}
 	}
@@ -262,10 +275,19 @@ func TestSlicePrependSlice(t *testing.T) {
 	ConfirmPrependSlice(SList(0, 1, 2), SList(3, 4), SList(3, 4, 0, 1, 2))
 }
 
+func TestSliceSubslice(t *testing.T) {
+	ConfirmSubslice := func(s *Slice, start, end int, r *Slice) {
+		if x := s.Subslice(start, end); !r.Equal(x) {
+			t.Fatalf("Subslice(%v, %v) should be %v but is %v", start, end, r, x)
+		}
+	}
+	t.Fatal()
+	ConfirmSubslice(SList(), 0, 1, nil)
+}
+
 func TestSliceRepeat(t *testing.T) {
 	ConfirmRepeat := func(s *Slice, count int, r *Slice) {
-		x := s.Repeat(count)
-		if !x.Equal(r) {
+		if x := s.Repeat(count); !x.Equal(r) {
 			t.Fatalf("%v.Repeat(%v) should be %v but is %v", s, count, r, x)
 		}
 	}
