@@ -105,6 +105,15 @@ func TestSliceEachWithIndex(t *testing.T) {
 	})
 }
 
+func TestSliceEachWithKey(t *testing.T) {
+	c := SList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
+	c.EachWithKey(func(key, i interface{}) {
+		if i != key {
+			t.Fatalf("element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
 func TestSliceBlockCopy(t *testing.T) {
 	ConfirmBlockCopy := func(s *Slice, destination, source, count int, r *Slice) {
 		s.BlockCopy(destination, source, count)
