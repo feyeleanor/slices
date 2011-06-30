@@ -314,24 +314,6 @@ func TestSliceCar(t *testing.T) {
 	ConfirmCar(SList(SList(10, 20), 2, 3), SList(10, 20))
 }
 
-func TestSliceCaar(t *testing.T) {
-	ConfirmCaar := func(s *Slice, r interface{}) {
-		var ok bool
-		n := s.Caar()
-		switch n := n.(type) {
-		case Equatable:		ok = n.Equal(r)
-		default:			ok = n == r
-		}
-		if !ok {
-			t.Fatalf("head should be '%v' but is '%v'", r, n)
-		}
-	}
-	ConfirmCaar(SList(1, 2), nil)
-	ConfirmCaar(SList(1, 2, 3), nil)
-	ConfirmCaar(SList(SList(10, 20), 2, 3), 10)
-	ConfirmCaar(SList(SList(SList(10, 20), 20), 2, 3), SList(10, 20))
-}
-
 func TestSliceCdr(t *testing.T) {
 	ConfirmCdr := func(s, r *Slice) {
 		if n := s.Cdr(); !n.Equal(r) {
@@ -339,17 +321,6 @@ func TestSliceCdr(t *testing.T) {
 		}
 	}
 	ConfirmCdr(SList(1, 2, 3), SList(2, 3))
-}
-
-func TestSliceCddr(t *testing.T) {
-	ConfirmCddr := func(s, r *Slice) {
-		if n := s.Cddr(); !n.Equal(r) {
-			t.Fatalf("tail should be '%v' but is '%v'", r, n)
-		}
-	}
-	ConfirmCddr(SList(1, 2, 3), SList(3))
-	ConfirmCddr(SList(1, 2, SList(10, 20)), SList(10, 20))
-	ConfirmCddr(SList(1, SList(10, 20)), SList(20))
 }
 
 func TestSliceRplaca(t *testing.T) {

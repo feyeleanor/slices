@@ -9,6 +9,14 @@ func SList(n... interface{}) *Slice {
 
 type Slice	[]interface{}
 
+func (s Slice) Len() int {
+	return len(s)
+}
+
+func (s Slice) Cap() int {
+	return cap(s)
+}
+
 func (s Slice) At(i int) interface{} {
 	return s[i]
 }
@@ -37,14 +45,6 @@ func (s Slice) String() (t string) {
 	return fmt.Sprintf("(%v)", t)
 }
 
-func (s Slice) Len() int {
-	return len(s)
-}
-
-func (s Slice) Cap() int {
-	return cap(s)
-}
-
 func (s Slice) BlockCopy(destination, source, count int) {
 	end := source + count
 	if end > len(s) {
@@ -54,8 +54,7 @@ func (s Slice) BlockCopy(destination, source, count int) {
 }
 
 func (s Slice) BlockClear(start, count int) {
-	n := make(Slice, count, count)
-	copy(s[start:], n)
+	copy(s[start:], make(Slice, count, count))
 }
 
 func (s Slice) Overwrite(offset int, container interface{}) {
@@ -173,8 +172,8 @@ func (s Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
 	case *Slice:			r = o != nil && s.equal(*o)
 	case Slice:				r = s.equal(o)
-	case *[]interface{}:	r = o != nil && s.equal(([]interface{})(*o))
-	case []interface{}:		r = s.equal(([]interface{})(o))
+	case *[]interface{}:	r = o != nil && s.equal(*o)
+	case []interface{}:		r = s.equal(o)
 	}
 	return
 }
@@ -186,30 +185,11 @@ func (s Slice) Car() (h interface{}) {
 	return
 }
 
-func (s Slice) Caar() (h interface{}) {
-	switch car := s.Car().(type) {
-	case *Slice:		h = car.Car()
-	case Slice:			h = car.Car()
-	}
-	return
-}
-
 func (s Slice) Cdr() (t Slice) {
-	switch s.Len() {
-	case 0:		fallthrough
-	case 1:		break
-	case 2:		switch v := s[1].(type) {
-				case *Slice:		t = *v
-				case Slice:			t = v
-				default:			t = s[1:]
-				}
-	default:	t = s[1:]
+	if s.Len() > 1 {
+		t = s[1:]
 	}
 	return
-}
-
-func (s Slice) Cddr() Slice {
-	return s.Cdr().Cdr()
 }
 
 func (s *Slice) Rplaca(v interface{}) {
@@ -225,14 +205,14 @@ func (s *Slice) Rplacd(v interface{}) {
 		*s = *SList(v)
 	} else {
 		ReplaceSlice := func(v Slice) {
-			if l := v.Len(); l >= cap(*s) {
+			if l := len(v); l < cap(*s) {
+				copy((*s)[1:], v)
+			} else {
 				l++
-				n := make([]interface{}, l, l)
+				n := make(Slice, l, l)
 				copy(n, (*s)[:1])
 				copy(n[1:], v)
 				*s = n
-			} else {
-				copy((*s)[1:], v)
 			}
 		}
 

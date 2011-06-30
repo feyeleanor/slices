@@ -233,24 +233,10 @@ func BenchmarkSliceCar(b *testing.B) {
 	}
 }
 
-func BenchmarkSliceCaar(b *testing.B) {
-	v := SList(SList(0, 1), 2)
-	for i := 0; i < b.N; i++ {
-		_ = v.Caar()
-	}
-}
-
 func BenchmarkSliceCdr(b *testing.B) {
 	v := SList(0, 1)
 	for i := 0; i < b.N; i++ {
 		_ = v.Cdr()
-	}
-}
-
-func BenchmarkSliceCddr(b *testing.B) {
-	v := SList(0, SList(1, 2))
-	for i := 0; i < b.N; i++ {
-		_ = v.Cddr()
 	}
 }
 
