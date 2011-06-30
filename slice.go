@@ -35,6 +35,12 @@ func (s Slice) Each(f func(interface{})) {
 	}
 }
 
+func (s Slice) EachWithIndex(f func(int, interface{})) {
+	for i, v := range s {
+		f(i, v)
+	}
+}
+
 func (s Slice) String() (t string) {
 	for _, v := range s {
 		if len(t) > 0 {
