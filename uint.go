@@ -19,8 +19,8 @@ func (s USlice) Clear(i int)						{ s[i] = 0 }
 func (s USlice) Swap(i, j int)						{ s[i], s[j] = s[j], s[i] }
 
 func (s USlice) Negate(i int)						{ s[i] = -s[i] }
-func (s USlice) Increment(i int)					{ s[i] += 1 }
-func (s USlice) Decrement(i int)					{ s[i] -= 1 }
+func (s USlice) Increment(i int)					{ s[i]++ }
+func (s USlice) Decrement(i int)					{ s[i]-- }
 
 func (s USlice) Add(i, j int)						{ s[i] += s[j] }
 func (s USlice) Subtract(i, j int)					{ s[i] -= s[j] }
@@ -41,10 +41,10 @@ func (s USlice) Same(i, j int) bool					{ return s[i] == s[j] }
 func (s USlice) AtMost(i, j int) bool				{ return s[i] >= s[j] }
 func (s USlice) More(i, j int) bool					{ return s[i] > s[j] }
 func (s USlice) ZeroLess(i int) bool				{ return 0 < s[i] }
-func (s USlice) ZeroAtLeast(i, j int) bool			{ return 0 <= s[j] }
+func (s USlice) ZeroAtLeast(i, j int) bool			{ return true }
 func (s USlice) ZeroSame(i int) bool				{ return 0 == s[i] }
-func (s USlice) ZeroAtMost(i, j int) bool			{ return 0 >= s[j] }
-func (s USlice) ZeroMore(i int) bool				{ return 0 > s[i] }
+func (s USlice) ZeroAtMost(i, j int) bool			{ return 0 == s[j] }
+func (s USlice) ZeroMore(i int) bool				{ return false }
 
 func (s USlice) Compare(i, j int) (r int) {
 	switch {
@@ -58,7 +58,6 @@ func (s USlice) Compare(i, j int) (r int) {
 func (s USlice) ZeroCompare(i int) (r int) {
 	switch {
 	case 0 < s[i]:			r = IS_LESS_THAN
-	case 0 > s[i]:			r = IS_GREATER_THAN
 	default:				r = IS_SAME_AS
 	}
 	return

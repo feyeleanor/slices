@@ -19,8 +19,8 @@ func (s U8Slice) Clear(i int)						{ s[i] = 0 }
 func (s U8Slice) Swap(i, j int)						{ s[i], s[j] = s[j], s[i] }
 
 func (s U8Slice) Negate(i int)						{ s[i] = -s[i] }
-func (s U8Slice) Increment(i int)					{ s[i] += 1 }
-func (s U8Slice) Decrement(i int)					{ s[i] -= 1 }
+func (s U8Slice) Increment(i int)					{ s[i]++ }
+func (s U8Slice) Decrement(i int)					{ s[i]-- }
 
 func (s U8Slice) Add(i, j int)						{ s[i] += s[j] }
 func (s U8Slice) Subtract(i, j int)					{ s[i] -= s[j] }
@@ -41,10 +41,10 @@ func (s U8Slice) Same(i, j int) bool				{ return s[i] == s[j] }
 func (s U8Slice) AtMost(i, j int) bool				{ return s[i] >= s[j] }
 func (s U8Slice) More(i, j int) bool				{ return s[i] > s[j] }
 func (s U8Slice) ZeroLess(i int) bool				{ return 0 < s[i] }
-func (s U8Slice) ZeroAtLeast(i, j int) bool			{ return 0 <= s[j] }
+func (s U8Slice) ZeroAtLeast(i, j int) bool			{ return true }
 func (s U8Slice) ZeroSame(i int) bool				{ return 0 == s[i] }
-func (s U8Slice) ZeroAtMost(i, j int) bool			{ return 0 >= s[j] }
-func (s U8Slice) ZeroMore(i int) bool				{ return 0 > s[i] }
+func (s U8Slice) ZeroAtMost(i, j int) bool			{ return 0 == s[j] }
+func (s U8Slice) ZeroMore(i int) bool				{ return false }
 
 func (s U8Slice) Compare(i, j int) (r int) {
 	switch {
@@ -58,7 +58,6 @@ func (s U8Slice) Compare(i, j int) (r int) {
 func (s U8Slice) ZeroCompare(i int) (r int) {
 	switch {
 	case 0 < s[i]:			r = IS_LESS_THAN
-	case 0 > s[i]:			r = IS_GREATER_THAN
 	default:				r = IS_SAME_AS
 	}
 	return

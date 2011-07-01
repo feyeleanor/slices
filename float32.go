@@ -19,8 +19,8 @@ func (s F32Slice) Clear(i int)						{ s[i] = 0 }
 func (s F32Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 
 func (s F32Slice) Negate(i int)						{ s[i] = -s[i] }
-func (s F32Slice) Increment(i int)					{ s[i] += 1 }
-func (s F32Slice) Decrement(i int)					{ s[i] -= 1 }
+func (s F32Slice) Increment(i int)					{ s[i]++ }
+func (s F32Slice) Decrement(i int)					{ s[i]-- }
 
 func (s F32Slice) Add(i, j int)						{ s[i] += s[j] }
 func (s F32Slice) Subtract(i, j int)				{ s[i] -= s[j] }

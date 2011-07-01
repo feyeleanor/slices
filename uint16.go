@@ -12,19 +12,19 @@ func (s U16Slice) Len() int							{ return len(s) }
 func (s U16Slice) Cap() int							{ return cap(s) }
 
 func (s U16Slice) At(i int) interface{}				{ return s[i] }
-func (s U16Slice) U16At(i int) uint16					{ return s[i] }
+func (s U16Slice) U16At(i int) uint16				{ return s[i] }
 func (s U16Slice) Set(i int, v interface{})			{ s[i] = v.(uint16) }
-func (s U16Slice) U16Set(i int, v uint16)				{ s[i] = v }
+func (s U16Slice) U16Set(i int, v uint16)			{ s[i] = v }
 func (s U16Slice) Clear(i int)						{ s[i] = 0 }
-func (s U16Slice) Swap(i, j int)						{ s[i], s[j] = s[j], s[i] }
+func (s U16Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 
 func (s U16Slice) Negate(i int)						{ s[i] = -s[i] }
-func (s U16Slice) Increment(i int)					{ s[i] += 1 }
-func (s U16Slice) Decrement(i int)					{ s[i] -= 1 }
+func (s U16Slice) Increment(i int)					{ s[i]++ }
+func (s U16Slice) Decrement(i int)					{ s[i]-- }
 
 func (s U16Slice) Add(i, j int)						{ s[i] += s[j] }
-func (s U16Slice) Subtract(i, j int)					{ s[i] -= s[j] }
-func (s U16Slice) Multiply(i, j int)					{ s[i] *= s[j] }
+func (s U16Slice) Subtract(i, j int)				{ s[i] -= s[j] }
+func (s U16Slice) Multiply(i, j int)				{ s[i] *= s[j] }
 func (s U16Slice) Divide(i, j int)					{ s[i] /= s[j] }
 func (s U16Slice) Remainder(i, j int)				{ s[i] %= s[j] }
 
@@ -36,15 +36,15 @@ func (s U16Slice) ShiftLeft(i, j int)				{ s[i] <<= s[j] }
 func (s U16Slice) ShiftRight(i, j int)				{ s[i] >>= s[j] }
 
 func (s U16Slice) Less(i, j int) bool				{ return s[i] < s[j] }
-func (s U16Slice) AtLeast(i, j int) bool				{ return s[i] <= s[j] }
+func (s U16Slice) AtLeast(i, j int) bool			{ return s[i] <= s[j] }
 func (s U16Slice) Same(i, j int) bool				{ return s[i] == s[j] }
 func (s U16Slice) AtMost(i, j int) bool				{ return s[i] >= s[j] }
 func (s U16Slice) More(i, j int) bool				{ return s[i] > s[j] }
 func (s U16Slice) ZeroLess(i int) bool				{ return 0 < s[i] }
-func (s U16Slice) ZeroAtLeast(i, j int) bool			{ return 0 <= s[j] }
+func (s U16Slice) ZeroAtLeast(i, j int) bool		{ return true }
 func (s U16Slice) ZeroSame(i int) bool				{ return 0 == s[i] }
-func (s U16Slice) ZeroAtMost(i, j int) bool			{ return 0 >= s[j] }
-func (s U16Slice) ZeroMore(i int) bool				{ return 0 > s[i] }
+func (s U16Slice) ZeroAtMost(i, j int) bool			{ return 0 == s[j] }
+func (s U16Slice) ZeroMore(i int) bool				{ return false }
 
 func (s U16Slice) Compare(i, j int) (r int) {
 	switch {
@@ -58,7 +58,6 @@ func (s U16Slice) Compare(i, j int) (r int) {
 func (s U16Slice) ZeroCompare(i int) (r int) {
 	switch {
 	case 0 < s[i]:			r = IS_LESS_THAN
-	case 0 > s[i]:			r = IS_GREATER_THAN
 	default:				r = IS_SAME_AS
 	}
 	return

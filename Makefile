@@ -6,6 +6,7 @@ GOFILES=\
 	slices.go\
 	slice.go\
 	slice_value.go\
+	uintptr.go\
 	uint.go\
 	uint8.go\
 	uint16.go\
@@ -17,6 +18,8 @@ GOFILES=\
 	int32.go\
 	int64.go\
 	float32.go\
-	float64.go
+	float64.go\
+	complex64.go\
+	complex128.go
 
 include $(GOROOT)/src/Make.pkg

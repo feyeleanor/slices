@@ -19,8 +19,8 @@ func (s ISlice) Clear(i int)						{ s[i] = 0 }
 func (s ISlice) Swap(i, j int)						{ s[i], s[j] = s[j], s[i] }
 
 func (s ISlice) Negate(i int)						{ s[i] = -s[i] }
-func (s ISlice) Increment(i int)					{ s[i] += 1 }
-func (s ISlice) Decrement(i int)					{ s[i] -= 1 }
+func (s ISlice) Increment(i int)					{ s[i]++ }
+func (s ISlice) Decrement(i int)					{ s[i]-- }
 
 func (s ISlice) Add(i, j int)						{ s[i] += s[j] }
 func (s ISlice) Subtract(i, j int)					{ s[i] -= s[j] }

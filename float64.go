@@ -19,8 +19,8 @@ func (s F64Slice) Clear(i int)						{ s[i] = 0 }
 func (s F64Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 
 func (s F64Slice) Negate(i int)						{ s[i] = -s[i] }
-func (s F64Slice) Increment(i int)					{ s[i] += 1 }
-func (s F64Slice) Decrement(i int)					{ s[i] -= 1 }
+func (s F64Slice) Increment(i int)					{ s[i]++ }
+func (s F64Slice) Decrement(i int)					{ s[i]-- }
 
 func (s F64Slice) Add(i, j int)						{ s[i] += s[j] }
 func (s F64Slice) Subtract(i, j int)				{ s[i] -= s[j] }
