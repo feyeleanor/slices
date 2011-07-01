@@ -85,6 +85,16 @@ func TestSliceLen(t *testing.T) {
 	ConfirmLength(SList(0, 1, SList(2, SList(3, 4, 5)), sxp, SList(6, 7, 8, 9)), 5)
 }
 
+func TestSliceSwap(t *testing.T) {
+	ConfirmSwap := func(s *Slice, i, j int, r *Slice) {
+		if s.Swap(i, j); !r.Equal(s) {
+			t.Fatalf("Swap(%v, %v) should be %v but is %v", i, j, r, s)
+		}
+	}
+	ConfirmSwap(SList(0, 1, 2), 0, 1, SList(1, 0, 2))
+	ConfirmSwap(SList(0, 1, 2), 0, 2, SList(2, 1, 0))
+}
+
 func TestSliceCut(t *testing.T) {
 	ConfirmCut := func(s *Slice, start, end int, r *Slice) {
 		if s.Cut(start, end); !r.Equal(s) {
@@ -98,6 +108,31 @@ func TestSliceCut(t *testing.T) {
 	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 3, 4, SList(0, 1, 2, 4, 5))
 	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 4, 5, SList(0, 1, 2, 3, 5))
 	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 5, 6, SList(0, 1, 2, 3, 4))
+
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), -1, 1, SList(1, 2, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 0, 2, SList(2, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 1, 3, SList(0, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 2, 4, SList(0, 1, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 3, 5, SList(0, 1, 2, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 4, 6, SList(0, 1, 2, 3))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 5, 7, SList(0, 1, 2, 3, 4))
+}
+
+func TestSliceDelete(t *testing.T) {
+	ConfirmCut := func(s *Slice, index int, r *Slice) {
+		if s.Delete(index); !r.Equal(s) {
+			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
+		}
+	}
+
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), -1, SList(0, 1, 2, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 0, SList(1, 2, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 1, SList(0, 2, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 2, SList(0, 1, 3, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 3, SList(0, 1, 2, 4, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 4, SList(0, 1, 2, 3, 5))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 5, SList(0, 1, 2, 3, 4))
+	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 6, SList(0, 1, 2, 3, 4, 5))
 }
 
 func TestSliceEach(t *testing.T) {
@@ -191,6 +226,45 @@ func TestSliceReallocate(t *testing.T) {
 	ConfirmReallocate(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 1, 5, SList(0))
 	ConfirmReallocate(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 5, SList(0, 1, 2, 3, 4))
 	ConfirmReallocate(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 5, SList(0, 1, 2, 3, 4))
+}
+
+func TestSliceExtend(t *testing.T) {
+	ConfirmExtend := func(s *Slice, n int, r *Slice) {
+		c := s.Cap()
+		s.Extend(n)
+		switch {
+		case s.Len() != r.Len():	t.Fatalf("Extend(%v) len should be %v but is %v", n, r.Len(), s.Len())
+		case s.Cap() != c + n:		t.Fatalf("Extend(%v) cap should be %v but is %v", n, c + n, s.Cap())
+		case !r.Equal(s):			t.Fatalf("Extend(%v) should be %v but is %v", n, r, s)
+		}
+	}
+
+	ConfirmExtend(SList(), 1, SList(nil))
+	ConfirmExtend(SList(), 2, SList(nil, nil))
+}
+
+func TestSliceExpand(t *testing.T) {
+	ConfirmExpand := func(s *Slice, i, n int, r *Slice) {
+		c := s.Cap()
+		s.Expand(i, n)
+		switch {
+		case s.Len() != r.Len():	t.Fatalf("Expand(%v, %v) len should be %v but is %v", i, n, r.Len(), s.Len())
+		case s.Cap() != c + n:		t.Fatalf("Expand(%v, %v) cap should be %v but is %v", i, n, c + n, s.Cap())
+		case !r.Equal(s):			t.Fatalf("Expand(%v, %v) should be %v but is %v", i, n, r, s)
+		}
+	}
+
+	ConfirmExpand(SList(), -1, 1, SList(nil))
+	ConfirmExpand(SList(), 0, 1, SList(nil))
+	ConfirmExpand(SList(), 1, 1, SList(nil))
+	ConfirmExpand(SList(), 0, 2, SList(nil, nil))
+
+	ConfirmExpand(SList(0, 1, 2), -1, 2, SList(nil, nil, 0, 1, 2))
+	ConfirmExpand(SList(0, 1, 2), 0, 2, SList(nil, nil, 0, 1, 2))
+	ConfirmExpand(SList(0, 1, 2), 1, 2, SList(0, nil, nil, 1, 2))
+	ConfirmExpand(SList(0, 1, 2), 2, 2, SList(0, 1, nil, nil, 2))
+	ConfirmExpand(SList(0, 1, 2), 3, 2, SList(0, 1, 2, nil, nil))
+	ConfirmExpand(SList(0, 1, 2), 4, 2, SList(0, 1, 2, nil, nil))
 }
 
 func TestSliceDepth(t *testing.T) {

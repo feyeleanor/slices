@@ -20,16 +20,33 @@ func (s Slice) Cap() int {
 func (s *Slice) Cut(i, j int) {
 	a := *s
 	n := len(a)
-	m := n - (j - i)
-
-	copy(a[i:m], a[j:n])
-	for k := m; k < n; k++ {
-		var zero interface{}
-		if _, ok := a[k].(Slice); ok {
-			a[k] = zero
+	if i < 0 {
+		i = 0
+	}
+	if j > n {
+		j = n
+	}
+	if j > i {
+		if m := n - (j - i); m > 0 && m <= n {
+			copy(a[i:m], a[j:n])
+			var zero interface{}
+			for k := m; k < n; k++ {
+				a[k] = zero
+			}
+			*s = a[0:m]
 		}
 	}
-	*s = a[0:m]
+}
+
+func (s *Slice) Delete(i int) {
+	a := *s
+	n := len(a)
+	if i > -1 && i < n {
+		copy(a[i:n-1], a[i+1:n])
+		var zero interface{}
+		a[n-1] = zero
+		*s = a[0 : n-1]
+	}
 }
 
 func (s Slice) At(i int) interface{} {
@@ -42,6 +59,10 @@ func (s Slice) Set(i int, v interface{}) {
 
 func (s Slice) Clear(i int) {
 	s[i] = nil
+}
+
+func (s Slice) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
 }
 
 func (s Slice) Each(f func(interface{})) {
@@ -87,6 +108,7 @@ func (s Slice) BlockClear(start, count int) {
 func (s Slice) Overwrite(offset int, container interface{}) {
 	switch container := container.(type) {
 	case Slice:					copy(s[offset:], container)
+	case []interface{}:			copy(s[offset:], container)
 	}
 }
 
@@ -97,6 +119,45 @@ func (s *Slice) Reallocate(length, capacity int) {
 								copy(x, *s)
 								*s = x
 	default:					*s = (*s)[:length]
+	}
+}
+
+func (s *Slice) Extend(n int) {
+	c := cap(*s)
+	l := len(*s) + n
+	if l > c {
+		c = l
+	}
+	s.Reallocate(l, c)
+}
+
+func (s *Slice) Expand(i, n int) {
+	if i < 0 {
+		i = 0
+	}
+
+	l := s.Len()
+	if l < i {
+		i = l
+	}
+
+	l += n
+	c := s.Cap()
+	if c < l {
+		c = l
+	}
+
+	if c != s.Cap() {
+		x := make(Slice, l, c)
+		copy(x, (*s)[:i])
+		copy(x[i + n:], (*s)[i:])
+		*s = x
+	} else {
+		a := (*s)[:l]
+		for j := l - 1; j >= i; j-- {
+			a[j] = a[j - n]
+		}
+		*s = a
 	}
 }
 
@@ -248,11 +309,13 @@ func (s *Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *Slice:		ReplaceSlice(*v)
-		case Slice:			ReplaceSlice(v)
-		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v
-							*s = (*s)[:2]
+		case *Slice:			ReplaceSlice(*v)
+		case Slice:				ReplaceSlice(v)
+		case *[]interface{}:	ReplaceSlice(Slice(*v))
+		case []interface{}:		ReplaceSlice(Slice(v))
+		case nil:				*s = (*s)[:1]
+		default:				(*s)[1] = v
+								*s = (*s)[:2]
 		}
 	}
 }
