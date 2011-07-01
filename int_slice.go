@@ -2,12 +2,8 @@ package slices
 
 import "fmt"
 
-func IList(n... interface{}) *ISlice {
-	s := make(ISlice, 0, len(n))
-	for _, v := range n {
-		s = append(s, v.(int))
-	}
-	return &s
+func IList(n... int) *ISlice {
+	return (*ISlice)(&n)
 }
 
 type ISlice	[]int
@@ -314,7 +310,7 @@ func (s ISlice) Cdr() (t ISlice) {
 
 func (s *ISlice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *IList(v)
+	case s == nil:			*s = *IList(v.(int))
 	case s.Len() == 0:		*s = append(*s, v.(int))
 	default:				(*s)[0] = v.(int)
 	}
@@ -322,7 +318,7 @@ func (s *ISlice) Rplaca(v interface{}) {
 
 func (s *ISlice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *IList(v)
+		*s = *IList(v.(int))
 	} else {
 		ReplaceSlice := func(v ISlice) {
 			if l := len(v); l < cap(*s) {

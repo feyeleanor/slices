@@ -5,8 +5,8 @@ import "testing"
 func TestISlice(t *testing.T) {
 	sxp := IList(1)
 	switch {
-	case sxp.Len() != 1:			t.Fatalf("IList(1 nil) should allocate 1 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("IList(1 nil) element 0 should be 1 and not %v", sxp.At(0))
+	case sxp.Len() != 1:			t.Fatalf("IList(1) should allocate 1 cells, not %v cells", sxp.Len())
+	case sxp.At(0) != 1:			t.Fatalf("IList(1) element 0 should be 1 and not %v", sxp.At(0))
 	}
 
 	sxp = IList(1, 2)
