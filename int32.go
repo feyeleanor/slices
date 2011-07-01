@@ -248,10 +248,6 @@ func (s *I32Slice) PrependSlice(o I32Slice) {
 	*s = n
 }
 
-func (s I32Slice) Subslice(start, end int) interface{} {
-	return s[start:end]
-}
-
 func (s I32Slice) Repeat(count int) I32Slice {
 	length := len(s) * count
 	capacity := cap(s)

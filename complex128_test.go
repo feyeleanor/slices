@@ -319,16 +319,6 @@ func TestC128SlicePrependSlice(t *testing.T) {
 	ConfirmPrependSlice(C128List(0, 1, 2), C128List(3, 4), C128List(3, 4, 0, 1, 2))
 }
 
-func TestC128SliceSubslice(t *testing.T) {
-	ConfirmSubslice := func(s *C128Slice, start, end int, r *C128Slice) {
-		if x := s.Subslice(start, end); !r.Equal(x) {
-			t.Fatalf("Subslice(%v, %v) should be %v but is %v", start, end, r, x)
-		}
-	}
-	t.Fatal()
-	ConfirmSubslice(C128List(), 0, 1, nil)
-}
-
 func TestC128SliceRepeat(t *testing.T) {
 	ConfirmRepeat := func(s *C128Slice, count int, r *C128Slice) {
 		if x := s.Repeat(count); !x.Equal(r) {

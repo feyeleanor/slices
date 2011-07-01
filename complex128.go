@@ -213,10 +213,6 @@ func (s *C128Slice) PrependSlice(o C128Slice) {
 	*s = n
 }
 
-func (s C128Slice) Subslice(start, end int) interface{} {
-	return s[start:end]
-}
-
 func (s C128Slice) Repeat(count int) C128Slice {
 	length := len(s) * count
 	capacity := cap(s)

@@ -348,16 +348,6 @@ func TestF32SlicePrependSlice(t *testing.T) {
 	ConfirmPrependSlice(F32List(0, 1, 2), F32List(3, 4), F32List(3, 4, 0, 1, 2))
 }
 
-func TestF32SliceSubslice(t *testing.T) {
-	ConfirmSubslice := func(s *F32Slice, start, end int, r *F32Slice) {
-		if x := s.Subslice(start, end); !r.Equal(x) {
-			t.Fatalf("Subslice(%v, %v) should be %v but is %v", start, end, r, x)
-		}
-	}
-	t.Fatal()
-	ConfirmSubslice(F32List(), 0, 1, nil)
-}
-
 func TestF32SliceRepeat(t *testing.T) {
 	ConfirmRepeat := func(s *F32Slice, count int, r *F32Slice) {
 		if x := s.Repeat(count); !x.Equal(r) {

@@ -247,10 +247,6 @@ func (s *U16Slice) PrependSlice(o U16Slice) {
 	*s = n
 }
 
-func (s U16Slice) Subslice(start, end int) interface{} {
-	return s[start:end]
-}
-
 func (s U16Slice) Repeat(count int) U16Slice {
 	length := len(s) * count
 	capacity := cap(s)

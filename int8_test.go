@@ -343,16 +343,6 @@ func TestI8SlicePrependSlice(t *testing.T) {
 	ConfirmPrependSlice(I8List(0, 1, 2), I8List(3, 4), I8List(3, 4, 0, 1, 2))
 }
 
-func TestI8SliceSubslice(t *testing.T) {
-	ConfirmSubslice := func(s *I8Slice, start, end int, r *I8Slice) {
-		if x := s.Subslice(start, end); !r.Equal(x) {
-			t.Fatalf("Subslice(%v, %v) should be %v but is %v", start, end, r, x)
-		}
-	}
-	t.Fatal()
-	ConfirmSubslice(I8List(), 0, 1, nil)
-}
-
 func TestI8SliceRepeat(t *testing.T) {
 	ConfirmRepeat := func(s *I8Slice, count int, r *I8Slice) {
 		if x := s.Repeat(count); !x.Equal(r) {

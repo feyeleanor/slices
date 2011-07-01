@@ -343,16 +343,6 @@ func TestU64SlicePrependSlice(t *testing.T) {
 	ConfirmPrependSlice(U64List(0, 1, 2), U64List(3, 4), U64List(3, 4, 0, 1, 2))
 }
 
-func TestU64SliceSubslice(t *testing.T) {
-	ConfirmSubslice := func(s *U64Slice, start, end int, r *U64Slice) {
-		if x := s.Subslice(start, end); !r.Equal(x) {
-			t.Fatalf("Subslice(%v, %v) should be %v but is %v", start, end, r, x)
-		}
-	}
-	t.Fatal()
-	ConfirmSubslice(U64List(), 0, 1, nil)
-}
-
 func TestU64SliceRepeat(t *testing.T) {
 	ConfirmRepeat := func(s *U64Slice, count int, r *U64Slice) {
 		if x := s.Repeat(count); !x.Equal(r) {

@@ -213,10 +213,6 @@ func (s *C64Slice) PrependSlice(o C64Slice) {
 	*s = n
 }
 
-func (s C64Slice) Subslice(start, end int) interface{} {
-	return s[start:end]
-}
-
 func (s C64Slice) Repeat(count int) C64Slice {
 	length := len(s) * count
 	capacity := cap(s)
