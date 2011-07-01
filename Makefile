@@ -6,6 +6,7 @@ GOFILES=\
 	slices.go\
 	slice.go\
 	slice_value.go\
-	int_slice.go
+	int_slice.go\
+	float32_slice.go
 
 include $(GOROOT)/src/Make.pkg
