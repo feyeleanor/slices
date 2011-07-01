@@ -154,7 +154,7 @@ func TestISliceEachWithKey(t *testing.T) {
 func TestISliceEachInt(t *testing.T) {
 	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	count := 0
-	c.EachInt(func(i int) {
+	c.IEach(func(i int) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
@@ -164,7 +164,7 @@ func TestISliceEachInt(t *testing.T) {
 
 func TestISliceEachIntWithIndex(t *testing.T) {
 	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachIntWithIndex(func(index int, i int) {
+	c.IEachWithIndex(func(index int, i int) {
 		if i != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
@@ -173,7 +173,7 @@ func TestISliceEachIntWithIndex(t *testing.T) {
 
 func TestISliceEachIntWithKey(t *testing.T) {
 	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachIntWithKey(func(key interface{}, i int) {
+	c.IEachWithKey(func(key interface{}, i int) {
 		if i != key {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}

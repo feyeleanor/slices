@@ -154,7 +154,7 @@ func TestF64SliceEachWithKey(t *testing.T) {
 func TestF64SliceEachF64(t *testing.T) {
 	c := F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	count := 0
-	c.EachF64(func(f float64) {
+	c.F64Each(func(f float64) {
 		if f != float64(count) {
 			t.Fatalf("element %v erroneously reported as %v", count, f)
 		}
@@ -164,7 +164,7 @@ func TestF64SliceEachF64(t *testing.T) {
 
 func TestF64SliceEachF32WithIndex(t *testing.T) {
 	c := F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachF64WithIndex(func(index int, f float64) {
+	c.F64EachWithIndex(func(index int, f float64) {
 		if f != float64(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, f)
 		}
@@ -173,7 +173,7 @@ func TestF64SliceEachF32WithIndex(t *testing.T) {
 
 func TestF64SliceEachIntWithKey(t *testing.T) {
 	c := F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachF64WithKey(func(key interface{}, f float64) {
+	c.F64EachWithKey(func(key interface{}, f float64) {
 		if f != float64(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, f)
 		}

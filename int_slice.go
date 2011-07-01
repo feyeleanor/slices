@@ -12,9 +12,9 @@ func (s ISlice) Len() int							{ return len(s) }
 func (s ISlice) Cap() int							{ return cap(s) }
 
 func (s ISlice) At(i int) interface{}				{ return s[i] }
-func (s ISlice) AtInt(i int) int					{ return s[i] }
+func (s ISlice) IAt(i int) int						{ return s[i] }
 func (s ISlice) Set(i int, v interface{})			{ s[i] = v.(int) }
-func (s ISlice) SetInt(i, v int)					{ s[i] = v }
+func (s ISlice) ISet(i, v int)						{ s[i] = v }
 func (s ISlice) Clear(i int)						{ s[i] = 0 }
 func (s ISlice) Swap(i, j int)						{ s[i], s[j] = s[j], s[i] }
 
@@ -108,19 +108,19 @@ func (s ISlice) EachWithKey(f func(key, value interface{})) {
 	}
 }
 
-func (s ISlice) EachInt(f func(int)) {
+func (s ISlice) IEach(f func(int)) {
 	for _, v := range s {
 		f(v)
 	}
 }
 
-func (s ISlice) EachIntWithIndex(f func(int, int)) {
+func (s ISlice) IEachWithIndex(f func(int, int)) {
 	for i, v := range s {
 		f(i, v)
 	}
 }
 
-func (s ISlice) EachIntWithKey(f func(interface{}, int)) {
+func (s ISlice) IEachWithKey(f func(interface{}, int)) {
 	for i, v := range s {
 		f(i, v)
 	}
@@ -217,10 +217,10 @@ func (s ISlice) Depth() int {
 }
 
 func (s *ISlice) Append(v interface{}) {
-	s.AppendInt(v.(int))
+	s.IAppend(v.(int))
 }
 
-func (s *ISlice) AppendInt(v int) {
+func (s *ISlice) IAppend(v int) {
 	*s = append(*s, v)
 }
 
@@ -229,10 +229,10 @@ func (s *ISlice) AppendSlice(o ISlice) {
 }
 
 func (s *ISlice) Prepend(v interface{}) {
-	s.PrependInt(v.(int))
+	s.IPrepend(v.(int))
 }
 
-func (s *ISlice) PrependInt(v int) {
+func (s *ISlice) IPrepend(v int) {
 	l := s.Len() + 1
 	n := make(ISlice, l, l)
 	n[0] = v

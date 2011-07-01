@@ -12,11 +12,11 @@ func (s F64Slice) Len() int							{ return len(s) }
 func (s F64Slice) Cap() int							{ return cap(s) }
 
 func (s F64Slice) At(i int) interface{}				{ return s[i] }
-func (s F64Slice) AtF32(i int) float32				{ return float32(s[i]) }
-func (s F64Slice) AtF64(i int) float64				{ return s[i] }
+func (s F64Slice) F32At(i int) float32				{ return float32(s[i]) }
+func (s F64Slice) F64At(i int) float64				{ return s[i] }
 func (s F64Slice) Set(i int, v interface{})			{ s[i] = v.(float64) }
-func (s F64Slice) SetF32(i int, v float32)			{ s[i] = float64(v) }
-func (s F64Slice) SetF64(i int, v float64)			{ s[i] = v }
+func (s F64Slice) F32Set(i int, v float32)			{ s[i] = float64(v) }
+func (s F64Slice) F64Set(i int, v float64)			{ s[i] = v }
 func (s F64Slice) Clear(i int)						{ s[i] = 0 }
 func (s F64Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 
@@ -103,19 +103,19 @@ func (s F64Slice) EachWithKey(f func(key, value interface{})) {
 	}
 }
 
-func (s F64Slice) EachF64(f func(float64)) {
+func (s F64Slice) F64Each(f func(float64)) {
 	for _, v := range s {
 		f(v)
 	}
 }
 
-func (s F64Slice) EachF64WithIndex(f func(int, float64)) {
+func (s F64Slice) F64EachWithIndex(f func(int, float64)) {
 	for i, v := range s {
 		f(i, v)
 	}
 }
 
-func (s F64Slice) EachF64WithKey(f func(interface{}, float64)) {
+func (s F64Slice) F64EachWithKey(f func(interface{}, float64)) {
 	for i, v := range s {
 		f(i, v)
 	}
@@ -212,10 +212,10 @@ func (s F64Slice) Depth() int {
 }
 
 func (s *F64Slice) Append(v interface{}) {
-	s.AppendF64(v.(float64))
+	s.F64Append(v.(float64))
 }
 
-func (s *F64Slice) AppendF64(v float64) {
+func (s *F64Slice) F64Append(v float64) {
 	*s = append(*s, v)
 }
 
@@ -224,10 +224,10 @@ func (s *F64Slice) AppendSlice(o F64Slice) {
 }
 
 func (s *F64Slice) Prepend(v interface{}) {
-	s.PrependF64(v.(float64))
+	s.F64Prepend(v.(float64))
 }
 
-func (s *F64Slice) PrependF64(v float64) {
+func (s *F64Slice) F64Prepend(v float64) {
 	l := s.Len() + 1
 	n := make(F64Slice, l, l)
 	n[0] = v
