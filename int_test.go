@@ -151,7 +151,7 @@ func TestISliceEachWithKey(t *testing.T) {
 	})
 }
 
-func TestISliceEachInt(t *testing.T) {
+func TestISliceIEach(t *testing.T) {
 	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	count := 0
 	c.IEach(func(i int) {
@@ -162,7 +162,7 @@ func TestISliceEachInt(t *testing.T) {
 	})
 }
 
-func TestISliceEachIntWithIndex(t *testing.T) {
+func TestISliceIEachWithIndex(t *testing.T) {
 	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	c.IEachWithIndex(func(index int, i int) {
 		if i != index {
@@ -171,7 +171,7 @@ func TestISliceEachIntWithIndex(t *testing.T) {
 	})
 }
 
-func TestISliceEachIntWithKey(t *testing.T) {
+func TestISliceIEachWithKey(t *testing.T) {
 	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	c.IEachWithKey(func(key interface{}, i int) {
 		if i != key {

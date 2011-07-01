@@ -13,10 +13,8 @@ func (s F32Slice) Cap() int							{ return cap(s) }
 
 func (s F32Slice) At(i int) interface{}				{ return s[i] }
 func (s F32Slice) F32At(i int) float32				{ return s[i] }
-func (s F32Slice) F64At(i int) float64				{ return float64(s[i]) }
 func (s F32Slice) Set(i int, v interface{})			{ s[i] = v.(float32) }
 func (s F32Slice) F32Set(i int, v float32)			{ s[i] = v }
-func (s F32Slice) F64Set(i int, v float64)			{ s[i] = float32(v) }
 func (s F32Slice) Clear(i int)						{ s[i] = 0 }
 func (s F32Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 

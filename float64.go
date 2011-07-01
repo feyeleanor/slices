@@ -12,10 +12,8 @@ func (s F64Slice) Len() int							{ return len(s) }
 func (s F64Slice) Cap() int							{ return cap(s) }
 
 func (s F64Slice) At(i int) interface{}				{ return s[i] }
-func (s F64Slice) F32At(i int) float32				{ return float32(s[i]) }
 func (s F64Slice) F64At(i int) float64				{ return s[i] }
 func (s F64Slice) Set(i int, v interface{})			{ s[i] = v.(float64) }
-func (s F64Slice) F32Set(i int, v float32)			{ s[i] = float64(v) }
 func (s F64Slice) F64Set(i int, v float64)			{ s[i] = v }
 func (s F64Slice) Clear(i int)						{ s[i] = 0 }
 func (s F64Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
