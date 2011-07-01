@@ -12,11 +12,11 @@ func (s F32Slice) Len() int							{ return len(s) }
 func (s F32Slice) Cap() int							{ return cap(s) }
 
 func (s F32Slice) At(i int) interface{}				{ return s[i] }
-func (s F32Slice) AtFloat32(i int) float32			{ return s[i] }
-func (s F32Slice) AtFloat64(i int) float64			{ return float64(s[i]) }
+func (s F32Slice) AtF32(i int) float32				{ return s[i] }
+func (s F32Slice) AtF64(i int) float64				{ return float64(s[i]) }
 func (s F32Slice) Set(i int, v interface{})			{ s[i] = v.(float32) }
-func (s F32Slice) SetFloat32(i int, v float32)		{ s[i] = v }
-func (s F32Slice) SetFloat64(i int, v float64)		{ s[i] = float32(v) }
+func (s F32Slice) SetF32(i int, v float32)			{ s[i] = v }
+func (s F32Slice) SetF64(i int, v float64)			{ s[i] = float32(v) }
 func (s F32Slice) Clear(i int)						{ s[i] = 0 }
 func (s F32Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 
@@ -103,19 +103,19 @@ func (s F32Slice) EachWithKey(f func(key, value interface{})) {
 	}
 }
 
-func (s F32Slice) EachFloat32(f func(float32)) {
+func (s F32Slice) EachF32(f func(float32)) {
 	for _, v := range s {
 		f(v)
 	}
 }
 
-func (s F32Slice) EachFloat32WithIndex(f func(int, float32)) {
+func (s F32Slice) EachF32WithIndex(f func(int, float32)) {
 	for i, v := range s {
 		f(i, v)
 	}
 }
 
-func (s F32Slice) EachFloat32WithKey(f func(interface{}, float32)) {
+func (s F32Slice) EachF32WithKey(f func(interface{}, float32)) {
 	for i, v := range s {
 		f(i, v)
 	}
@@ -212,10 +212,10 @@ func (s F32Slice) Depth() int {
 }
 
 func (s *F32Slice) Append(v interface{}) {
-	s.AppendFloat32(v.(float32))
+	s.AppendF32(v.(float32))
 }
 
-func (s *F32Slice) AppendFloat32(v float32) {
+func (s *F32Slice) AppendF32(v float32) {
 	*s = append(*s, v)
 }
 
@@ -224,10 +224,10 @@ func (s *F32Slice) AppendSlice(o F32Slice) {
 }
 
 func (s *F32Slice) Prepend(v interface{}) {
-	s.PrependFloat32(v.(float32))
+	s.PrependF32(v.(float32))
 }
 
-func (s *F32Slice) PrependFloat32(v float32) {
+func (s *F32Slice) PrependF32(v float32) {
 	l := s.Len() + 1
 	n := make(F32Slice, l, l)
 	n[0] = v

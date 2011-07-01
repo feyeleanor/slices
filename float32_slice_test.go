@@ -151,10 +151,10 @@ func TestF32SliceEachWithKey(t *testing.T) {
 	})
 }
 
-func TestF32SliceEachFloat32(t *testing.T) {
+func TestF32SliceEachF32(t *testing.T) {
 	c := F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	count := 0
-	c.EachFloat32(func(f float32) {
+	c.EachF32(func(f float32) {
 		if f != float32(count) {
 			t.Fatalf("element %v erroneously reported as %v", count, f)
 		}
@@ -162,9 +162,9 @@ func TestF32SliceEachFloat32(t *testing.T) {
 	})
 }
 
-func TestF32SliceEachFloat32WithIndex(t *testing.T) {
+func TestF32SliceEachF32WithIndex(t *testing.T) {
 	c := F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachFloat32WithIndex(func(index int, f float32) {
+	c.EachF32WithIndex(func(index int, f float32) {
 		if f != float32(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, f)
 		}
@@ -173,7 +173,7 @@ func TestF32SliceEachFloat32WithIndex(t *testing.T) {
 
 func TestF32SliceEachIntWithKey(t *testing.T) {
 	c := F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachFloat32WithKey(func(key interface{}, f float32) {
+	c.EachF32WithKey(func(key interface{}, f float32) {
 		if f != float32(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, f)
 		}
