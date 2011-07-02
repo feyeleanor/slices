@@ -3,53 +3,53 @@ package slices
 import "github.com/feyeleanor/lists"
 import "testing"
 
-func TestSList(t *testing.T) {
-	sxp := SList(nil, nil)
+func TestList(t *testing.T) {
+	sxp := List(nil, nil)
 	switch {
-	case sxp.Len() != 2:			t.Fatalf("SList(nil nil) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != nil:			t.Fatalf("SList(nil nil) element 0 should be nil and not %v", sxp.At(0))
-	case sxp.At(1) != nil:			t.Fatalf("SList(nil nil) element 1 should be nil and not %v", sxp.At(1))
+	case sxp.Len() != 2:			t.Fatalf("List(nil nil) should allocate 2 cells, not %v cells", sxp.Len())
+	case sxp.At(0) != nil:			t.Fatalf("List(nil nil) element 0 should be nil and not %v", sxp.At(0))
+	case sxp.At(1) != nil:			t.Fatalf("List(nil nil) element 1 should be nil and not %v", sxp.At(1))
 	}
 
-	sxp = SList(1, nil)
+	sxp = List(1, nil)
 	switch {
-	case sxp.Len() != 2:			t.Fatalf("SList(1 nil) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("SList(1 nil) element 0 should be 1 and not %v", sxp.At(0))
-	case sxp.At(1) != nil:			t.Fatalf("SList(1 nil) element 1 should be nil and not %v", sxp.At(1))
+	case sxp.Len() != 2:			t.Fatalf("List(1 nil) should allocate 2 cells, not %v cells", sxp.Len())
+	case sxp.At(0) != 1:			t.Fatalf("List(1 nil) element 0 should be 1 and not %v", sxp.At(0))
+	case sxp.At(1) != nil:			t.Fatalf("List(1 nil) element 1 should be nil and not %v", sxp.At(1))
 	}
 
-	sxp = SList(1, 2)
+	sxp = List(1, 2)
 	switch {
-	case sxp.Len() != 2:			t.Fatalf("SList(1 2) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("SList(1 2) element 0 should be 1 and not %v", sxp.At(0))
-	case sxp.At(1) != 2:			t.Fatalf("SList(1 2) element 1 should be 2 and not %v", sxp.At(1))
+	case sxp.Len() != 2:			t.Fatalf("List(1 2) should allocate 2 cells, not %v cells", sxp.Len())
+	case sxp.At(0) != 1:			t.Fatalf("List(1 2) element 0 should be 1 and not %v", sxp.At(0))
+	case sxp.At(1) != 2:			t.Fatalf("List(1 2) element 1 should be 2 and not %v", sxp.At(1))
 	}
 
-	sxp = SList(1, 2, 3)
+	sxp = List(1, 2, 3)
 	switch {
-	case sxp.Len() != 3:			t.Fatalf("SList(1 2 3) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("SList(1 2 3) element 0 should be 1 and not %v", sxp.At(0))
-	case sxp.At(1) != 2:			t.Fatalf("SList(1 2 3) element 1 should be 2 and not %v", sxp.At(1))
-	case sxp.At(2) != 3:			t.Fatalf("SList(1 2 3) element 2 should be 3 and not %v", sxp.At(2))
+	case sxp.Len() != 3:			t.Fatalf("List(1 2 3) should allocate 3 cells, not %v cells", sxp.Len())
+	case sxp.At(0) != 1:			t.Fatalf("List(1 2 3) element 0 should be 1 and not %v", sxp.At(0))
+	case sxp.At(1) != 2:			t.Fatalf("List(1 2 3) element 1 should be 2 and not %v", sxp.At(1))
+	case sxp.At(2) != 3:			t.Fatalf("List(1 2 3) element 2 should be 3 and not %v", sxp.At(2))
 	}
 
-	sxp = SList(1, SList(10, 20), 3)
-	rxp := SList(10, 20)
+	sxp = List(1, List(10, 20), 3)
+	rxp := List(10, 20)
 	switch {
-	case sxp.Len() != 3:			t.Fatalf("SList(1 (10 20) 3) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("SList(1 (10 20) 3) element 0 should be 1 and not %v", sxp.At(0))
-	case !rxp.Equal(sxp.At(1)):		t.Fatalf("SList(1 (10 20) 3) element 1 should be (10 20) and not %v", sxp.At(1))
-	case sxp.At(2) != 3:			t.Fatalf("SList(1 (10 20) 3) element 2 should be 3 and not %v", sxp.At(2))
+	case sxp.Len() != 3:			t.Fatalf("List(1 (10 20) 3) should allocate 3 cells, not %v cells", sxp.Len())
+	case sxp.At(0) != 1:			t.Fatalf("List(1 (10 20) 3) element 0 should be 1 and not %v", sxp.At(0))
+	case !rxp.Equal(sxp.At(1)):		t.Fatalf("List(1 (10 20) 3) element 1 should be (10 20) and not %v", sxp.At(1))
+	case sxp.At(2) != 3:			t.Fatalf("List(1 (10 20) 3) element 2 should be 3 and not %v", sxp.At(2))
 	}
 
 
-	sxp = SList(1, SList(10, SList(-10, -30)), 3)
-	rxp = SList(10, SList(-10, -30))
+	sxp = List(1, List(10, List(-10, -30)), 3)
+	rxp = List(10, List(-10, -30))
 	switch {
-	case sxp.Len() != 3:			t.Fatalf("SList(1 (10 20) 3) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("SList(1 (10 20) 3) element 0 should be 1 and not %v", sxp.At(0))
-	case !rxp.Equal(sxp.At(1)):		t.Fatalf("SList(1 (10 20) 3) element 1 should be (10 20) and not %v", sxp.At(1))
-	case sxp.At(2) != 3:			t.Fatalf("SList(1 (10 20) 3) element 2 should be 3 and not %v", sxp.At(2))
+	case sxp.Len() != 3:			t.Fatalf("List(1 (10 20) 3) should allocate 3 cells, not %v cells", sxp.Len())
+	case sxp.At(0) != 1:			t.Fatalf("List(1 (10 20) 3) element 0 should be 1 and not %v", sxp.At(0))
+	case !rxp.Equal(sxp.At(1)):		t.Fatalf("List(1 (10 20) 3) element 1 should be (10 20) and not %v", sxp.At(1))
+	case sxp.At(2) != 3:			t.Fatalf("List(1 (10 20) 3) element 2 should be 3 and not %v", sxp.At(2))
 	}
 }
 
@@ -60,11 +60,11 @@ func TestSliceString(t *testing.T) {
 		}
 	}
 
-	ConfirmString(SList(), "()")
-	ConfirmString(SList(0), "(0)")
-	ConfirmString(SList(0, 1), "(0 1)")
-	ConfirmString(SList(SList(0, 1), 1), "((0 1) 1)")
-	ConfirmString(SList(SList(0, 1), SList(0, 1)), "((0 1) (0 1))")
+	ConfirmString(List(), "()")
+	ConfirmString(List(0), "(0)")
+	ConfirmString(List(0, 1), "(0 1)")
+	ConfirmString(List(List(0, 1), 1), "((0 1) 1)")
+	ConfirmString(List(List(0, 1), List(0, 1)), "((0 1) (0 1))")
 }
 
 func TestSliceLen(t *testing.T) {
@@ -74,15 +74,15 @@ func TestSliceLen(t *testing.T) {
 		}
 	}
 	
-	ConfirmLength(SList(0), 1)
-	ConfirmLength(SList(0, 1), 2)
-	ConfirmLength(SList(SList(0, 1), 2), 2)
-	ConfirmLength(SList(0, 1), 2)
-	ConfirmLength(SList(SList(0, 1), 2), 2)
+	ConfirmLength(List(0), 1)
+	ConfirmLength(List(0, 1), 2)
+	ConfirmLength(List(List(0, 1), 2), 2)
+	ConfirmLength(List(0, 1), 2)
+	ConfirmLength(List(List(0, 1), 2), 2)
 
-	sxp := SList(0, 1, SList(2, SList(3, 4, 5)), SList(6, 7, 8, 9))
+	sxp := List(0, 1, List(2, List(3, 4, 5)), List(6, 7, 8, 9))
 	ConfirmLength(sxp, 4)
-	ConfirmLength(SList(0, 1, SList(2, SList(3, 4, 5)), sxp, SList(6, 7, 8, 9)), 5)
+	ConfirmLength(List(0, 1, List(2, List(3, 4, 5)), sxp, List(6, 7, 8, 9)), 5)
 }
 
 func TestSliceSwap(t *testing.T) {
@@ -91,8 +91,8 @@ func TestSliceSwap(t *testing.T) {
 			t.Fatalf("Swap(%v, %v) should be %v but is %v", i, j, r, s)
 		}
 	}
-	ConfirmSwap(SList(0, 1, 2), 0, 1, SList(1, 0, 2))
-	ConfirmSwap(SList(0, 1, 2), 0, 2, SList(2, 1, 0))
+	ConfirmSwap(List(0, 1, 2), 0, 1, List(1, 0, 2))
+	ConfirmSwap(List(0, 1, 2), 0, 2, List(2, 1, 0))
 }
 
 func TestSliceRestrictTo(t *testing.T) {
@@ -102,18 +102,18 @@ func TestSliceRestrictTo(t *testing.T) {
 		}
 	}
 
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 0, 1, SList(0))
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 1, 2, SList(1))
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 2, 3, SList(2))
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 3, 4, SList(3))
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 4, 5, SList(4))
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 5, 6, SList(5))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 0, 1, List(0))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 1, 2, List(1))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 2, 3, List(2))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 3, 4, List(3))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 4, 5, List(4))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 5, 6, List(5))
 
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 0, 2, SList(0, 1))
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 1, 3, SList(1, 2))
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 2, 4, SList(2, 3))
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 3, 5, SList(3, 4))
-	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 4, 6, SList(4, 5))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 0, 2, List(0, 1))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 1, 3, List(1, 2))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 2, 4, List(2, 3))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 3, 5, List(3, 4))
+	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 4, 6, List(4, 5))
 }
 
 func TestSliceCut(t *testing.T) {
@@ -123,20 +123,20 @@ func TestSliceCut(t *testing.T) {
 		}
 	}
 
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 0, 1, SList(1, 2, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 1, 2, SList(0, 2, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 2, 3, SList(0, 1, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 3, 4, SList(0, 1, 2, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 4, 5, SList(0, 1, 2, 3, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 5, 6, SList(0, 1, 2, 3, 4))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 0, 1, List(1, 2, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 1, 2, List(0, 2, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 2, 3, List(0, 1, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 3, 4, List(0, 1, 2, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 4, 5, List(0, 1, 2, 3, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 5, 6, List(0, 1, 2, 3, 4))
 
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), -1, 1, SList(1, 2, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 0, 2, SList(2, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 1, 3, SList(0, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 2, 4, SList(0, 1, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 3, 5, SList(0, 1, 2, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 4, 6, SList(0, 1, 2, 3))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 5, 7, SList(0, 1, 2, 3, 4))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), -1, 1, List(1, 2, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 0, 2, List(2, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 1, 3, List(0, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 2, 4, List(0, 1, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 3, 5, List(0, 1, 2, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 4, 6, List(0, 1, 2, 3))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 5, 7, List(0, 1, 2, 3, 4))
 }
 
 func TestSliceTrim(t *testing.T) {
@@ -146,20 +146,20 @@ func TestSliceTrim(t *testing.T) {
 		}
 	}
 
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 0, 1, SList(0))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 1, 2, SList(1))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 2, 3, SList(2))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 3, 4, SList(3))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 4, 5, SList(4))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 5, 6, SList(5))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 0, 1, List(0))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 1, 2, List(1))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 2, 3, List(2))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 3, 4, List(3))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 4, 5, List(4))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 5, 6, List(5))
 
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), -1, 1, SList(0))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 0, 2, SList(0, 1))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 1, 3, SList(1, 2))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 2, 4, SList(2, 3))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 3, 5, SList(3, 4))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 4, 6, SList(4, 5))
-	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 5, 7, SList(5))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), -1, 1, List(0))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 0, 2, List(0, 1))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 1, 3, List(1, 2))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 2, 4, List(2, 3))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 3, 5, List(3, 4))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 4, 6, List(4, 5))
+	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 5, 7, List(5))
 }
 
 func TestSliceDelete(t *testing.T) {
@@ -169,18 +169,18 @@ func TestSliceDelete(t *testing.T) {
 		}
 	}
 
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), -1, SList(0, 1, 2, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 0, SList(1, 2, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 1, SList(0, 2, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 2, SList(0, 1, 3, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 3, SList(0, 1, 2, 4, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 4, SList(0, 1, 2, 3, 5))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 5, SList(0, 1, 2, 3, 4))
-	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 6, SList(0, 1, 2, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), -1, List(0, 1, 2, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 0, List(1, 2, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 1, List(0, 2, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 2, List(0, 1, 3, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 3, List(0, 1, 2, 4, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 4, List(0, 1, 2, 3, 5))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 5, List(0, 1, 2, 3, 4))
+	ConfirmCut(List(0, 1, 2, 3, 4, 5), 6, List(0, 1, 2, 3, 4, 5))
 }
 
 func TestSliceEach(t *testing.T) {
-	c := SList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
+	c := List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	count := 0
 	c.Each(func(i interface{}) {
 		if i != count {
@@ -191,7 +191,7 @@ func TestSliceEach(t *testing.T) {
 }
 
 func TestSliceEachWithIndex(t *testing.T) {
-	c := SList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
+	c := List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	c.EachWithIndex(func(index int, i interface{}) {
 		if i != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
@@ -200,7 +200,7 @@ func TestSliceEachWithIndex(t *testing.T) {
 }
 
 func TestSliceEachWithKey(t *testing.T) {
-	c := SList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
+	c := List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	c.EachWithKey(func(key, i interface{}) {
 		if i != key {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
@@ -216,10 +216,10 @@ func TestSliceBlockCopy(t *testing.T) {
 		}
 	}
 
-	ConfirmBlockCopy(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 0, 4, SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockCopy(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 9, 9, 4, SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockCopy(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 2, 4, SList(0, 1, 2, 3, 4, 2, 3, 4, 5, 9))
-	ConfirmBlockCopy(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 2, 5, 4, SList(0, 1, 5, 6, 7, 8, 6, 7, 8, 9))
+	ConfirmBlockCopy(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 0, 4, List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+	ConfirmBlockCopy(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 9, 9, 4, List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+	ConfirmBlockCopy(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 2, 4, List(0, 1, 2, 3, 4, 2, 3, 4, 5, 9))
+	ConfirmBlockCopy(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 2, 5, 4, List(0, 1, 5, 6, 7, 8, 6, 7, 8, 9))
 }
 
 func TestSliceBlockClear(t *testing.T) {
@@ -230,9 +230,9 @@ func TestSliceBlockClear(t *testing.T) {
 		}
 	}
 
-	ConfirmBlockClear(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 4, SList(nil, nil, nil, nil, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockClear(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 4, SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockClear(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 4, SList(0, 1, 2, 3, 4, nil, nil, nil, nil, 9))
+	ConfirmBlockClear(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 4, List(nil, nil, nil, nil, 4, 5, 6, 7, 8, 9))
+	ConfirmBlockClear(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 4, List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+	ConfirmBlockClear(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 4, List(0, 1, 2, 3, 4, nil, nil, nil, nil, 9))
 }
 
 func TestSliceOverwrite(t *testing.T) {
@@ -243,9 +243,9 @@ func TestSliceOverwrite(t *testing.T) {
 		}
 	}
 
-	ConfirmOverwrite(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, SList(10, 9, 8, 7), SList(10, 9, 8, 7, 4, 5, 6, 7, 8, 9))
-	ConfirmOverwrite(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, SList(10, 9, 8, 7), SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmOverwrite(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, SList(11, 12, 13, 14), SList(0, 1, 2, 3, 4, 11, 12, 13, 14, 9))
+	ConfirmOverwrite(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, List(10, 9, 8, 7), List(10, 9, 8, 7, 4, 5, 6, 7, 8, 9))
+	ConfirmOverwrite(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, List(10, 9, 8, 7), List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+	ConfirmOverwrite(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, List(11, 12, 13, 14), List(0, 1, 2, 3, 4, 11, 12, 13, 14, 9))
 }
 
 func TestSliceReallocate(t *testing.T) {
@@ -263,13 +263,13 @@ func TestSliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(SList(), 0, 10, SList())
-	ConfirmReallocate(SList(0, 1, 2, 3, 4), 3, 10, SList(0, 1, 2))
-	ConfirmReallocate(SList(0, 1, 2, 3, 4), 5, 10, SList(0, 1, 2, 3, 4))
-	ConfirmReallocate(SList(0, 1, 2, 3, 4), 10, 10, SList(0, 1, 2, 3, 4, nil, nil, nil, nil, nil))
-	ConfirmReallocate(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 1, 5, SList(0))
-	ConfirmReallocate(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 5, SList(0, 1, 2, 3, 4))
-	ConfirmReallocate(SList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 5, SList(0, 1, 2, 3, 4))
+	ConfirmReallocate(List(), 0, 10, List())
+	ConfirmReallocate(List(0, 1, 2, 3, 4), 3, 10, List(0, 1, 2))
+	ConfirmReallocate(List(0, 1, 2, 3, 4), 5, 10, List(0, 1, 2, 3, 4))
+	ConfirmReallocate(List(0, 1, 2, 3, 4), 10, 10, List(0, 1, 2, 3, 4, nil, nil, nil, nil, nil))
+	ConfirmReallocate(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 1, 5, List(0))
+	ConfirmReallocate(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 5, List(0, 1, 2, 3, 4))
+	ConfirmReallocate(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 5, List(0, 1, 2, 3, 4))
 }
 
 func TestSliceExtend(t *testing.T) {
@@ -283,8 +283,8 @@ func TestSliceExtend(t *testing.T) {
 		}
 	}
 
-	ConfirmExtend(SList(), 1, SList(nil))
-	ConfirmExtend(SList(), 2, SList(nil, nil))
+	ConfirmExtend(List(), 1, List(nil))
+	ConfirmExtend(List(), 2, List(nil, nil))
 }
 
 func TestSliceExpand(t *testing.T) {
@@ -298,17 +298,17 @@ func TestSliceExpand(t *testing.T) {
 		}
 	}
 
-	ConfirmExpand(SList(), -1, 1, SList(nil))
-	ConfirmExpand(SList(), 0, 1, SList(nil))
-	ConfirmExpand(SList(), 1, 1, SList(nil))
-	ConfirmExpand(SList(), 0, 2, SList(nil, nil))
+	ConfirmExpand(List(), -1, 1, List(nil))
+	ConfirmExpand(List(), 0, 1, List(nil))
+	ConfirmExpand(List(), 1, 1, List(nil))
+	ConfirmExpand(List(), 0, 2, List(nil, nil))
 
-	ConfirmExpand(SList(0, 1, 2), -1, 2, SList(nil, nil, 0, 1, 2))
-	ConfirmExpand(SList(0, 1, 2), 0, 2, SList(nil, nil, 0, 1, 2))
-	ConfirmExpand(SList(0, 1, 2), 1, 2, SList(0, nil, nil, 1, 2))
-	ConfirmExpand(SList(0, 1, 2), 2, 2, SList(0, 1, nil, nil, 2))
-	ConfirmExpand(SList(0, 1, 2), 3, 2, SList(0, 1, 2, nil, nil))
-	ConfirmExpand(SList(0, 1, 2), 4, 2, SList(0, 1, 2, nil, nil))
+	ConfirmExpand(List(0, 1, 2), -1, 2, List(nil, nil, 0, 1, 2))
+	ConfirmExpand(List(0, 1, 2), 0, 2, List(nil, nil, 0, 1, 2))
+	ConfirmExpand(List(0, 1, 2), 1, 2, List(0, nil, nil, 1, 2))
+	ConfirmExpand(List(0, 1, 2), 2, 2, List(0, 1, nil, nil, 2))
+	ConfirmExpand(List(0, 1, 2), 3, 2, List(0, 1, 2, nil, nil))
+	ConfirmExpand(List(0, 1, 2), 4, 2, List(0, 1, 2, nil, nil))
 }
 
 func TestSliceDepth(t *testing.T) {
@@ -317,26 +317,26 @@ func TestSliceDepth(t *testing.T) {
 			t.Fatalf("%v.Depth() should be %v but is %v", s, i, x)
 		}
 	}
-	ConfirmDepth(SList(0, 1), 0)
-	ConfirmDepth(SList(SList(0, 1), 2), 1)
-	ConfirmDepth(SList(0, SList(1, 2)), 1)
-	ConfirmDepth(SList(0, 1, SList(2, SList(3, 4, 5))), 2)
+	ConfirmDepth(List(0, 1), 0)
+	ConfirmDepth(List(List(0, 1), 2), 1)
+	ConfirmDepth(List(0, List(1, 2)), 1)
+	ConfirmDepth(List(0, 1, List(2, List(3, 4, 5))), 2)
 
-	sxp := SList(0, 1,
-				SList(2, SList(3, 4, 5)),
-				SList(6, SList(7, SList(8, SList(9, 0)))),
-				SList(2, SList(3, 4, 5)))
+	sxp := List(0, 1,
+				List(2, List(3, 4, 5)),
+				List(6, List(7, List(8, List(9, 0)))),
+				List(2, List(3, 4, 5)))
 	ConfirmDepth(sxp, 4)
 
-	rxp := SList(0, sxp, sxp)
+	rxp := List(0, sxp, sxp)
 	ConfirmDepth(rxp, 5)
-	ConfirmDepth(SList(rxp, sxp), 6)
+	ConfirmDepth(List(rxp, sxp), 6)
 	t.Log("Need tests for circular recursive Slice?")
 }
 
 func TestSliceReverse(t *testing.T) {
-	sxp := SList(1, 2, 3, 4, 5)
-	rxp := SList(5, 4, 3, 2, 1)
+	sxp := List(1, 2, 3, 4, 5)
+	rxp := List(5, 4, 3, 2, 1)
 	sxp.Reverse()
 	if !rxp.Equal(sxp) {
 		t.Fatalf("Reversal failed: %v", sxp)
@@ -351,9 +351,9 @@ func TestSliceAppend(t *testing.T) {
 		}
 	}
 
-	ConfirmAppend(SList(), 0, SList(0))
-	ConfirmAppend(SList(), SList(0, 1), SList(SList(0, 1)))
-	ConfirmAppend(SList(0, 1, 2), SList(3, 4), SList(0, 1, 2, SList(3, 4)))
+	ConfirmAppend(List(), 0, List(0))
+	ConfirmAppend(List(), List(0, 1), List(List(0, 1)))
+	ConfirmAppend(List(0, 1, 2), List(3, 4), List(0, 1, 2, List(3, 4)))
 }
 
 func TestSliceAppendSlice(t *testing.T) {
@@ -364,9 +364,9 @@ func TestSliceAppendSlice(t *testing.T) {
 		}
 	}
 
-	ConfirmAppendSlice(SList(), SList(0), SList(0))
-	ConfirmAppendSlice(SList(), SList(0, 1), SList(0, 1))
-	ConfirmAppendSlice(SList(0, 1, 2), SList(3, 4), SList(0, 1, 2, 3, 4))
+	ConfirmAppendSlice(List(), List(0), List(0))
+	ConfirmAppendSlice(List(), List(0, 1), List(0, 1))
+	ConfirmAppendSlice(List(0, 1, 2), List(3, 4), List(0, 1, 2, 3, 4))
 }
 
 func TestSlicePrepend(t *testing.T) {
@@ -376,9 +376,9 @@ func TestSlicePrepend(t *testing.T) {
 		}
 	}
 
-	ConfirmPrepend(SList(), 0, SList(0))
-	ConfirmPrepend(SList(0), 1, SList(1, 0))
-	ConfirmPrepend(SList(0, 1, 2), SList(3, 4), SList(SList(3, 4), 0, 1, 2))
+	ConfirmPrepend(List(), 0, List(0))
+	ConfirmPrepend(List(0), 1, List(1, 0))
+	ConfirmPrepend(List(0, 1, 2), List(3, 4), List(List(3, 4), 0, 1, 2))
 }
 
 func TestSlicePrependSlice(t *testing.T) {
@@ -388,9 +388,9 @@ func TestSlicePrependSlice(t *testing.T) {
 		}
 	}
 
-	ConfirmPrependSlice(SList(), SList(0), SList(0))
-	ConfirmPrependSlice(SList(), SList(0, 1), SList(0, 1))
-	ConfirmPrependSlice(SList(0, 1, 2), SList(3, 4), SList(3, 4, 0, 1, 2))
+	ConfirmPrependSlice(List(), List(0), List(0))
+	ConfirmPrependSlice(List(), List(0, 1), List(0, 1))
+	ConfirmPrependSlice(List(0, 1, 2), List(3, 4), List(3, 4, 0, 1, 2))
 }
 
 func TestSliceRepeat(t *testing.T) {
@@ -400,12 +400,12 @@ func TestSliceRepeat(t *testing.T) {
 		}
 	}
 
-	ConfirmRepeat(SList(), 5, SList())
-	ConfirmRepeat(SList(0), 1, SList(0))
-	ConfirmRepeat(SList(0), 2, SList(0, 0))
-	ConfirmRepeat(SList(0), 3, SList(0, 0, 0))
-	ConfirmRepeat(SList(0), 4, SList(0, 0, 0, 0))
-	ConfirmRepeat(SList(0), 5, SList(0, 0, 0, 0, 0))
+	ConfirmRepeat(List(), 5, List())
+	ConfirmRepeat(List(0), 1, List(0))
+	ConfirmRepeat(List(0), 2, List(0, 0))
+	ConfirmRepeat(List(0), 3, List(0, 0, 0))
+	ConfirmRepeat(List(0), 4, List(0, 0, 0, 0))
+	ConfirmRepeat(List(0), 5, List(0, 0, 0, 0, 0))
 }
 
 func TestSliceFlatten(t *testing.T) {
@@ -415,31 +415,31 @@ func TestSliceFlatten(t *testing.T) {
 			t.Fatalf("%v should be %v", s, r)
 		}
 	}
-	ConfirmFlatten(SList(), SList())
-	ConfirmFlatten(SList(1), SList(1))
-	ConfirmFlatten(SList(1, SList(2)), SList(1, 2))
-	ConfirmFlatten(SList(1, SList(2, SList(3))), SList(1, 2, 3))
-	ConfirmFlatten(SList(1, 2, SList(3, SList(4, 5), SList(6, SList(7, 8, 9), SList(10, 11)))), SList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
+	ConfirmFlatten(List(), List())
+	ConfirmFlatten(List(1), List(1))
+	ConfirmFlatten(List(1, List(2)), List(1, 2))
+	ConfirmFlatten(List(1, List(2, List(3))), List(1, 2, 3))
+	ConfirmFlatten(List(1, 2, List(3, List(4, 5), List(6, List(7, 8, 9), List(10, 11)))), List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
 
-	ConfirmFlatten(SList(0, lists.List(1, 2, SList(3, 4))), SList(0, lists.List(1, 2, SList(3, 4))))
-	ConfirmFlatten(SList(0, lists.List(1, 2, lists.List(3, 4))), SList(0, lists.List(1, 2, 3, 4)))
+	ConfirmFlatten(List(0, lists.List(1, 2, List(3, 4))), List(0, lists.List(1, 2, List(3, 4))))
+	ConfirmFlatten(List(0, lists.List(1, 2, lists.List(3, 4))), List(0, lists.List(1, 2, 3, 4)))
 
-	ConfirmFlatten(SList(0, lists.Loop(1, 2)), SList(0, lists.Loop(1, 2)))
-	ConfirmFlatten(SList(0, lists.List(1, lists.Loop(2, 3))), SList(0, lists.List(1, 2, 3)))
+	ConfirmFlatten(List(0, lists.Loop(1, 2)), List(0, lists.Loop(1, 2)))
+	ConfirmFlatten(List(0, lists.List(1, lists.Loop(2, 3))), List(0, lists.List(1, 2, 3)))
 
-	ConfirmFlatten(SList(0, lists.List(1, 2, lists.Loop(3, 4))), SList(0, lists.List(1, 2, 3, 4)))
-	ConfirmFlatten(SList(3, 4, SList(5, 6, 7)), SList(3, 4, 5, 6, 7))
-	ConfirmFlatten(SList(0, lists.Loop(1, 2, SList(3, 4, SList(5, 6, 7)))), SList(0, lists.Loop(1, 2, SList(3, 4, 5, 6, 7))))
+	ConfirmFlatten(List(0, lists.List(1, 2, lists.Loop(3, 4))), List(0, lists.List(1, 2, 3, 4)))
+	ConfirmFlatten(List(3, 4, List(5, 6, 7)), List(3, 4, 5, 6, 7))
+	ConfirmFlatten(List(0, lists.Loop(1, 2, List(3, 4, List(5, 6, 7)))), List(0, lists.Loop(1, 2, List(3, 4, 5, 6, 7))))
 
-	sxp := SList(1, 2, SList(3, SList(4, 5), SList(6, SList(7, 8, 9), SList(10, 11))))
-	rxp := SList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+	sxp := List(1, 2, List(3, List(4, 5), List(6, List(7, 8, 9), List(10, 11))))
+	rxp := List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
 	sxp.Flatten()
 	if !rxp.Equal(sxp) {
 		t.Fatalf("Flatten failed: %v", sxp)
 	}
 
-	rxp = SList(1, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-	sxp = SList(1, 2, sxp, SList(3, SList(4, 5), SList(6, SList(7, 8, 9), SList(10, 11), sxp)))
+	rxp = List(1, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+	sxp = List(1, 2, sxp, List(3, List(4, 5), List(6, List(7, 8, 9), List(10, 11), sxp)))
 	sxp.Flatten()
 	if !rxp.Equal(sxp) {
 		t.Fatalf("Flatten failed with explicit expansions: %v", sxp)
@@ -458,8 +458,8 @@ func TestSliceCar(t *testing.T) {
 			t.Fatalf("head should be '%v' but is '%v'", r, n)
 		}
 	}
-	ConfirmCar(SList(1, 2, 3), 1)
-	ConfirmCar(SList(SList(10, 20), 2, 3), SList(10, 20))
+	ConfirmCar(List(1, 2, 3), 1)
+	ConfirmCar(List(List(10, 20), 2, 3), List(10, 20))
 }
 
 func TestSliceCdr(t *testing.T) {
@@ -468,7 +468,7 @@ func TestSliceCdr(t *testing.T) {
 			t.Fatalf("tail should be '%v' but is '%v'", r, n)
 		}
 	}
-	ConfirmCdr(SList(1, 2, 3), SList(2, 3))
+	ConfirmCdr(List(1, 2, 3), List(2, 3))
 }
 
 func TestSliceRplaca(t *testing.T) {
@@ -478,8 +478,8 @@ func TestSliceRplaca(t *testing.T) {
 			t.Fatalf("slice should be '%v' but is '%v'", r, s)
 		}
 	}
-	ConfirmRplaca(SList(1, 2, 3, 4, 5), 0, SList(0, 2, 3, 4, 5))
-	ConfirmRplaca(SList(1, 2, 3, 4, 5), SList(1, 2, 3), SList(SList(1, 2, 3), 2, 3, 4, 5))
+	ConfirmRplaca(List(1, 2, 3, 4, 5), 0, List(0, 2, 3, 4, 5))
+	ConfirmRplaca(List(1, 2, 3, 4, 5), List(1, 2, 3), List(List(1, 2, 3), 2, 3, 4, 5))
 }
 
 func TestSliceRplacd(t *testing.T) {
@@ -489,8 +489,8 @@ func TestSliceRplacd(t *testing.T) {
 			t.Fatalf("slice should be '%v' but is '%v'", r, s)
 		}
 	}
-	ConfirmRplacd(SList(1, 2, 3, 4, 5), nil, SList(1))
-	ConfirmRplacd(SList(1, 2, 3, 4, 5), 10, SList(1, 10))
-	ConfirmRplacd(SList(1, 2, 3, 4, 5), SList(5, 4, 3, 2), SList(1, 5, 4, 3, 2))
-	ConfirmRplacd(SList(1, 2, 3, 4, 5), SList(2, 4, 8, 16, 32), SList(1, 2, 4, 8, 16, 32))
+	ConfirmRplacd(List(1, 2, 3, 4, 5), nil, List(1))
+	ConfirmRplacd(List(1, 2, 3, 4, 5), 10, List(1, 10))
+	ConfirmRplacd(List(1, 2, 3, 4, 5), List(5, 4, 3, 2), List(1, 5, 4, 3, 2))
+	ConfirmRplacd(List(1, 2, 3, 4, 5), List(2, 4, 8, 16, 32), List(1, 2, 4, 8, 16, 32))
 }

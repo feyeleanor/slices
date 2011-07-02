@@ -2,7 +2,7 @@ package slices
 
 import "fmt"
 
-func SList(n... interface{}) *Slice {
+func List(n... interface{}) *Slice {
 	s := Slice(n)
 	return &s
 }
@@ -285,7 +285,7 @@ func (s Slice) Cdr() (t Slice) {
 
 func (s *Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *SList(v)
+	case s == nil:			*s = *List(v)
 	case s.Len() == 0:		*s = append(*s, v)
 	default:				(*s)[0] = v
 	}
@@ -293,7 +293,7 @@ func (s *Slice) Rplaca(v interface{}) {
 
 func (s *Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *SList(v)
+		*s = *List(v)
 	} else {
 		ReplaceSlice := func(v Slice) {
 			if l := len(v); l < cap(*s) {
