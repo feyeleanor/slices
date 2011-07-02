@@ -394,5 +394,5 @@ func TestC128SliceRplacd(t *testing.T) {
 	ConfirmRplacd(C128List(1, 2, 3, 4, 5), nil, C128List(1))
 	ConfirmRplacd(C128List(1, 2, 3, 4, 5), complex128(10), C128List(1, 10))
 	ConfirmRplacd(C128List(1, 2, 3, 4, 5), C128List(5, 4, 3, 2), C128List(1, 5, 4, 3, 2))
-	ConfirmRplacd(C128List(1, 2, 3, 4, 5), C128List(2, 4, 8, 16, 32), C128List(1, 2, 4, 8, 16, 32))
+	ConfirmRplacd(C128List(1, 2, 3, 4, 5, 6), C128List(2, 4, 8, 16), C128List(1, 2, 4, 8, 16))
 }

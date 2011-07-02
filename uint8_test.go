@@ -418,5 +418,5 @@ func TestU8SliceRplacd(t *testing.T) {
 	ConfirmRplacd(U8List(1, 2, 3, 4, 5), nil, U8List(1))
 	ConfirmRplacd(U8List(1, 2, 3, 4, 5), uint8(10), U8List(1, 10))
 	ConfirmRplacd(U8List(1, 2, 3, 4, 5), U8List(5, 4, 3, 2), U8List(1, 5, 4, 3, 2))
-	ConfirmRplacd(U8List(1, 2, 3, 4, 5), U8List(2, 4, 8, 16, 32), U8List(1, 2, 4, 8, 16, 32))
+	ConfirmRplacd(U8List(1, 2, 3, 4, 5, 6), U8List(2, 4, 8, 16), U8List(1, 2, 4, 8, 16))
 }

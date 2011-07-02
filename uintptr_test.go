@@ -421,5 +421,5 @@ func TestASliceRplacd(t *testing.T) {
 	ConfirmRplacd(AList(1, 2, 3, 4, 5), nil, AList(1))
 	ConfirmRplacd(AList(1, 2, 3, 4, 5), uintptr(10), AList(1, 10))
 	ConfirmRplacd(AList(1, 2, 3, 4, 5), AList(5, 4, 3, 2), AList(1, 5, 4, 3, 2))
-	ConfirmRplacd(AList(1, 2, 3, 4, 5), AList(2, 4, 8, 16, 32), AList(1, 2, 4, 8, 16, 32))
+	ConfirmRplacd(AList(1, 2, 3, 4, 5, 6), AList(2, 4, 8, 16), AList(1, 2, 4, 8, 16))
 }

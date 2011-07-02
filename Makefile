@@ -6,6 +6,7 @@ GOFILES=\
 	slices.go\
 	slice.go\
 	slice_value.go\
+	string.go\
 	uintptr.go\
 	uint.go\
 	uint8.go\

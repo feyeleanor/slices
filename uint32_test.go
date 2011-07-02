@@ -418,5 +418,5 @@ func TestU32SliceRplacd(t *testing.T) {
 	ConfirmRplacd(U32List(1, 2, 3, 4, 5), nil, U32List(1))
 	ConfirmRplacd(U32List(1, 2, 3, 4, 5), uint32(10), U32List(1, 10))
 	ConfirmRplacd(U32List(1, 2, 3, 4, 5), U32List(5, 4, 3, 2), U32List(1, 5, 4, 3, 2))
-	ConfirmRplacd(U32List(1, 2, 3, 4, 5), U32List(2, 4, 8, 16, 32), U32List(1, 2, 4, 8, 16, 32))
+	ConfirmRplacd(U32List(1, 2, 3, 4, 5, 6), U32List(2, 4, 8, 16), U32List(1, 2, 4, 8, 16))
 }

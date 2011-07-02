@@ -329,6 +329,7 @@ func (s *F32Slice) Rplacd(v interface{}) {
 		ReplaceSlice := func(v F32Slice) {
 			if l := len(v); l < cap(*s) {
 				copy((*s)[1:], v)
+				*s = (*s)[0:l + 1]
 			} else {
 				l++
 				n := make(F32Slice, l, l)

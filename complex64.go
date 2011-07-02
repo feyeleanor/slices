@@ -300,6 +300,7 @@ func (s *C64Slice) Rplacd(v interface{}) {
 		ReplaceSlice := func(v C64Slice) {
 			if l := len(v); l < cap(*s) {
 				copy((*s)[1:], v)
+				*s = (*s)[0:l + 1]
 			} else {
 				l++
 				n := make(C64Slice, l, l)
@@ -310,13 +311,13 @@ func (s *C64Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *C64Slice:		ReplaceSlice(*v)
-		case C64Slice:		ReplaceSlice(v)
+		case *C64Slice:			ReplaceSlice(*v)
+		case C64Slice:			ReplaceSlice(v)
 		case *[]complex64:		ReplaceSlice(C64Slice(*v))
 		case []complex64:		ReplaceSlice(C64Slice(v))
-		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(complex64)
-							*s = (*s)[:2]
+		case nil:				*s = (*s)[:1]
+		default:				(*s)[1] = v.(complex64)
+								*s = (*s)[:2]
 		}
 	}
 }

@@ -423,5 +423,5 @@ func TestISliceRplacd(t *testing.T) {
 	ConfirmRplacd(IList(1, 2, 3, 4, 5), nil, IList(1))
 	ConfirmRplacd(IList(1, 2, 3, 4, 5), 10, IList(1, 10))
 	ConfirmRplacd(IList(1, 2, 3, 4, 5), IList(5, 4, 3, 2), IList(1, 5, 4, 3, 2))
-	ConfirmRplacd(IList(1, 2, 3, 4, 5), IList(2, 4, 8, 16, 32), IList(1, 2, 4, 8, 16, 32))
+	ConfirmRplacd(IList(1, 2, 3, 4, 5, 6), IList(2, 4, 8, 16), IList(1, 2, 4, 8, 16))
 }

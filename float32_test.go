@@ -423,5 +423,5 @@ func TestF32SliceRplacd(t *testing.T) {
 	ConfirmRplacd(F32List(1, 2, 3, 4, 5), nil, F32List(1))
 	ConfirmRplacd(F32List(1, 2, 3, 4, 5), float32(10), F32List(1, 10))
 	ConfirmRplacd(F32List(1, 2, 3, 4, 5), F32List(5, 4, 3, 2), F32List(1, 5, 4, 3, 2))
-	ConfirmRplacd(F32List(1, 2, 3, 4, 5), F32List(2, 4, 8, 16, 32), F32List(1, 2, 4, 8, 16, 32))
+	ConfirmRplacd(F32List(1, 2, 3, 4, 5, 6), F32List(2, 4, 8, 16), F32List(1, 2, 4, 8, 16))
 }

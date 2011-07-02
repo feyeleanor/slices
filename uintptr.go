@@ -333,6 +333,7 @@ func (s *ASlice) Rplacd(v interface{}) {
 		ReplaceSlice := func(v ASlice) {
 			if l := len(v); l < cap(*s) {
 				copy((*s)[1:], v)
+				*s = (*s)[0:l + 1]
 			} else {
 				l++
 				n := make(ASlice, l, l)

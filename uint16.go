@@ -335,6 +335,7 @@ func (s *U16Slice) Rplacd(v interface{}) {
 		ReplaceSlice := func(v U16Slice) {
 			if l := len(v); l < cap(*s) {
 				copy((*s)[1:], v)
+				*s = (*s)[0:l + 1]
 			} else {
 				l++
 				n := make(U16Slice, l, l)

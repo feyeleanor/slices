@@ -298,6 +298,7 @@ func (s *Slice) Rplacd(v interface{}) {
 		ReplaceSlice := func(v Slice) {
 			if l := len(v); l < cap(*s) {
 				copy((*s)[1:], v)
+				*s = (*s)[0:l + 1]
 			} else {
 				l++
 				n := make(Slice, l, l)

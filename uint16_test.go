@@ -418,5 +418,5 @@ func TestU16SliceRplacd(t *testing.T) {
 	ConfirmRplacd(U16List(1, 2, 3, 4, 5), nil, U16List(1))
 	ConfirmRplacd(U16List(1, 2, 3, 4, 5), uint16(10), U16List(1, 10))
 	ConfirmRplacd(U16List(1, 2, 3, 4, 5), U16List(5, 4, 3, 2), U16List(1, 5, 4, 3, 2))
-	ConfirmRplacd(U16List(1, 2, 3, 4, 5), U16List(2, 4, 8, 16, 32), U16List(1, 2, 4, 8, 16, 32))
+	ConfirmRplacd(U16List(1, 2, 3, 4, 5, 6), U16List(2, 4, 8, 16), U16List(1, 2, 4, 8, 16))
 }
