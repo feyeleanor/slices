@@ -1,6 +1,7 @@
 package slices
 
 import "fmt"
+import "sort"
 
 func U8List(n... uint8) *U8Slice {
 	return (*U8Slice)(&n)
@@ -45,6 +46,8 @@ func (s U8Slice) ZeroAtLeast(i, j int) bool			{ return true }
 func (s U8Slice) ZeroSame(i int) bool				{ return 0 == s[i] }
 func (s U8Slice) ZeroAtMost(i, j int) bool			{ return 0 == s[j] }
 func (s U8Slice) ZeroMore(i int) bool				{ return false }
+
+func (s U8Slice) Sort()								{ sort.Sort(s) }
 
 func (s *U8Slice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 

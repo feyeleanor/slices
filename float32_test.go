@@ -58,6 +58,16 @@ func TestF32SliceSwap(t *testing.T) {
 	ConfirmSwap(F32List(0, 1, 2), 0, 2, F32List(2, 1, 0))
 }
 
+func TestF32SliceSort(t *testing.T) {
+	ConfirmSort := func(s, r *F32Slice) {
+		if s.Sort(); !r.Equal(s) {
+			t.Fatalf("Sort() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmSort(F32List(3, 2, 1, 4, 5, 0), F32List(0, 1, 2, 3, 4, 5))
+}
+
 func TestF32SliceCompare(t *testing.T) {
 	ConfirmCompare := func(s *F32Slice, i, j, r int) {
 		if x := s.Compare(i, j); x != r {

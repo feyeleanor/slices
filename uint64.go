@@ -1,6 +1,7 @@
 package slices
 
 import "fmt"
+import "sort"
 
 func U64List(n... uint64) *U64Slice {
 	return (*U64Slice)(&n)
@@ -45,6 +46,8 @@ func (s U64Slice) ZeroAtLeast(i, j int) bool		{ return true }
 func (s U64Slice) ZeroSame(i int) bool				{ return 0 == s[i] }
 func (s U64Slice) ZeroAtMost(i, j int) bool			{ return 0 == s[j] }
 func (s U64Slice) ZeroMore(i int) bool				{ return false }
+
+func (s U64Slice) Sort()							{ sort.Sort(s) }
 
 func (s *U64Slice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 

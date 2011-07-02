@@ -1,6 +1,7 @@
 package slices
 
 import "fmt"
+import "sort"
 
 func U16List(n... uint16) *U16Slice {
 	return (*U16Slice)(&n)
@@ -45,6 +46,8 @@ func (s U16Slice) ZeroAtLeast(i, j int) bool		{ return true }
 func (s U16Slice) ZeroSame(i int) bool				{ return 0 == s[i] }
 func (s U16Slice) ZeroAtMost(i, j int) bool			{ return 0 == s[j] }
 func (s U16Slice) ZeroMore(i int) bool				{ return false }
+
+func (s U16Slice) Sort()							{ sort.Sort(s) }
 
 func (s *U16Slice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 

@@ -58,6 +58,16 @@ func TestI8SliceSwap(t *testing.T) {
 	ConfirmSwap(I8List(0, 1, 2), 0, 2, I8List(2, 1, 0))
 }
 
+func TestI8SliceSort(t *testing.T) {
+	ConfirmSort := func(s, r *I8Slice) {
+		if s.Sort(); !r.Equal(s) {
+			t.Fatalf("Sort() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmSort(I8List(3, 2, 1, 4, 5, 0), I8List(0, 1, 2, 3, 4, 5))
+}
+
 func TestI8SliceCompare(t *testing.T) {
 	ConfirmCompare := func(s *I8Slice, i, j, r int) {
 		if x := s.Compare(i, j); x != r {

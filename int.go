@@ -1,6 +1,7 @@
 package slices
 
 import "fmt"
+import "sort"
 
 func IList(n... int) *ISlice {
 	return (*ISlice)(&n)
@@ -46,7 +47,9 @@ func (s ISlice) ZeroSame(i int) bool				{ return 0 == s[i] }
 func (s ISlice) ZeroAtMost(i, j int) bool			{ return 0 >= s[j] }
 func (s ISlice) ZeroMore(i int) bool				{ return 0 > s[i] }
 
-func (s *ISlice) Slice(i, j int)					{ *s = (*s)[i:j] }
+func (s ISlice) Sort()								{ sort.Sort(s) }
+
+func (s *ISlice) RestrictTo(i, j int)					{ *s = (*s)[i:j] }
 
 func (s ISlice) Compare(i, j int) (r int) {
 	switch {

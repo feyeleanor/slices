@@ -58,6 +58,16 @@ func TestF64SliceSwap(t *testing.T) {
 	ConfirmSwap(F64List(0, 1, 2), 0, 2, F64List(2, 1, 0))
 }
 
+func TestF64SliceSort(t *testing.T) {
+	ConfirmSort := func(s, r *F64Slice) {
+		if s.Sort(); !r.Equal(s) {
+			t.Fatalf("Sort() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmSort(F64List(3, 2, 1, 4, 5, 0), F64List(0, 1, 2, 3, 4, 5))
+}
+
 func TestF64SliceCompare(t *testing.T) {
 	ConfirmCompare := func(s *F64Slice, i, j, r int) {
 		if x := s.Compare(i, j); x != r {
@@ -185,7 +195,7 @@ func TestF64SliceEachF64(t *testing.T) {
 	})
 }
 
-func TestF64SliceEachF32WithIndex(t *testing.T) {
+func TestF64SliceEachF64WithIndex(t *testing.T) {
 	c := F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	c.F64EachWithIndex(func(index int, f float64) {
 		if f != float64(index) {

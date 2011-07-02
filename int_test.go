@@ -58,6 +58,16 @@ func TestISliceSwap(t *testing.T) {
 	ConfirmSwap(IList(0, 1, 2), 0, 2, IList(2, 1, 0))
 }
 
+func TestISliceSort(t *testing.T) {
+	ConfirmSort := func(s, r *ISlice) {
+		if s.Sort(); !r.Equal(s) {
+			t.Fatalf("Sort() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmSort(IList(3, 2, 1, 4, 5, 0), IList(0, 1, 2, 3, 4, 5))
+}
+
 func TestISliceCompare(t *testing.T) {
 	ConfirmCompare := func(s *ISlice, i, j, r int) {
 		if x := s.Compare(i, j); x != r {
