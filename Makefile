@@ -1,6 +1,6 @@
 include $(GOROOT)/src/Make.inc
 
-TARG=slices
+TARG=github.com/feyeleanor/slices
 
 GOFILES=\
 	slices.go\
