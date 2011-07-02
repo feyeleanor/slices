@@ -105,6 +105,29 @@ func TestI32SliceCut(t *testing.T) {
 	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 5, 7, I32List(0, 1, 2, 3, 4))
 }
 
+func TestI32SliceTrim(t *testing.T) {
+	ConfirmTrim := func(s *I32Slice, start, end int, r *I32Slice) {
+		if s.Trim(start, end); !r.Equal(s) {
+			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
+		}
+	}
+
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 0, 1, I32List(0))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 1, 2, I32List(1))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 2, 3, I32List(2))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 3, 4, I32List(3))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 4, 5, I32List(4))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 5, 6, I32List(5))
+
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), -1, 1, I32List(0))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 0, 2, I32List(0, 1))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 1, 3, I32List(1, 2))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 2, 4, I32List(2, 3))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 3, 5, I32List(3, 4))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 4, 6, I32List(4, 5))
+	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 5, 7, I32List(5))
+}
+
 func TestI32SliceDelete(t *testing.T) {
 	ConfirmCut := func(s *I32Slice, index int, r *I32Slice) {
 		if s.Delete(index); !r.Equal(s) {

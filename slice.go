@@ -38,14 +38,33 @@ func (s *Slice) Cut(i, j int) {
 	}
 }
 
+func (s *Slice) Trim(i, j int) {
+	a := *s
+	n := len(a)
+	if i < 0 {
+		i = 0
+	}
+	if j > n {
+		j = n
+	}
+	if j > i {
+		copy(a, a[i:j])
+		var zero interface{}
+		for k, base := n - 1, i + 1; k > base; k-- {
+			a[k] = zero
+		}
+		*s = a[0:j - i]
+	}
+}
+
 func (s *Slice) Delete(i int) {
 	a := *s
 	n := len(a)
 	if i > -1 && i < n {
-		copy(a[i:n-1], a[i+1:n])
+		copy(a[i:n - 1], a[i + 1:n])
 		var zero interface{}
 		a[n-1] = zero
-		*s = a[0 : n-1]
+		*s = a[0:n - 1]
 	}
 }
 

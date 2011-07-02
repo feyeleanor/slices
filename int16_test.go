@@ -105,6 +105,29 @@ func TestI16SliceCut(t *testing.T) {
 	ConfirmCut(I16List(0, 1, 2, 3, 4, 5), 5, 7, I16List(0, 1, 2, 3, 4))
 }
 
+func TestI16SliceTrim(t *testing.T) {
+	ConfirmTrim := func(s *I16Slice, start, end int, r *I16Slice) {
+		if s.Trim(start, end); !r.Equal(s) {
+			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
+		}
+	}
+
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 0, 1, I16List(0))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 1, 2, I16List(1))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 2, 3, I16List(2))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 3, 4, I16List(3))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 4, 5, I16List(4))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 5, 6, I16List(5))
+
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), -1, 1, I16List(0))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 0, 2, I16List(0, 1))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 1, 3, I16List(1, 2))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 2, 4, I16List(2, 3))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 3, 5, I16List(3, 4))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 4, 6, I16List(4, 5))
+	ConfirmTrim(I16List(0, 1, 2, 3, 4, 5), 5, 7, I16List(5))
+}
+
 func TestI16SliceDelete(t *testing.T) {
 	ConfirmCut := func(s *I16Slice, index int, r *I16Slice) {
 		if s.Delete(index); !r.Equal(s) {

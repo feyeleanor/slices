@@ -118,6 +118,29 @@ func TestSliceCut(t *testing.T) {
 	ConfirmCut(SList(0, 1, 2, 3, 4, 5), 5, 7, SList(0, 1, 2, 3, 4))
 }
 
+func TestSliceTrim(t *testing.T) {
+	ConfirmTrim := func(s *Slice, start, end int, r *Slice) {
+		if s.Trim(start, end); !r.Equal(s) {
+			t.Fatalf("Trim(%v, %v) should be %v but is %v", start, end, r, s)
+		}
+	}
+
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 0, 1, SList(0))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 1, 2, SList(1))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 2, 3, SList(2))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 3, 4, SList(3))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 4, 5, SList(4))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 5, 6, SList(5))
+
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), -1, 1, SList(0))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 0, 2, SList(0, 1))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 1, 3, SList(1, 2))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 2, 4, SList(2, 3))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 3, 5, SList(3, 4))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 4, 6, SList(4, 5))
+	ConfirmTrim(SList(0, 1, 2, 3, 4, 5), 5, 7, SList(5))
+}
+
 func TestSliceDelete(t *testing.T) {
 	ConfirmCut := func(s *Slice, index int, r *Slice) {
 		if s.Delete(index); !r.Equal(s) {

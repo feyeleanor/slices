@@ -105,6 +105,29 @@ func TestF64SliceCut(t *testing.T) {
 	ConfirmCut(F64List(0, 1, 2, 3, 4, 5), 5, 7, F64List(0, 1, 2, 3, 4))
 }
 
+func TestF64SliceTrim(t *testing.T) {
+	ConfirmTrim := func(s *F64Slice, start, end int, r *F64Slice) {
+		if s.Trim(start, end); !r.Equal(s) {
+			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
+		}
+	}
+
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 0, 1, F64List(0))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 1, 2, F64List(1))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 2, 3, F64List(2))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 3, 4, F64List(3))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 4, 5, F64List(4))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 5, 6, F64List(5))
+
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), -1, 1, F64List(0))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 0, 2, F64List(0, 1))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 1, 3, F64List(1, 2))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 2, 4, F64List(2, 3))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 3, 5, F64List(3, 4))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 4, 6, F64List(4, 5))
+	ConfirmTrim(F64List(0, 1, 2, 3, 4, 5), 5, 7, F64List(5))
+}
+
 func TestF64SliceDelete(t *testing.T) {
 	ConfirmCut := func(s *F64Slice, index int, r *F64Slice) {
 		if s.Delete(index); !r.Equal(s) {

@@ -105,6 +105,29 @@ func TestU8SliceCut(t *testing.T) {
 	ConfirmCut(U8List(0, 1, 2, 3, 4, 5), 5, 7, U8List(0, 1, 2, 3, 4))
 }
 
+func TestU8SliceTrim(t *testing.T) {
+	ConfirmTrim := func(s *U8Slice, start, end int, r *U8Slice) {
+		if s.Trim(start, end); !r.Equal(s) {
+			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
+		}
+	}
+
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 0, 1, U8List(0))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 1, 2, U8List(1))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 2, 3, U8List(2))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 3, 4, U8List(3))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 4, 5, U8List(4))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 5, 6, U8List(5))
+
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), -1, 1, U8List(0))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 0, 2, U8List(0, 1))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 1, 3, U8List(1, 2))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 2, 4, U8List(2, 3))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 3, 5, U8List(3, 4))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 4, 6, U8List(4, 5))
+	ConfirmTrim(U8List(0, 1, 2, 3, 4, 5), 5, 7, U8List(5))
+}
+
 func TestU8SliceDelete(t *testing.T) {
 	ConfirmCut := func(s *U8Slice, index int, r *U8Slice) {
 		if s.Delete(index); !r.Equal(s) {

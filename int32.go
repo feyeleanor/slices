@@ -81,6 +81,21 @@ func (s *I32Slice) Cut(i, j int) {
 	}
 }
 
+func (s *I32Slice) Trim(i, j int) {
+	a := *s
+	n := len(a)
+	if i < 0 {
+		i = 0
+	}
+	if j > n {
+		j = n
+	}
+	if j > i {
+		copy(a, a[i:j])
+		*s = a[0:j - i]
+	}
+}
+
 func (s *I32Slice) Delete(i int) {
 	a := *s
 	n := len(a)

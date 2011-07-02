@@ -82,6 +82,29 @@ func TestC128SliceCut(t *testing.T) {
 	ConfirmCut(C128List(0, 1, 2, 3, 4, 5), 5, 7, C128List(0, 1, 2, 3, 4))
 }
 
+func TestC128SliceTrim(t *testing.T) {
+	ConfirmTrim := func(s *C128Slice, start, end int, r *C128Slice) {
+		if s.Trim(start, end); !r.Equal(s) {
+			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
+		}
+	}
+
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 0, 1, C128List(0))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 1, 2, C128List(1))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 2, 3, C128List(2))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 3, 4, C128List(3))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 4, 5, C128List(4))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 5, 6, C128List(5))
+
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), -1, 1, C128List(0))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 0, 2, C128List(0, 1))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 1, 3, C128List(1, 2))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 2, 4, C128List(2, 3))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 3, 5, C128List(3, 4))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 4, 6, C128List(4, 5))
+	ConfirmTrim(C128List(0, 1, 2, 3, 4, 5), 5, 7, C128List(5))
+}
+
 func TestC128SliceDelete(t *testing.T) {
 	ConfirmCut := func(s *C128Slice, index int, r *C128Slice) {
 		if s.Delete(index); !r.Equal(s) {
