@@ -43,6 +43,8 @@ func (s ASlice) ZeroSame(i int) bool				{ return 0 == s[i] }
 func (s ASlice) ZeroAtMost(i, j int) bool			{ return 0 >= s[j] }
 func (s ASlice) ZeroMore(i int) bool				{ return 0 > s[i] }
 
+func (s *ASlice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
+
 func (s ASlice) Compare(i, j int) (r int) {
 	switch {
 	case s[i] < s[j]:		r = IS_LESS_THAN

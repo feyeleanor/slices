@@ -29,6 +29,8 @@ func (s C128Slice) Divide(i, j int)					{ s[i] /= s[j] }
 
 func (s C128Slice) Same(i, j int) bool				{ return s[i] == s[j] }
 
+func (s *C128Slice) RestrictTo(i, j int)			{ *s = (*s)[i:j] }
+
 func (s *C128Slice) Cut(i, j int) {
 	a := *s
 	l := len(a)

@@ -9,13 +9,13 @@ func SList(n... interface{}) *Slice {
 
 type Slice	[]interface{}
 
-func (s Slice) Len() int {
-	return len(s)
-}
-
-func (s Slice) Cap() int {
-	return cap(s)
-}
+func (s Slice) Len() int					{ return len(s) }
+func (s Slice) Cap() int					{ return cap(s) }
+func (s Slice) At(i int) interface{}		{ return s[i] }
+func (s Slice) Set(i int, v interface{})	{ s[i] = v }
+func (s Slice) Clear(i int)					{ s[i] = nil }
+func (s Slice) Swap(i, j int)				{ s[i], s[j] = s[j], s[i] }
+func (s *Slice) RestrictTo(i, j int)		{ *s = (*s)[i:j] }
 
 func (s *Slice) Cut(i, j int) {
 	a := *s
@@ -66,22 +66,6 @@ func (s *Slice) Delete(i int) {
 		a[n-1] = zero
 		*s = a[0:n - 1]
 	}
-}
-
-func (s Slice) At(i int) interface{} {
-	return s[i]
-}
-
-func (s Slice) Set(i int, v interface{}) {
-	s[i] = v
-}
-
-func (s Slice) Clear(i int) {
-	s[i] = nil
-}
-
-func (s Slice) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
 }
 
 func (s Slice) Each(f func(interface{})) {

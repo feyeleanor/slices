@@ -95,6 +95,27 @@ func TestSliceSwap(t *testing.T) {
 	ConfirmSwap(SList(0, 1, 2), 0, 2, SList(2, 1, 0))
 }
 
+func TestSliceRestrictTo(t *testing.T) {
+	ConfirmRestrictTo := func(s *Slice, start, end int, r *Slice) {
+		if s.RestrictTo(start, end); !r.Equal(s) {
+			t.Fatalf("Trim(%v, %v) should be %v but is %v", start, end, r, s)
+		}
+	}
+
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 0, 1, SList(0))
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 1, 2, SList(1))
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 2, 3, SList(2))
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 3, 4, SList(3))
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 4, 5, SList(4))
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 5, 6, SList(5))
+
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 0, 2, SList(0, 1))
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 1, 3, SList(1, 2))
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 2, 4, SList(2, 3))
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 3, 5, SList(3, 4))
+	ConfirmRestrictTo(SList(0, 1, 2, 3, 4, 5), 4, 6, SList(4, 5))
+}
+
 func TestSliceCut(t *testing.T) {
 	ConfirmCut := func(s *Slice, start, end int, r *Slice) {
 		if s.Cut(start, end); !r.Equal(s) {
