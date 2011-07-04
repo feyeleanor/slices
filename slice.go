@@ -33,7 +33,7 @@ func (s *Slice) Cut(i, j int) {
 			for k := m; k < n; k++ {
 				a[k] = zero
 			}
-			*s = a[0:m]
+			*s = a[:m]
 		}
 	}
 }
@@ -53,7 +53,7 @@ func (s *Slice) Trim(i, j int) {
 		for k, base := n - 1, i + 1; k > base; k-- {
 			a[k] = zero
 		}
-		*s = a[0:j - i]
+		*s = a[:j - i]
 	}
 }
 
@@ -64,7 +64,7 @@ func (s *Slice) Delete(i int) {
 		copy(a[i:n - 1], a[i + 1:n])
 		var zero interface{}
 		a[n-1] = zero
-		*s = a[0:n - 1]
+		*s = a[:n - 1]
 	}
 }
 
@@ -298,7 +298,7 @@ func (s *Slice) Rplacd(v interface{}) {
 		ReplaceSlice := func(v Slice) {
 			if l := len(v); l < cap(*s) {
 				copy((*s)[1:], v)
-				*s = (*s)[0:l + 1]
+				*s = (*s)[:l + 1]
 			} else {
 				l++
 				n := make(Slice, l, l)

@@ -43,7 +43,7 @@ func (s *C128Slice) Cut(i, j int) {
 	if j > i {
 		if m := l - (j - i); m > 0 && l > m {
 			copy(a[i:m], a[j:l])
-			*s = a[0:m]
+			*s = a[:m]
 		}
 	}
 }
@@ -59,7 +59,7 @@ func (s *C128Slice) Trim(i, j int) {
 	}
 	if j > i {
 		copy(a, a[i:j])
-		*s = a[0:j - i]
+		*s = a[:j - i]
 	}
 }
 
@@ -301,7 +301,7 @@ func (s *C128Slice) Rplacd(v interface{}) {
 		ReplaceSlice := func(v C128Slice) {
 			if l := len(v); l < cap(*s) {
 				copy((*s)[1:], v)
-				*s = (*s)[0:l + 1]
+				*s = (*s)[:l + 1]
 			} else {
 				l++
 				n := make(C128Slice, l, l)

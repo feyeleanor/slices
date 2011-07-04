@@ -5,7 +5,7 @@ TARG=github.com/feyeleanor/slices
 GOFILES=\
 	slices.go\
 	slice.go\
-	slice_value.go\
+	value.go\
 	string.go\
 	uintptr.go\
 	uint.go\

@@ -2,18 +2,18 @@ package slices
 
 import "testing"
 
-func initSliceValueTest() (b []int, g *SliceValue) {
+func initVSliceTest() (b []int, g *VSlice) {
 	b = []int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-	g = VSlice(b)
+	g = VWrap(b)
 	return
 }
 
-func TestSliceValueMakeSlice(t *testing.T) {
+func TestVSliceMakeSlice(t *testing.T) {
 //	t.Fatal()
 }
 
-func TestSliceValueVSlice(t *testing.T) {
-	g := VSlice([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
+func TestVSliceVSlice(t *testing.T) {
+	g := VWrap([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
 	if g == nil {
 		t.Fatal("Make slice returned a nil value")
 	}
@@ -29,40 +29,40 @@ func TestSliceValueVSlice(t *testing.T) {
 	}
 }
 
-func TestSliceValueAt(t *testing.T) {
+func TestVSliceAt(t *testing.T) {
 //	t.Fatal()
 }
 
-func TestSliceValueSet(t *testing.T) {
+func TestVSliceSet(t *testing.T) {
 //	t.Fatal()
 }
 
-func TestSliceValueEach(t *testing.T) {
+func TestVSliceEach(t *testing.T) {
 //	t.Fatal()
 }
 
-func TestSliceValueString(t *testing.T) {
+func TestVSliceString(t *testing.T) {
 //	t.Fatal()
 }
 
-func TestSliceValueLen(t *testing.T) {
+func TestVSliceLen(t *testing.T) {
 //	t.Fatal()
 }
 
-func TestSliceValueCap(t *testing.T) {
+func TestVSliceCap(t *testing.T) {
 //	t.Fatal()
 }
 
 
-func TestSliceValuenew(t *testing.T) {
+func TestVSlicenew(t *testing.T) {
 //	t.Fatal()
 }
 
-func TestSliceValueBlockCopy(t *testing.T) {
+func TestVSliceBlockCopy(t *testing.T) {
 //	t.Fatal()
 /*	SHOULD_MATCH := "Slice elements g[%v] and c[%v] should match but are %v and %v"
 
-	_, g := initSliceValueTest()
+	_, g := initVSliceTest()
 	c := Copy(g)
 	c.BlockCopy(0, 5, 5)
 	switch {
@@ -81,9 +81,9 @@ func TestSliceValueBlockCopy(t *testing.T) {
 	}
 */}
 
-func TestSliceValueOverwrite(t *testing.T) {
-	g := VSlice([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
-	c := VSlice(make([]int, g.Len(), g.Cap()))
+func TestVSliceOverwrite(t *testing.T) {
+	g := VWrap([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
+	c := VWrap(make([]int, g.Len(), g.Cap()))
 	c.Overwrite(0, g)
 	for i := 0; i < g.Len(); i++ {
 		if c.At(i) != g.At(i) {
@@ -92,8 +92,8 @@ func TestSliceValueOverwrite(t *testing.T) {
 	}
 }
 
-func TestSliceValueReallocate(t *testing.T) {
-	b, g := initSliceValueTest()
+func TestVSliceReallocate(t *testing.T) {
+	b, g := initVSliceTest()
 	switch g.Reallocate(10, 20); {
 	case b == nil:				t.Fatal("Reallocate() created a nil value for original slice")
 	case g == nil:				t.Fatal("Reallocate() created a nil value for Slice")
@@ -113,9 +113,9 @@ func TestSliceValueReallocate(t *testing.T) {
 	}
 }
 
-func TestSliceValueAppend(t *testing.T) {
-	ConfirmAppend := func(b, v interface{}, r *SliceValue) {
-		g := VSlice(b)
+func TestVSliceAppend(t *testing.T) {
+	ConfirmAppend := func(b, v interface{}, r *VSlice) {
+		g := VWrap(b)
 		g.Append(v)
 		if g.Len() != r.Len() {
 			t.Fatalf("Slice length should be %v but is %v", r.Len(), g.Len())
@@ -127,15 +127,31 @@ func TestSliceValueAppend(t *testing.T) {
 		}
 	}
 
-	ConfirmAppend([]int{0, 1, 2}, 3, 							VSlice([]int{0, 1, 2, 3}))
-	ConfirmAppend([]int{0, 1, 2}, []int{3, 4, 5}, 				VSlice([]int{0, 1, 2, 3, 4, 5}))
-	ConfirmAppend([]int{0, 1, 2}, VSlice([]int{3, 4, 5}),		VSlice([]int{0, 1, 2, 3, 4, 5}))
-	ConfirmAppend([]int{0, 1, 2}, *VSlice([]int{3, 4, 5}),	VSlice([]int{0, 1, 2, 3, 4, 5}))
+	ConfirmAppend([]int{0, 1, 2}, 3, 						VWrap([]int{0, 1, 2, 3}))
 }
 
-func TestSliceValuePrepend(t *testing.T) {
-	ConfirmPrepend := func(b, v interface{}, r *SliceValue) {
-		g := VSlice(b)
+func TestVSliceAppendSlice(t *testing.T) {
+	ConfirmAppendSlice := func(b, v interface{}, r *VSlice) {
+		g := VWrap(b)
+		g.AppendSlice(VWrap(v))
+		if g.Len() != r.Len() {
+			t.Fatalf("Slice length should be %v but is %v", r.Len(), g.Len())
+		}
+		for i := 0; i < r.Len(); i++ {
+			if g.At(i) != r.At(i) {
+				t.Fatalf("Slice elements b[%v] and r[%v] should match but are %v and %v", i, i, g.At(i), r.At(i))
+			}
+		}
+	}
+
+	ConfirmAppendSlice([]int{0, 1, 2}, []int{3, 4, 5}, 			VWrap([]int{0, 1, 2, 3, 4, 5}))
+	ConfirmAppendSlice([]int{0, 1, 2}, VWrap([]int{3, 4, 5}),	VWrap([]int{0, 1, 2, 3, 4, 5}))
+	ConfirmAppendSlice([]int{0, 1, 2}, *VWrap([]int{3, 4, 5}),	VWrap([]int{0, 1, 2, 3, 4, 5}))
+}
+
+func TestVSlicePrepend(t *testing.T) {
+	ConfirmPrepend := func(b, v interface{}, r *VSlice) {
+		g := VWrap(b)
 		g.Prepend(v)
 		if g.Len() != r.Len() {
 			t.Fatalf("Slice length should be %v but is %v", r.Len(), g.Len())
@@ -147,16 +163,32 @@ func TestSliceValuePrepend(t *testing.T) {
 		}
 	}
 
-	ConfirmPrepend([]int{3, 4, 5}, 2, 							VSlice([]int{2, 3, 4, 5}))
-	ConfirmPrepend([]int{3, 4, 5}, []int{0, 1, 2},				VSlice([]int{0, 1, 2, 3, 4, 5}))
-	ConfirmPrepend([]int{3, 4, 5}, VSlice([]int{0, 1, 2}),	VSlice([]int{0, 1, 2, 3, 4, 5}))
-	ConfirmPrepend([]int{3, 4, 5}, *VSlice([]int{0, 1, 2}),	VSlice([]int{0, 1, 2, 3, 4, 5}))
+	ConfirmPrepend([]int{3, 4, 5}, 2, VList(2, 3, 4, 5))
 }
 
-func TestSliceValueRepeat(t *testing.T) {
+func TestVSlicePrependSlice(t *testing.T) {
+	ConfirmPrependSlice := func(b, v interface{}, r *VSlice) {
+		g := VWrap(b)
+		g.PrependSlice(VWrap(v))
+		if g.Len() != r.Len() {
+			t.Fatalf("Slice length should be %v but is %v", r.Len(), g.Len())
+		}
+		for i := 0; i < r.Len(); i++ {
+			if g.At(i) != r.At(i) {
+				t.Fatalf("Slice elements b[%v] and r[%v] should match but are %v and %v", i, i, g.At(i), r.At(i))
+			}
+		}
+	}
+
+	ConfirmPrependSlice([]int{3, 4, 5}, []int{0, 1, 2},			VWrap([]int{0, 1, 2, 3, 4, 5}))
+	ConfirmPrependSlice([]int{3, 4, 5}, VWrap([]int{0, 1, 2}),	VWrap([]int{0, 1, 2, 3, 4, 5}))
+	ConfirmPrependSlice([]int{3, 4, 5}, *VWrap([]int{0, 1, 2}),	VWrap([]int{0, 1, 2, 3, 4, 5}))
+}
+
+func TestVSliceRepeat(t *testing.T) {
 	SHOULD_MATCH := "Slice elements g[%v] and g[%v] should match but are %v and %v"
 
-	b, g := initSliceValueTest()
+	b, g := initVSliceTest()
 	c := 3
 	g = g.Repeat(c)
 	switch {
@@ -171,25 +203,25 @@ func TestSliceValueRepeat(t *testing.T) {
 	}
 }
 
-func TestSliceValueFlatten(t *testing.T) {
+func TestVSliceFlatten(t *testing.T) {
 	
 }
 
-func TestSliceValueEqual(t *testing.T) {
-	ConfirmEqual := func(s *SliceValue, o interface{}) {
+func TestVSliceEqual(t *testing.T) {
+	ConfirmEqual := func(s *VSlice, o interface{}) {
 		if !s.Equal(o) {
 			t.Fatalf("%v should equal %v", s, o)
 		}
 	}
-	RefuteEqual := func(s *SliceValue, o interface{}) {
+	RefuteEqual := func(s *VSlice, o interface{}) {
 		if s.Equal(o) {
 			t.Fatalf("%v should not equal %v", s, o)
 		}
 	}
 
-	ConfirmEqual(VSlice([]int{ 0 }), VSlice([]int{ 0 }))
-	RefuteEqual(VSlice([]int{ 0 }), VSlice([]int{ 1 }))
+	ConfirmEqual(VWrap([]int{ 0 }), VWrap([]int{ 0 }))
+	RefuteEqual(VWrap([]int{ 0 }), VWrap([]int{ 1 }))
 }
 
-//	func TestSliceValueFeed(t *testing.T) { t.Fatal() }
-//	func TestSliceValuePipe(t *testing.T) { t.Fatal() }
+//	func TestVSliceFeed(t *testing.T) { t.Fatal() }
+//	func TestVSlicePipe(t *testing.T) { t.Fatal() }

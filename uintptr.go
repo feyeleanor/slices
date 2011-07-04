@@ -78,7 +78,7 @@ func (s *ASlice) Cut(i, j int) {
 	if j > i {
 		if m := l - (j - i); m > 0 && l > m {
 			copy(a[i:m], a[j:l])
-			*s = a[0:m]
+			*s = a[:m]
 		}
 	}
 }
@@ -94,7 +94,7 @@ func (s *ASlice) Trim(i, j int) {
 	}
 	if j > i {
 		copy(a, a[i:j])
-		*s = a[0:j - i]
+		*s = a[:j - i]
 	}
 }
 
@@ -336,7 +336,7 @@ func (s *ASlice) Rplacd(v interface{}) {
 		ReplaceSlice := func(v ASlice) {
 			if l := len(v); l < cap(*s) {
 				copy((*s)[1:], v)
-				*s = (*s)[0:l + 1]
+				*s = (*s)[:l + 1]
 			} else {
 				l++
 				n := make(ASlice, l, l)
