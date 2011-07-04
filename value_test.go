@@ -2,15 +2,7 @@ package slices
 
 import "testing"
 
-func initVSliceTest() (b []int, g *VSlice) {
-	b = []int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-	g = VWrap(b)
-	return
-}
-
-func TestVSliceMakeSlice(t *testing.T) {
-//	t.Fatal()
-}
+func TestVSliceMakeSlice(t *testing.T) {}
 
 func TestVSliceVSlice(t *testing.T) {
 	g := VWrap([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
@@ -29,57 +21,14 @@ func TestVSliceVSlice(t *testing.T) {
 	}
 }
 
-func TestVSliceAt(t *testing.T) {
-//	t.Fatal()
-}
-
-func TestVSliceSet(t *testing.T) {
-//	t.Fatal()
-}
-
-func TestVSliceEach(t *testing.T) {
-//	t.Fatal()
-}
-
-func TestVSliceString(t *testing.T) {
-//	t.Fatal()
-}
-
-func TestVSliceLen(t *testing.T) {
-//	t.Fatal()
-}
-
-func TestVSliceCap(t *testing.T) {
-//	t.Fatal()
-}
-
-
-func TestVSlicenew(t *testing.T) {
-//	t.Fatal()
-}
-
-func TestVSliceBlockCopy(t *testing.T) {
-//	t.Fatal()
-/*	SHOULD_MATCH := "Slice elements g[%v] and c[%v] should match but are %v and %v"
-
-	_, g := initVSliceTest()
-	c := Copy(g)
-	c.BlockCopy(0, 5, 5)
-	switch {
-	case c.Len() != g.Len():	t.Fatalf("Slice length should be %v not %v", g.Len(), c.Len())
-	case c.Cap() != g.Cap():	t.Fatalf("Slice capacity should be %v not %v", g.Cap(), c.Cap())
-	case c.At(0) != g.At(5):	t.Fatalf(SHOULD_MATCH, 0, 0, g.At(5), c.At(0))
-	case c.At(1) != g.At(6):	t.Fatalf(SHOULD_MATCH, 1, 1, g.At(6), c.At(1))
-	case c.At(2) != g.At(7):	t.Fatalf(SHOULD_MATCH, 2, 2, g.At(7), c.At(2))
-	case c.At(3) != g.At(8):	t.Fatalf(SHOULD_MATCH, 3, 3, g.At(8), c.At(3))
-	case c.At(4) != g.At(9):	t.Fatalf(SHOULD_MATCH, 4, 4, g.At(9), c.At(4))
-	case c.At(5) != g.At(5):	t.Fatalf(SHOULD_MATCH, 5, 5, g.At(5), c.At(5))
-	case c.At(6) != g.At(6):	t.Fatalf(SHOULD_MATCH, 6, 6, g.At(6), c.At(6))
-	case c.At(7) != g.At(7):	t.Fatalf(SHOULD_MATCH, 7, 7, g.At(7), c.At(7))
-	case c.At(8) != g.At(8):	t.Fatalf(SHOULD_MATCH, 8, 8, g.At(8), c.At(8))
-	case c.At(9) != g.At(9):	t.Fatalf(SHOULD_MATCH, 9, 9, g.At(9), c.At(9))
-	}
-*/}
+func TestVSliceAt(t *testing.T) {}
+func TestVSliceSet(t *testing.T) {}
+func TestVSliceEach(t *testing.T) {}
+func TestVSliceString(t *testing.T) {}
+func TestVSliceLen(t *testing.T) {}
+func TestVSliceCap(t *testing.T) {}
+func TestVSlicenew(t *testing.T) {}
+func TestVSliceBlockCopy(t *testing.T) {}
 
 func TestVSliceOverwrite(t *testing.T) {
 	g := VWrap([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
@@ -93,24 +42,73 @@ func TestVSliceOverwrite(t *testing.T) {
 }
 
 func TestVSliceReallocate(t *testing.T) {
-	b, g := initVSliceTest()
-	switch g.Reallocate(10, 20); {
-	case b == nil:				t.Fatal("Reallocate() created a nil value for original slice")
-	case g == nil:				t.Fatal("Reallocate() created a nil value for Slice")
-	case cap(b) != 10:			t.Fatalf("original slice capacity should be 10 but is %v", cap(b))
-	case len(b) != 10:			t.Fatalf("original slice length should be 10 but is %v", len(b))
-	case g.Cap() != 20:			t.Fatalf("Slice capacity should be 20 but is %v", g.Cap())
-	case g.Len() != 10:			t.Fatalf("Slice length should be 10 but is %v", g.Len())
+	ConfirmReallocate := func(s *VSlice, l, c int, r *VSlice) {
+		o := s.String()
+		el := l
+		if el > c {
+			el = c
+		}
+		switch s.Reallocate(l, c); {
+		case s == nil:				t.Fatalf("%v.Reallocate(%v, %v) created a nil value for Slice", o, l, c)
+		case s.Cap() != c:			t.Fatalf("%v.Reallocate(%v, %v) capacity should be %v but is %v", o, l, c, c, s.Cap())
+		case s.Len() != el:			t.Fatalf("%v.Reallocate(%v, %v) length should be %v but is %v", o, l, c, el, s.Len())
+		case !r.Equal(s):			t.Fatalf("%v.Reallocate(%v, %v) should be %v but is %v", o, l, c, r, s)
+		}
 	}
 
-	switch g.Reallocate(10, 5); {
-	case b == nil:				t.Fatal("Reallocate() created a nil value for original slice")
-	case g == nil:				t.Fatal("Reallocate() created a nil value for Slice")
-	case cap(b) != 10:			t.Fatalf("original slice capacity should be 10 but is %v", cap(b))
-	case len(b) != 10:			t.Fatalf("original slice length should be 10 but is %v", len(b))
-	case g.Cap() != 5:			t.Fatalf("Slice capacity should be 5 but is %v", g.Cap())
-	case g.Len() != 5:			t.Fatalf("Slice length should be 5 but is %v", g.Len())
+	ConfirmReallocate(VList(), 0, 10, VList())
+	ConfirmReallocate(VList(0, 1, 2, 3, 4), 3, 10, VList(0, 1, 2))
+	ConfirmReallocate(VList(0, 1, 2, 3, 4), 5, 10, VList(0, 1, 2, 3, 4))
+	ConfirmReallocate(VList(0, 1, 2, 3, 4), 10, 10, VList(0, 1, 2, 3, 4, nil, nil, nil, nil, nil))
+	ConfirmReallocate(VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 1, 5, VList(0))
+	ConfirmReallocate(VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 5, VList(0, 1, 2, 3, 4))
+	ConfirmReallocate(VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 5, VList(0, 1, 2, 3, 4))
+}
+
+func TestVSliceExtend(t *testing.T) {
+	ConfirmExtend := func(s *VSlice, n int, r *VSlice) {
+		c := s.Cap()
+		s.Extend(n)
+		switch {
+		case s.Len() != r.Len():	t.Fatalf("Extend(%v) len should be %v but is %v", n, r.Len(), s.Len())
+		case s.Cap() != c + n:		t.Fatalf("Extend(%v) cap should be %v but is %v", n, c + n, s.Cap())
+		case !r.Equal(s):			t.Fatalf("Extend(%v) should be %v but is %v", n, r, s)
+		}
 	}
+
+	ConfirmExtend(VList(), 1, VList(nil))
+	ConfirmExtend(VList(), 2, VList(nil, nil))
+}
+
+func TestVSliceExpand(t *testing.T) {
+	ConfirmExpand := func(s *VSlice, i, n int, r *VSlice) {
+		c := s.Cap()
+		s.Expand(i, n)
+		switch {
+		case s.Len() != r.Len():	t.Fatalf("Expand(%v, %v) len should be %v but is %v", i, n, r.Len(), s.Len())
+		case s.Cap() != c + n:		t.Fatalf("Expand(%v, %v) cap should be %v but is %v", i, n, c + n, s.Cap())
+		case !r.Equal(s):			t.Fatalf("Expand(%v, %v) should be %v but is %v", i, n, r, s)
+		}
+	}
+
+	ConfirmExpand(VList(), -1, 1, VList(nil))
+	ConfirmExpand(VList(), 0, 1, VList(nil))
+	ConfirmExpand(VList(), 1, 1, VList(nil))
+	ConfirmExpand(VList(), 0, 2, VList(nil, nil))
+
+	ConfirmExpand(VList(0, 1, 2), -1, 2, VList(nil, nil, 0, 1, 2))
+	ConfirmExpand(VList(0, 1, 2), 0, 2, VList(nil, nil, 0, 1, 2))
+	ConfirmExpand(VList(0, 1, 2), 1, 2, VList(0, nil, nil, 1, 2))
+	ConfirmExpand(VList(0, 1, 2), 2, 2, VList(0, 1, nil, nil, 2))
+	ConfirmExpand(VList(0, 1, 2), 3, 2, VList(0, 1, 2, nil, nil))
+	ConfirmExpand(VList(0, 1, 2), 4, 2, VList(0, 1, 2, nil, nil))
+
+	ConfirmExpand(VWrap([]int{0, 1, 2}), -1, 2, VList(0, 0, 0, 1, 2))
+	ConfirmExpand(VWrap([]int{0, 1, 2}), 0, 2, VList(0, 0, 0, 1, 2))
+	ConfirmExpand(VWrap([]int{0, 1, 2}), 1, 2, VList(0, 0, 0, 1, 2))
+	ConfirmExpand(VWrap([]int{0, 1, 2}), 2, 2, VList(0, 1, 0, 0, 2))
+	ConfirmExpand(VWrap([]int{0, 1, 2}), 3, 2, VList(0, 1, 2, 0, 0))
+	ConfirmExpand(VWrap([]int{0, 1, 2}), 4, 2, VList(0, 1, 2, 0, 0))
 }
 
 func TestVSliceAppend(t *testing.T) {
@@ -186,21 +184,18 @@ func TestVSlicePrependSlice(t *testing.T) {
 }
 
 func TestVSliceRepeat(t *testing.T) {
-	SHOULD_MATCH := "Slice elements g[%v] and g[%v] should match but are %v and %v"
-
-	b, g := initVSliceTest()
-	c := 3
-	g = g.Repeat(c)
-	switch {
-	case g.Len() != len(b) * c:	t.Fatalf("Slice length should be %v not %v", len(b) * c, g.Len())
-	case g.Cap() != cap(b) * c:	t.Fatalf("Slice capacity should be %v not %v", cap(b) * c, g.Cap())
-	case g.At(0) != g.At(10):	t.Fatalf(SHOULD_MATCH, 0, 10, g.At(0), g.At(10))
-	case g.At(1) != g.At(11):	t.Fatalf(SHOULD_MATCH, 1, 11, g.At(1), g.At(11))
-	case g.At(9) != g.At(19):	t.Fatalf(SHOULD_MATCH, 9, 19, g.At(9), g.At(19))
-	case g.At(0) != g.At(20):	t.Fatalf(SHOULD_MATCH, 0, 20, g.At(0), g.At(20))
-	case g.At(1) != g.At(21):	t.Fatalf(SHOULD_MATCH, 1, 21, g.At(1), g.At(21))
-	case g.At(9) != g.At(29):	t.Fatalf(SHOULD_MATCH, 9, 19, g.At(9), g.At(29))
+	ConfirmRepeat := func(s *VSlice, count int, r *VSlice) {
+		if x := s.Repeat(count); !x.Equal(r) {
+			t.Fatalf("%v.Repeat(%v) should be %v but is %v", s, count, r, x)
+		}
 	}
+
+	ConfirmRepeat(VList(), 5, VList())
+	ConfirmRepeat(VList(0), 1,VList(0))
+	ConfirmRepeat(VList(0), 2, VList(0, 0))
+	ConfirmRepeat(VList(0), 3, VList(0, 0, 0))
+	ConfirmRepeat(VList(0), 4, VList(0, 0, 0, 0))
+	ConfirmRepeat(VList(0), 5, VList(0, 0, 0, 0, 0))
 }
 
 func TestVSliceFlatten(t *testing.T) {
@@ -222,6 +217,3 @@ func TestVSliceEqual(t *testing.T) {
 	ConfirmEqual(VWrap([]int{ 0 }), VWrap([]int{ 0 }))
 	RefuteEqual(VWrap([]int{ 0 }), VWrap([]int{ 1 }))
 }
-
-//	func TestVSliceFeed(t *testing.T) { t.Fatal() }
-//	func TestVSlicePipe(t *testing.T) { t.Fatal() }

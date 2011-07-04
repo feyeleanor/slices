@@ -223,7 +223,7 @@ func (s *VSlice) Expand(i, n int) {
 	if c != s.Cap() {
 		x := reflect.MakeSlice(s.Type(), l, c)
 		reflect.Copy(x, s.Slice(0, i))
-		reflect.Copy(x.Slice(i + n, l - 1), s.Slice(i, s.Len() - 1))
+		reflect.Copy(x.Slice(i + n, l), s.Slice(i, s.Len()))
 		s.setValue(x)
 	} else {
 		for j := l - 1; j >= i; j-- {
