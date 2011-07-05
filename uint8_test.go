@@ -118,7 +118,7 @@ func TestU8SliceCut(t *testing.T) {
 func TestU8SliceTrim(t *testing.T) {
 	ConfirmTrim := func(s *U8Slice, start, end int, r *U8Slice) {
 		if s.Trim(start, end); !r.Equal(s) {
-			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
+			t.Fatalf("Trim(%v, %v) should be %v but is %v", start, end, r, s)
 		}
 	}
 
