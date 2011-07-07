@@ -356,3 +356,31 @@ func (s C128Slice) SetUnion(o C128Slice) (r C128Slice) {
 	}
 	return
 }
+
+func (s C128Slice) SetDifference(o C128Slice) (r C128Slice) {
+	left := make(map[complex128]bool)
+	right := make(map[complex128]bool)
+	for _, v := range s {
+		if ok := left[v]; !ok {
+			left[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := right[v]; !ok {
+			right[v] = true
+		}
+	}
+	for k, _ := range left {
+		if ok := right[k]; ok {
+			right[k] = false, false
+		} else {
+			r = append(r, k)
+		}
+	}
+	for k, _ := range right {
+		if ok := left[k]; !ok {
+			r = append(r, k)
+		}
+	}
+	return
+}

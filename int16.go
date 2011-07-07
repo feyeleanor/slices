@@ -394,3 +394,31 @@ func (s I16Slice) SetUnion(o I16Slice) (r I16Slice) {
 	}
 	return
 }
+
+func (s I16Slice) SetDifference(o I16Slice) (r I16Slice) {
+	left := make(map[int16]bool)
+	right := make(map[int16]bool)
+	for _, v := range s {
+		if ok := left[v]; !ok {
+			left[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := right[v]; !ok {
+			right[v] = true
+		}
+	}
+	for k, _ := range left {
+		if ok := right[k]; ok {
+			right[k] = false, false
+		} else {
+			r = append(r, k)
+		}
+	}
+	for k, _ := range right {
+		if ok := left[k]; !ok {
+			r = append(r, k)
+		}
+	}
+	return
+}

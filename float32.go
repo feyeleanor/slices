@@ -387,3 +387,31 @@ func (s F32Slice) SetUnion(o F32Slice) (r F32Slice) {
 	}
 	return
 }
+
+func (s F32Slice) SetDifference(o F32Slice) (r F32Slice) {
+	left := make(map[float32]bool)
+	right := make(map[float32]bool)
+	for _, v := range s {
+		if ok := left[v]; !ok {
+			left[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := right[v]; !ok {
+			right[v] = true
+		}
+	}
+	for k, _ := range left {
+		if ok := right[k]; ok {
+			right[k] = false, false
+		} else {
+			r = append(r, k)
+		}
+	}
+	for k, _ := range right {
+		if ok := left[k]; !ok {
+			r = append(r, k)
+		}
+	}
+	return
+}

@@ -387,3 +387,31 @@ func (s F64Slice) SetUnion(o F64Slice) (r F64Slice) {
 	}
 	return
 }
+
+func (s F64Slice) SetDifference(o F64Slice) (r F64Slice) {
+	left := make(map[float64]bool)
+	right := make(map[float64]bool)
+	for _, v := range s {
+		if ok := left[v]; !ok {
+			left[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := right[v]; !ok {
+			right[v] = true
+		}
+	}
+	for k, _ := range left {
+		if ok := right[k]; ok {
+			right[k] = false, false
+		} else {
+			r = append(r, k)
+		}
+	}
+	for k, _ := range right {
+		if ok := left[k]; !ok {
+			r = append(r, k)
+		}
+	}
+	return
+}

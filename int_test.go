@@ -465,3 +465,18 @@ func TestISliceSetUnion(t *testing.T) {
 	ConfirmSetUnion(IList(1, 2, 3), IList(1, 1), IList(1, 2, 3))
 	ConfirmSetUnion(IList(1, 2, 3), IList(1, 2, 1), IList(1, 2, 3))
 }
+
+func TestISliceSetDifference(t *testing.T) {
+	ConfirmSetUnion := func(s, o, r *ISlice) {
+		x := s.SetDifference(*o)
+		x.Sort()
+		if !r.Equal(x) {
+			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetUnion(IList(1, 2, 3), IList(), IList(1, 2, 3))
+	ConfirmSetUnion(IList(1, 2, 3), IList(1), IList(2, 3))
+	ConfirmSetUnion(IList(1, 2, 3), IList(1, 1), IList(2, 3))
+	ConfirmSetUnion(IList(1, 2, 3), IList(1, 2, 1), IList(3))
+}

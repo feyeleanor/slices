@@ -393,3 +393,31 @@ func (s U8Slice) SetUnion(o U8Slice) (r U8Slice) {
 	}
 	return
 }
+
+func (s U8Slice) SetDifference(o U8Slice) (r U8Slice) {
+	left := make(map[uint8]bool)
+	right := make(map[uint8]bool)
+	for _, v := range s {
+		if ok := left[v]; !ok {
+			left[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := right[v]; !ok {
+			right[v] = true
+		}
+	}
+	for k, _ := range left {
+		if ok := right[k]; ok {
+			right[k] = false, false
+		} else {
+			r = append(r, k)
+		}
+	}
+	for k, _ := range right {
+		if ok := left[k]; !ok {
+			r = append(r, k)
+		}
+	}
+	return
+}

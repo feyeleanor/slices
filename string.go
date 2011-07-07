@@ -365,3 +365,31 @@ func (s SSlice) SetUnion(o SSlice) (r SSlice) {
 	}
 	return
 }
+
+func (s SSlice) SetDifference(o SSlice) (r SSlice) {
+	left := make(map[string]bool)
+	right := make(map[string]bool)
+	for _, v := range s {
+		if ok := left[v]; !ok {
+			left[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := right[v]; !ok {
+			right[v] = true
+		}
+	}
+	for k, _ := range left {
+		if ok := right[k]; ok {
+			right[k] = false, false
+		} else {
+			r = append(r, k)
+		}
+	}
+	for k, _ := range right {
+		if ok := left[k]; !ok {
+			r = append(r, k)
+		}
+	}
+	return
+}

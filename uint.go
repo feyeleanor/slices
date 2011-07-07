@@ -393,3 +393,31 @@ func (s USlice) SetUnion(o USlice) (r USlice) {
 	}
 	return
 }
+
+func (s USlice) SetDifference(o USlice) (r USlice) {
+	left := make(map[uint]bool)
+	right := make(map[uint]bool)
+	for _, v := range s {
+		if ok := left[v]; !ok {
+			left[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := right[v]; !ok {
+			right[v] = true
+		}
+	}
+	for k, _ := range left {
+		if ok := right[k]; ok {
+			right[k] = false, false
+		} else {
+			r = append(r, k)
+		}
+	}
+	for k, _ := range right {
+		if ok := left[k]; !ok {
+			r = append(r, k)
+		}
+	}
+	return
+}

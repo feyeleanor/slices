@@ -406,12 +406,13 @@ func (s *VSlice) Rplacd(v interface{}) {
 
 func (s VSlice) SetIntersection(o VSlice) (r VSlice) {
 	cache := make(map[interface{}]bool)
-	results := []interface{}{}
 	s.Each(func(v interface{}) {
 		if ok := cache[v]; !ok {
 			cache[v] = true
 		}
 	})
+
+	results := []interface{}{}
 	o.Each(func(v interface{}) {
 		if _, ok := cache[v]; ok {
 			cache[v] = false, false
@@ -423,7 +424,6 @@ func (s VSlice) SetIntersection(o VSlice) (r VSlice) {
 
 func (s VSlice) SetUnion(o VSlice) (r VSlice) {
 	cache := make(map[interface{}]bool)
-	results := []interface{}{}
 	s.Each(func(v interface{}) {
 		if ok := cache[v]; !ok {
 			cache[v] = true
@@ -434,8 +434,40 @@ func (s VSlice) SetUnion(o VSlice) (r VSlice) {
 			cache[v] = true
 		}
 	})
+
+	results := []interface{}{}
 	for k, _ := range cache {
 		results = append(results, k)
+	}
+	return *VList(results...)
+}
+
+func (s VSlice) SetDifference(o VSlice) (r VSlice) {
+	left := make(map[interface{}]bool)
+	right := make(map[interface{}]bool)
+	s.Each(func(v interface{}) {
+		if ok := left[v]; !ok {
+			left[v] = true
+		}
+	})
+	o.Each(func(v interface{}) {
+		if ok := right[v]; !ok {
+			right[v] = true
+		}
+	})
+
+	results := []interface{}{}
+	for k, _ := range left {
+		if ok := right[k]; ok {
+			right[k] = false, false
+		} else {
+			results = append(results, k)
+		}
+	}
+	for k, _ := range right {
+		if ok := left[k]; !ok {
+			results = append(results, k)
+		}
 	}
 	return *VList(results...)
 }

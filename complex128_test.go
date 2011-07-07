@@ -422,3 +422,16 @@ func TestC128SliceSetUnion(t *testing.T) {
 	ConfirmSetUnion(C128List(1, 2, 3), C128List(1, 1), C128List(1, 2, 3))
 	ConfirmSetUnion(C128List(1, 2, 3), C128List(1, 2, 1), C128List(1, 2, 3))
 }
+
+func TestC128SliceSetDifference(t *testing.T) {
+	ConfirmSetUnion := func(s, o, r *C128Slice) {
+		if x := s.SetDifference(*o); !r.Equal(x) {
+			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetUnion(C128List(1, 2, 3), C128List(), C128List(1, 2, 3))
+	ConfirmSetUnion(C128List(1, 2, 3), C128List(1), C128List(2, 3))
+	ConfirmSetUnion(C128List(1, 2, 3), C128List(1, 1), C128List(2, 3))
+	ConfirmSetUnion(C128List(1, 2, 3), C128List(1, 2, 1), C128List(3))
+}

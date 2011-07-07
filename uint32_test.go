@@ -460,3 +460,18 @@ func TestU32SliceSetUnion(t *testing.T) {
 	ConfirmSetUnion(U32List(1, 2, 3), U32List(1, 1), U32List(1, 2, 3))
 	ConfirmSetUnion(U32List(1, 2, 3), U32List(1, 2, 1), U32List(1, 2, 3))
 }
+
+func TestU32SliceSetDifference(t *testing.T) {
+	ConfirmSetUnion := func(s, o, r *U32Slice) {
+		x := s.SetDifference(*o)
+		x.Sort()
+		if !r.Equal(x) {
+			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetUnion(U32List(1, 2, 3), U32List(), U32List(1, 2, 3))
+	ConfirmSetUnion(U32List(1, 2, 3), U32List(1), U32List(2, 3))
+	ConfirmSetUnion(U32List(1, 2, 3), U32List(1, 1), U32List(2, 3))
+	ConfirmSetUnion(U32List(1, 2, 3), U32List(1, 2, 1), U32List(3))
+}

@@ -465,3 +465,18 @@ func TestF64SliceSetUnion(t *testing.T) {
 	ConfirmSetUnion(F64List(1, 2, 3), F64List(1, 1), F64List(1, 2, 3))
 	ConfirmSetUnion(F64List(1, 2, 3), F64List(1, 2, 1), F64List(1, 2, 3))
 }
+
+func TestF64SliceSetDifference(t *testing.T) {
+	ConfirmSetUnion := func(s, o, r *F64Slice) {
+		x := s.SetDifference(*o)
+		x.Sort()
+		if !r.Equal(x) {
+			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetUnion(F64List(1, 2, 3), F64List(), F64List(1, 2, 3))
+	ConfirmSetUnion(F64List(1, 2, 3), F64List(1), F64List(2, 3))
+	ConfirmSetUnion(F64List(1, 2, 3), F64List(1, 1), F64List(2, 3))
+	ConfirmSetUnion(F64List(1, 2, 3), F64List(1, 2, 1), F64List(3))
+}
