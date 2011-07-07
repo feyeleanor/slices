@@ -322,3 +322,37 @@ func (s *C128Slice) Rplacd(v interface{}) {
 		}
 	}
 }
+
+func (s C128Slice) SetIntersection(o C128Slice) (r C128Slice) {
+	cache := make(map[complex128]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if _, ok := cache[v]; ok {
+			cache[v] = false, false
+			r = append(r, v)
+		}
+	}
+	return
+}
+
+func (s C128Slice) SetUnion(o C128Slice) (r C128Slice) {
+	cache := make(map[complex128]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for k, _ := range cache {
+		r = append(r, k)
+	}
+	return
+}

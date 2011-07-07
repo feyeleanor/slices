@@ -321,3 +321,37 @@ func (s *C64Slice) Rplacd(v interface{}) {
 		}
 	}
 }
+
+func (s C64Slice) SetIntersection(o C64Slice) (r C64Slice) {
+	cache := make(map[complex64]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if _, ok := cache[v]; ok {
+			cache[v] = false, false
+			r = append(r, v)
+		}
+	}
+	return
+}
+
+func (s C64Slice) SetUnion(o C64Slice) (r C64Slice) {
+	cache := make(map[complex64]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for k, _ := range cache {
+		r = append(r, k)
+	}
+	return
+}

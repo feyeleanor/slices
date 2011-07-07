@@ -319,3 +319,37 @@ func (s *Slice) Rplacd(v interface{}) {
 		}
 	}
 }
+
+func (s Slice) SetIntersection(o Slice) (r Slice) {
+	cache := make(map[interface{}]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if _, ok := cache[v]; ok {
+			cache[v] = false, false
+			r = append(r, v)
+		}
+	}
+	return
+}
+
+func (s Slice) SetUnion(o Slice) (r Slice) {
+	cache := make(map[interface{}]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for k, _ := range cache {
+		r = append(r, k)
+	}
+	return
+}

@@ -422,3 +422,33 @@ func TestSSliceRplacd(t *testing.T) {
 	ConfirmRplacd(SList("A", "B", "C", "D", "E", "F"), "B", SList("A", "B"))
 	ConfirmRplacd(SList("A", "B", "C", "D", "E", "F"), SList("F", "E", "D", "C"), SList("A", "F", "E", "D", "C"))
 }
+
+func TestSSliceSetIntersection(t *testing.T) {
+	ConfirmSetIntersection := func(s, o, r *SSlice) {
+		x := s.SetIntersection(*o)
+		x.Sort()
+		if !r.Equal(x) {
+			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetIntersection(SList("A", "B", "C"), SList(), SList())
+	ConfirmSetIntersection(SList("A", "B", "C"), SList("A"), SList("A"))
+	ConfirmSetIntersection(SList("A", "B", "C"), SList("A", "A"), SList("A"))
+	ConfirmSetIntersection(SList("A", "B", "C"), SList("A", "B", "A"), SList("A", "B"))
+}
+
+func TestSSliceSetUnion(t *testing.T) {
+	ConfirmSetUnion := func(s, o, r *SSlice) {
+		x := s.SetUnion(*o)
+		x.Sort()
+		if !r.Equal(x) {
+			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetUnion(SList("A", "B", "C"), SList(), SList("A", "B", "C"))
+	ConfirmSetUnion(SList("A", "B", "C"), SList("A"), SList("A", "B", "C"))
+	ConfirmSetUnion(SList("A", "B", "C"), SList("A", "A"), SList("A", "B", "C"))
+	ConfirmSetUnion(SList("A", "B", "C"), SList("A", "B", "A"), SList("A", "B", "C"))
+}

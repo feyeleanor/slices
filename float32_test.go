@@ -435,3 +435,33 @@ func TestF32SliceRplacd(t *testing.T) {
 	ConfirmRplacd(F32List(1, 2, 3, 4, 5), F32List(5, 4, 3, 2), F32List(1, 5, 4, 3, 2))
 	ConfirmRplacd(F32List(1, 2, 3, 4, 5, 6), F32List(2, 4, 8, 16), F32List(1, 2, 4, 8, 16))
 }
+
+func TestF32SliceSetIntersection(t *testing.T) {
+	ConfirmSetIntersection := func(s, o, r *F32Slice) {
+		x := s.SetIntersection(*o)
+		x.Sort()
+		if !r.Equal(x) {
+			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetIntersection(F32List(1, 2, 3), F32List(), F32List())
+	ConfirmSetIntersection(F32List(1, 2, 3), F32List(1), F32List(1))
+	ConfirmSetIntersection(F32List(1, 2, 3), F32List(1, 1), F32List(1))
+	ConfirmSetIntersection(F32List(1, 2, 3), F32List(1, 2, 1), F32List(1, 2))
+}
+
+func TestF32SliceSetUnion(t *testing.T) {
+	ConfirmSetUnion := func(s, o, r *F32Slice) {
+		x := s.SetUnion(*o)
+		x.Sort()
+		if !r.Equal(x) {
+			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetUnion(F32List(1, 2, 3), F32List(), F32List(1, 2, 3))
+	ConfirmSetUnion(F32List(1, 2, 3), F32List(1), F32List(1, 2, 3))
+	ConfirmSetUnion(F32List(1, 2, 3), F32List(1, 1), F32List(1, 2, 3))
+	ConfirmSetUnion(F32List(1, 2, 3), F32List(1, 2, 1), F32List(1, 2, 3))
+}

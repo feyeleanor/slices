@@ -396,3 +396,29 @@ func TestC128SliceRplacd(t *testing.T) {
 	ConfirmRplacd(C128List(1, 2, 3, 4, 5), C128List(5, 4, 3, 2), C128List(1, 5, 4, 3, 2))
 	ConfirmRplacd(C128List(1, 2, 3, 4, 5, 6), C128List(2, 4, 8, 16), C128List(1, 2, 4, 8, 16))
 }
+
+func TestC128SliceSetIntersection(t *testing.T) {
+	ConfirmSetIntersection := func(s, o, r *C128Slice) {
+		if x := s.SetIntersection(*o); !r.Equal(x) {
+			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetIntersection(C128List(1, 2, 3), C128List(), C128List())
+	ConfirmSetIntersection(C128List(1, 2, 3), C128List(1), C128List(1))
+	ConfirmSetIntersection(C128List(1, 2, 3), C128List(1, 1), C128List(1))
+	ConfirmSetIntersection(C128List(1, 2, 3), C128List(1, 2, 1), C128List(1, 2))
+}
+
+func TestC128SliceSetUnion(t *testing.T) {
+	ConfirmSetUnion := func(s, o, r *C128Slice) {
+		if x := s.SetUnion(*o); !r.Equal(x) {
+			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetUnion(C128List(1, 2, 3), C128List(), C128List(1, 2, 3))
+	ConfirmSetUnion(C128List(1, 2, 3), C128List(1), C128List(1, 2, 3))
+	ConfirmSetUnion(C128List(1, 2, 3), C128List(1, 1), C128List(1, 2, 3))
+	ConfirmSetUnion(C128List(1, 2, 3), C128List(1, 2, 1), C128List(1, 2, 3))
+}

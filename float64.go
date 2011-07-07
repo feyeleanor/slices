@@ -353,3 +353,37 @@ func (s *F64Slice) Rplacd(v interface{}) {
 		}
 	}
 }
+
+func (s F64Slice) SetIntersection(o F64Slice) (r F64Slice) {
+	cache := make(map[float64]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if _, ok := cache[v]; ok {
+			cache[v] = false, false
+			r = append(r, v)
+		}
+	}
+	return
+}
+
+func (s F64Slice) SetUnion(o F64Slice) (r F64Slice) {
+	cache := make(map[float64]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for k, _ := range cache {
+		r = append(r, k)
+	}
+	return
+}

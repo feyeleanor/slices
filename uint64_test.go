@@ -430,3 +430,33 @@ func TestU64SliceRplacd(t *testing.T) {
 	ConfirmRplacd(U64List(1, 2, 3, 4, 5), U64List(5, 4, 3, 2), U64List(1, 5, 4, 3, 2))
 	ConfirmRplacd(U64List(1, 2, 3, 4, 5, 6), U64List(2, 4, 8, 16), U64List(1, 2, 4, 8, 16))
 }
+
+func TestU64SliceSetIntersection(t *testing.T) {
+	ConfirmSetIntersection := func(s, o, r *U64Slice) {
+		x := s.SetIntersection(*o)
+		x.Sort()
+		if !r.Equal(x) {
+			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetIntersection(U64List(1, 2, 3), U64List(), U64List())
+	ConfirmSetIntersection(U64List(1, 2, 3), U64List(1), U64List(1))
+	ConfirmSetIntersection(U64List(1, 2, 3), U64List(1, 1), U64List(1))
+	ConfirmSetIntersection(U64List(1, 2, 3), U64List(1, 2, 1), U64List(1, 2))
+}
+
+func TestU64SliceSetUnion(t *testing.T) {
+	ConfirmSetUnion := func(s, o, r *U64Slice) {
+		x := s.SetUnion(*o)
+		x.Sort()
+		if !r.Equal(x) {
+			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetUnion(U64List(1, 2, 3), U64List(), U64List(1, 2, 3))
+	ConfirmSetUnion(U64List(1, 2, 3), U64List(1), U64List(1, 2, 3))
+	ConfirmSetUnion(U64List(1, 2, 3), U64List(1, 1), U64List(1, 2, 3))
+	ConfirmSetUnion(U64List(1, 2, 3), U64List(1, 2, 1), U64List(1, 2, 3))
+}

@@ -403,3 +403,39 @@ func (s *VSlice) Rplacd(v interface{}) {
 		}
 	}
 }
+
+func (s VSlice) SetIntersection(o VSlice) (r VSlice) {
+	cache := make(map[interface{}]bool)
+	results := []interface{}{}
+	s.Each(func(v interface{}) {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	})
+	o.Each(func(v interface{}) {
+		if _, ok := cache[v]; ok {
+			cache[v] = false, false
+			results = append(results, v)
+		}
+	})
+	return *VList(results...)
+}
+
+func (s VSlice) SetUnion(o VSlice) (r VSlice) {
+	cache := make(map[interface{}]bool)
+	results := []interface{}{}
+	s.Each(func(v interface{}) {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	})
+	o.Each(func(v interface{}) {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	})
+	for k, _ := range cache {
+		results = append(results, k)
+	}
+	return *VList(results...)
+}

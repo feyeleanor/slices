@@ -360,3 +360,37 @@ func (s *I8Slice) Rplacd(v interface{}) {
 		}
 	}
 }
+
+func (s I8Slice) SetIntersection(o I8Slice) (r I8Slice) {
+	cache := make(map[int8]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if _, ok := cache[v]; ok {
+			cache[v] = false, false
+			r = append(r, v)
+		}
+	}
+	return
+}
+
+func (s I8Slice) SetUnion(o I8Slice) (r I8Slice) {
+	cache := make(map[int8]bool)
+	for _, v := range s {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for _, v := range o {
+		if ok := cache[v]; !ok {
+			cache[v] = true
+		}
+	}
+	for k, _ := range cache {
+		r = append(r, k)
+	}
+	return
+}

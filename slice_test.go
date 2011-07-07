@@ -337,16 +337,14 @@ func TestSliceDepth(t *testing.T) {
 func TestSliceReverse(t *testing.T) {
 	sxp := List(1, 2, 3, 4, 5)
 	rxp := List(5, 4, 3, 2, 1)
-	sxp.Reverse()
-	if !rxp.Equal(sxp) {
+	if sxp.Reverse(); !rxp.Equal(sxp) {
 		t.Fatalf("Reversal failed: %v", sxp)
 	}
 }
 
 func TestSliceAppend(t *testing.T) {
 	ConfirmAppend := func(s *Slice, v interface{}, r *Slice) {
-		s.Append(v)
-		if !r.Equal(s) {
+		if s.Append(v); !r.Equal(s) {
 			t.Fatalf("Append(%v) should be %v but is %v", v, r, s)
 		}
 	}
@@ -358,8 +356,7 @@ func TestSliceAppend(t *testing.T) {
 
 func TestSliceAppendSlice(t *testing.T) {
 	ConfirmAppendSlice := func(s, v, r *Slice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
+		if s.AppendSlice(*v); !r.Equal(s) {
 			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
 		}
 	}
@@ -410,8 +407,7 @@ func TestSliceRepeat(t *testing.T) {
 
 func TestSliceFlatten(t *testing.T) {
 	ConfirmFlatten := func(s, r *Slice) {
-		s.Flatten()
-		if !s.Equal(r) {
+		if s.Flatten(); !s.Equal(r) {
 			t.Fatalf("%v should be %v", s, r)
 		}
 	}
@@ -473,8 +469,7 @@ func TestSliceCdr(t *testing.T) {
 
 func TestSliceRplaca(t *testing.T) {
 	ConfirmRplaca := func(s *Slice, v interface{}, r *Slice) {
-		s.Rplaca(v)
-		if !s.Equal(r) {
+		if s.Rplaca(v); !s.Equal(r) {
 			t.Fatalf("slice should be '%v' but is '%v'", r, s)
 		}
 	}
@@ -484,8 +479,7 @@ func TestSliceRplaca(t *testing.T) {
 
 func TestSliceRplacd(t *testing.T) {
 	ConfirmRplacd := func(s *Slice, v interface{}, r *Slice) {
-		s.Rplacd(v)
-		if !s.Equal(r) {
+		if s.Rplacd(v); !s.Equal(r) {
 			t.Fatalf("slice should be '%v' but is '%v'", r, s)
 		}
 	}
@@ -493,4 +487,30 @@ func TestSliceRplacd(t *testing.T) {
 	ConfirmRplacd(List(1, 2, 3, 4, 5), 10, List(1, 10))
 	ConfirmRplacd(List(1, 2, 3, 4, 5), List(5, 4, 3, 2), List(1, 5, 4, 3, 2))
 	ConfirmRplacd(List(1, 2, 3, 4, 5, 6), List(2, 4, 8, 16), List(1, 2, 4, 8, 16))
+}
+
+func TestSliceSetIntersection(t *testing.T) {
+	ConfirmSetIntersection := func(s, o, r *Slice) {
+		if x := s.SetIntersection(*o); !r.Equal(x) {
+			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetIntersection(List(1, 2, 3), List(), List())
+	ConfirmSetIntersection(List(1, 2, 3), List(1), List(1))
+	ConfirmSetIntersection(List(1, 2, 3), List(1, 1), List(1))
+	ConfirmSetIntersection(List(1, 2, 3), List(1, 2, 1), List(1, 2))
+}
+
+func TestSliceSetUnion(t *testing.T) {
+	ConfirmSetUnion := func(s, o, r *Slice) {
+		if x := s.SetUnion(*o); !r.Equal(x) {
+			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+		}
+	}
+
+	ConfirmSetUnion(List(1, 2, 3), List(), List(1, 2, 3))
+	ConfirmSetUnion(List(1, 2, 3), List(1), List(1, 2, 3))
+	ConfirmSetUnion(List(1, 2, 3), List(1, 1), List(1, 2, 3))
+	ConfirmSetUnion(List(1, 2, 3), List(1, 2, 1), List(1, 2, 3))
 }
