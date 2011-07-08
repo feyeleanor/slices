@@ -106,8 +106,64 @@ func (s *I16Slice) Delete(i int) {
 	n := len(a)
 	if i > -1 && i < n {
 		copy(a[i:n - 1], a[i + 1:n])
-		*s = a[0 : n - 1]
+		*s = a[:n - 1]
 	}
+}
+
+func (s *I16Slice) DeleteAll(x interface{}) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *I16Slice) I16DeleteAll(x int16) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *I16Slice) DeleteIf(f func(interface{}) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *I16Slice) I16DeleteIf(f func(int16) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
 }
 
 func (s I16Slice) Each(f func(interface{})) {

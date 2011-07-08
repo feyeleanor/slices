@@ -139,20 +139,68 @@ func TestU32SliceTrim(t *testing.T) {
 }
 
 func TestU32SliceDelete(t *testing.T) {
-	ConfirmCut := func(s *U32Slice, index int, r *U32Slice) {
+	ConfirmDelete := func(s *U32Slice, index int, r *U32Slice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmCut(U32List(0, 1, 2, 3, 4, 5), -1, U32List(0, 1, 2, 3, 4, 5))
-	ConfirmCut(U32List(0, 1, 2, 3, 4, 5), 0, U32List(1, 2, 3, 4, 5))
-	ConfirmCut(U32List(0, 1, 2, 3, 4, 5), 1, U32List(0, 2, 3, 4, 5))
-	ConfirmCut(U32List(0, 1, 2, 3, 4, 5), 2, U32List(0, 1, 3, 4, 5))
-	ConfirmCut(U32List(0, 1, 2, 3, 4, 5), 3, U32List(0, 1, 2, 4, 5))
-	ConfirmCut(U32List(0, 1, 2, 3, 4, 5), 4, U32List(0, 1, 2, 3, 5))
-	ConfirmCut(U32List(0, 1, 2, 3, 4, 5), 5, U32List(0, 1, 2, 3, 4))
-	ConfirmCut(U32List(0, 1, 2, 3, 4, 5), 6, U32List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(U32List(0, 1, 2, 3, 4, 5), -1, U32List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(U32List(0, 1, 2, 3, 4, 5), 0, U32List(1, 2, 3, 4, 5))
+	ConfirmDelete(U32List(0, 1, 2, 3, 4, 5), 1, U32List(0, 2, 3, 4, 5))
+	ConfirmDelete(U32List(0, 1, 2, 3, 4, 5), 2, U32List(0, 1, 3, 4, 5))
+	ConfirmDelete(U32List(0, 1, 2, 3, 4, 5), 3, U32List(0, 1, 2, 4, 5))
+	ConfirmDelete(U32List(0, 1, 2, 3, 4, 5), 4, U32List(0, 1, 2, 3, 5))
+	ConfirmDelete(U32List(0, 1, 2, 3, 4, 5), 5, U32List(0, 1, 2, 3, 4))
+	ConfirmDelete(U32List(0, 1, 2, 3, 4, 5), 6, U32List(0, 1, 2, 3, 4, 5))
+}
+
+func TestU32SliceDeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *U32Slice, v interface{}, r *U32Slice) {
+		if s.DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(U32List(0, 1, 0, 3, 0, 5), uint32(0), U32List(1, 3, 5))
+	ConfirmDeleteAll(U32List(0, 1, 0, 3, 0, 5), uint32(1), U32List(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(U32List(0, 1, 0, 3, 0, 5), uint32(6), U32List(0, 1, 0, 3, 0, 5))
+}
+
+func TestU32SliceU32DeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *U32Slice, v uint32, r *U32Slice) {
+		if s.U32DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(U32List(0, 1, 0, 3, 0, 5), uint32(0), U32List(1, 3, 5))
+	ConfirmDeleteAll(U32List(0, 1, 0, 3, 0, 5), uint32(1), U32List(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(U32List(0, 1, 0, 3, 0, 5), uint32(6), U32List(0, 1, 0, 3, 0, 5))
+}
+
+func TestU32SliceDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *U32Slice, f func(interface{}) bool) {
+		if s.DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(U32List(0, 1, 0, 3, 0, 5), U32List(1, 3, 5), func(x interface{}) bool { return x == uint32(0) })
+	ConfirmDeleteIf(U32List(0, 1, 0, 3, 0, 5), U32List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(1) })
+	ConfirmDeleteIf(U32List(0, 1, 0, 3, 0, 5), U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(6) })
+}
+
+func TestU32SliceU32DeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *U32Slice, f func(uint32) bool) {
+		if s.U32DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(U32List(0, 1, 0, 3, 0, 5), U32List(1, 3, 5), func(x uint32) bool { return x == uint32(0) })
+	ConfirmDeleteIf(U32List(0, 1, 0, 3, 0, 5), U32List(0, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(1) })
+	ConfirmDeleteIf(U32List(0, 1, 0, 3, 0, 5), U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(6) })
 }
 
 func TestU32SliceEach(t *testing.T) {

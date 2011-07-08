@@ -123,20 +123,68 @@ func TestVSliceTrim(t *testing.T) {
 }
 
 func TestVSliceDelete(t *testing.T) {
-	ConfirmCut := func(s *VSlice, index int, r *VSlice) {
+	ConfirmDelete := func(s *VSlice, index int, r *VSlice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmCut(VList(0, 1, 2, 3, 4, 5), -1, VList(0, 1, 2, 3, 4, 5))
-	ConfirmCut(VList(0, 1, 2, 3, 4, 5), 0, VList(1, 2, 3, 4, 5))
-	ConfirmCut(VList(0, 1, 2, 3, 4, 5), 1, VList(0, 2, 3, 4, 5))
-	ConfirmCut(VList(0, 1, 2, 3, 4, 5), 2, VList(0, 1, 3, 4, 5))
-	ConfirmCut(VList(0, 1, 2, 3, 4, 5), 3, VList(0, 1, 2, 4, 5))
-	ConfirmCut(VList(0, 1, 2, 3, 4, 5), 4, VList(0, 1, 2, 3, 5))
-	ConfirmCut(VList(0, 1, 2, 3, 4, 5), 5, VList(0, 1, 2, 3, 4))
-	ConfirmCut(VList(0, 1, 2, 3, 4, 5), 6, VList(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(VList(0, 1, 2, 3, 4, 5), -1, VList(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(VList(0, 1, 2, 3, 4, 5), 0, VList(1, 2, 3, 4, 5))
+	ConfirmDelete(VList(0, 1, 2, 3, 4, 5), 1, VList(0, 2, 3, 4, 5))
+	ConfirmDelete(VList(0, 1, 2, 3, 4, 5), 2, VList(0, 1, 3, 4, 5))
+	ConfirmDelete(VList(0, 1, 2, 3, 4, 5), 3, VList(0, 1, 2, 4, 5))
+	ConfirmDelete(VList(0, 1, 2, 3, 4, 5), 4, VList(0, 1, 2, 3, 5))
+	ConfirmDelete(VList(0, 1, 2, 3, 4, 5), 5, VList(0, 1, 2, 3, 4))
+	ConfirmDelete(VList(0, 1, 2, 3, 4, 5), 6, VList(0, 1, 2, 3, 4, 5))
+}
+
+func TestVSliceDeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *VSlice, v interface{}, r *VSlice) {
+		if s.DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(VList(0, 1, 0, 3, 0, 5), 0, VList(1, 3, 5))
+	ConfirmDeleteAll(VList(0, 1, 0, 3, 0, 5), 1, VList(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(VList(0, 1, 0, 3, 0, 5), 6, VList(0, 1, 0, 3, 0, 5))
+}
+
+func TestVSliceVDeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *VSlice, v reflect.Value, r *VSlice) {
+		if s.VDeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(VList(0, 1, 0, 3, 0, 5), reflect.ValueOf(0), VList(1, 3, 5))
+	ConfirmDeleteAll(VList(0, 1, 0, 3, 0, 5), reflect.ValueOf(1), VList(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(VList(0, 1, 0, 3, 0, 5), reflect.ValueOf(6), VList(0, 1, 0, 3, 0, 5))
+}
+
+func TestVSliceDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *VSlice, f func(interface{}) bool) {
+		if s.DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(VList(0, 1, 0, 3, 0, 5), VList(1, 3, 5), func(x interface{}) bool { return x == 0 })
+	ConfirmDeleteIf(VList(0, 1, 0, 3, 0, 5), VList(0, 0, 3, 0, 5), func(x interface{}) bool { return x == 1 })
+	ConfirmDeleteIf(VList(0, 1, 0, 3, 0, 5), VList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 6 })
+}
+
+func TestVSliceVDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *VSlice, f func(reflect.Value) bool) {
+		if s.VDeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(VList(0, 1, 0, 3, 0, 5), VList(1, 3, 5), func(x reflect.Value) bool { return x.Interface() == 0 })
+	ConfirmDeleteIf(VList(0, 1, 0, 3, 0, 5), VList(0, 0, 3, 0, 5), func(x reflect.Value) bool { return x.Interface() == 1 })
+	ConfirmDeleteIf(VList(0, 1, 0, 3, 0, 5), VList(0, 1, 0, 3, 0, 5), func(x reflect.Value) bool { return x.Interface() == 6 })
 }
 
 func TestVSliceEach(t *testing.T) {

@@ -104,6 +104,66 @@ func (s *VSlice) Delete(i int) {
 	}
 }
 
+func (s *VSlice) DeleteAll(x interface{}) {
+	p := 0
+	for i := 0; i < s.Len(); i++ {
+		v := s.At(i)
+		if i != p {
+			s.Set(p, v)
+		}
+		if v != x {
+			p++
+		}
+	}
+	s.MakeAddressable()
+	s.SetLen(p)
+}
+
+func (s *VSlice) VDeleteAll(x reflect.Value) {
+	p := 0
+	for i := 0; i < s.Len(); i++ {
+		v := s.VAt(i)
+		if i != p {
+			s.VSet(p, v)
+		}
+		if v.Interface() != x.Interface() {
+			p++
+		}
+	}
+	s.MakeAddressable()
+	s.SetLen(p)
+}
+
+func (s *VSlice) DeleteIf(f func(interface{}) bool) {
+	p := 0
+	for i := 0; i < s.Len(); i++ {
+		v := s.At(i)
+		if i != p {
+			s.Set(p, v)
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	s.MakeAddressable()
+	s.SetLen(p)
+}
+
+func (s *VSlice) VDeleteIf(f func(reflect.Value) bool) {
+	p := 0
+	for i := 0; i < s.Len(); i++ {
+		v := s.VAt(i)
+		if i != p {
+			s.VSet(p, v)
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	s.MakeAddressable()
+	s.SetLen(p)
+}
+
 func (s *VSlice) Each(f func(interface{})) {
 	for i := 0; i < s.Len(); i++ {
 		f(s.At(i))

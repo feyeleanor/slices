@@ -139,20 +139,68 @@ func TestASliceTrim(t *testing.T) {
 }
 
 func TestASliceDelete(t *testing.T) {
-	ConfirmCut := func(s *ASlice, index int, r *ASlice) {
+	ConfirmDelete := func(s *ASlice, index int, r *ASlice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmCut(AList(0, 1, 2, 3, 4, 5), -1, AList(0, 1, 2, 3, 4, 5))
-	ConfirmCut(AList(0, 1, 2, 3, 4, 5), 0, AList(1, 2, 3, 4, 5))
-	ConfirmCut(AList(0, 1, 2, 3, 4, 5), 1, AList(0, 2, 3, 4, 5))
-	ConfirmCut(AList(0, 1, 2, 3, 4, 5), 2, AList(0, 1, 3, 4, 5))
-	ConfirmCut(AList(0, 1, 2, 3, 4, 5), 3, AList(0, 1, 2, 4, 5))
-	ConfirmCut(AList(0, 1, 2, 3, 4, 5), 4, AList(0, 1, 2, 3, 5))
-	ConfirmCut(AList(0, 1, 2, 3, 4, 5), 5, AList(0, 1, 2, 3, 4))
-	ConfirmCut(AList(0, 1, 2, 3, 4, 5), 6, AList(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(AList(0, 1, 2, 3, 4, 5), -1, AList(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(AList(0, 1, 2, 3, 4, 5), 0, AList(1, 2, 3, 4, 5))
+	ConfirmDelete(AList(0, 1, 2, 3, 4, 5), 1, AList(0, 2, 3, 4, 5))
+	ConfirmDelete(AList(0, 1, 2, 3, 4, 5), 2, AList(0, 1, 3, 4, 5))
+	ConfirmDelete(AList(0, 1, 2, 3, 4, 5), 3, AList(0, 1, 2, 4, 5))
+	ConfirmDelete(AList(0, 1, 2, 3, 4, 5), 4, AList(0, 1, 2, 3, 5))
+	ConfirmDelete(AList(0, 1, 2, 3, 4, 5), 5, AList(0, 1, 2, 3, 4))
+	ConfirmDelete(AList(0, 1, 2, 3, 4, 5), 6, AList(0, 1, 2, 3, 4, 5))
+}
+
+func TestASliceDeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *ASlice, v interface{}, r *ASlice) {
+		if s.DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(AList(0, 1, 0, 3, 0, 5), uintptr(0), AList(1, 3, 5))
+	ConfirmDeleteAll(AList(0, 1, 0, 3, 0, 5), uintptr(1), AList(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(AList(0, 1, 0, 3, 0, 5), uintptr(6), AList(0, 1, 0, 3, 0, 5))
+}
+
+func TestASliceADeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *ASlice, v uintptr, r *ASlice) {
+		if s.ADeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(AList(0, 1, 0, 3, 0, 5), uintptr(0), AList(1, 3, 5))
+	ConfirmDeleteAll(AList(0, 1, 0, 3, 0, 5), uintptr(1), AList(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(AList(0, 1, 0, 3, 0, 5), uintptr(6), AList(0, 1, 0, 3, 0, 5))
+}
+
+func TestASliceDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *ASlice, f func(interface{}) bool) {
+		if s.DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(AList(0, 1, 0, 3, 0, 5), AList(1, 3, 5), func(x interface{}) bool { return x == uintptr(0) })
+	ConfirmDeleteIf(AList(0, 1, 0, 3, 0, 5), AList(0, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(1) })
+	ConfirmDeleteIf(AList(0, 1, 0, 3, 0, 5), AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(6) })
+}
+
+func TestASliceADeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *ASlice, f func(uintptr) bool) {
+		if s.ADeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(AList(0, 1, 0, 3, 0, 5), AList(1, 3, 5), func(x uintptr) bool { return x == uintptr(0) })
+	ConfirmDeleteIf(AList(0, 1, 0, 3, 0, 5), AList(0, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(1) })
+	ConfirmDeleteIf(AList(0, 1, 0, 3, 0, 5), AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(6) })
 }
 
 func TestASliceEach(t *testing.T) {

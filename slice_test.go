@@ -163,20 +163,44 @@ func TestSliceTrim(t *testing.T) {
 }
 
 func TestSliceDelete(t *testing.T) {
-	ConfirmCut := func(s *Slice, index int, r *Slice) {
+	ConfirmDelete := func(s *Slice, index int, r *Slice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), -1, List(0, 1, 2, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 0, List(1, 2, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 1, List(0, 2, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 2, List(0, 1, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 3, List(0, 1, 2, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 4, List(0, 1, 2, 3, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 5, List(0, 1, 2, 3, 4))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 6, List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(List(0, 1, 2, 3, 4, 5), -1, List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 0, List(1, 2, 3, 4, 5))
+	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 1, List(0, 2, 3, 4, 5))
+	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 2, List(0, 1, 3, 4, 5))
+	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 3, List(0, 1, 2, 4, 5))
+	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 4, List(0, 1, 2, 3, 5))
+	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 5, List(0, 1, 2, 3, 4))
+	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 6, List(0, 1, 2, 3, 4, 5))
+}
+
+func TestSliceDeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *Slice, v interface{}, r *Slice) {
+		if s.DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(List(0, 1, 0, 3, 0, 5), 0, List(1, 3, 5))
+	ConfirmDeleteAll(List(0, 1, 0, 3, 0, 5), 1, List(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(List(0, 1, 0, 3, 0, 5), 6, List(0, 1, 0, 3, 0, 5))
+}
+
+func TestSliceDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *Slice, f func(interface{}) bool) {
+		if s.DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), List(1, 3, 5), func(x interface{}) bool { return x == 0 })
+	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == 1 })
+	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 6 })
 }
 
 func TestSliceEach(t *testing.T) {

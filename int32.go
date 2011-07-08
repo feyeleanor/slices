@@ -106,8 +106,64 @@ func (s *I32Slice) Delete(i int) {
 	n := len(a)
 	if i > -1 && i < n {
 		copy(a[i:n - 1], a[i + 1:n])
-		*s = a[0 : n - 1]
+		*s = a[:n - 1]
 	}
+}
+
+func (s *I32Slice) DeleteAll(x interface{}) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *I32Slice) I32DeleteAll(x int32) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *I32Slice) DeleteIf(f func(interface{}) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *I32Slice) I32DeleteIf(f func(int32) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
 }
 
 func (s I32Slice) Each(f func(interface{})) {

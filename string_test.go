@@ -127,20 +127,56 @@ func TestSSliceTrim(t *testing.T) {
 }
 
 func TestSSliceDelete(t *testing.T) {
-	ConfirmCut := func(s *SSlice, index int, r *SSlice) {
+	ConfirmDelete := func(s *SSlice, index int, r *SSlice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmCut(SList("A", "B", "C", "D", "E", "F"), -1, SList("A", "B", "C", "D", "E", "F"))
-	ConfirmCut(SList("A", "B", "C", "D", "E", "F"), 0, SList("B", "C", "D", "E", "F"))
-	ConfirmCut(SList("A", "B", "C", "D", "E", "F"), 1, SList("A", "C", "D", "E", "F"))
-	ConfirmCut(SList("A", "B", "C", "D", "E", "F"), 2, SList("A", "B", "D", "E", "F"))
-	ConfirmCut(SList("A", "B", "C", "D", "E", "F"), 3, SList("A", "B", "C", "E", "F"))
-	ConfirmCut(SList("A", "B", "C", "D", "E", "F"), 4, SList("A", "B", "C", "D", "F"))
-	ConfirmCut(SList("A", "B", "C", "D", "E", "F"), 5, SList("A", "B", "C", "D", "E"))
-	ConfirmCut(SList("A", "B", "C", "D", "E", "F"), 6, SList("A", "B", "C", "D", "E", "F"))
+	ConfirmDelete(SList("A", "B", "C", "D", "E", "F"), -1, SList("A", "B", "C", "D", "E", "F"))
+	ConfirmDelete(SList("A", "B", "C", "D", "E", "F"), 0, SList("B", "C", "D", "E", "F"))
+	ConfirmDelete(SList("A", "B", "C", "D", "E", "F"), 1, SList("A", "C", "D", "E", "F"))
+	ConfirmDelete(SList("A", "B", "C", "D", "E", "F"), 2, SList("A", "B", "D", "E", "F"))
+	ConfirmDelete(SList("A", "B", "C", "D", "E", "F"), 3, SList("A", "B", "C", "E", "F"))
+	ConfirmDelete(SList("A", "B", "C", "D", "E", "F"), 4, SList("A", "B", "C", "D", "F"))
+	ConfirmDelete(SList("A", "B", "C", "D", "E", "F"), 5, SList("A", "B", "C", "D", "E"))
+	ConfirmDelete(SList("A", "B", "C", "D", "E", "F"), 6, SList("A", "B", "C", "D", "E", "F"))
+}
+
+func TestSSliceDeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *SSlice, v interface{}, r *SSlice) {
+		if s.DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(SList("A", "B", "A", "C", "A", "E"), string("A"), SList("B", "C", "E"))
+	ConfirmDeleteAll(SList("A", "B", "A", "C", "A", "E"), string("B"), SList("A", "A", "C", "A", "E"))
+	ConfirmDeleteAll(SList("A", "B", "A", "C", "A", "E"), string("F"), SList("A", "B", "A", "C", "A", "E"))
+}
+
+func TestSSliceDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *SSlice, f func(interface{}) bool) {
+		if s.DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("B", "C", "E"), func(x interface{}) bool { return x == "A" })
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("A", "A", "C", "A", "E"), func(x interface{}) bool { return x == "B" })
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("A", "B", "A", "C", "A", "E"), func(x interface{}) bool { return x == "F" })
+}
+
+func TestSSliceSDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *SSlice, f func(string) bool) {
+		if s.SDeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("B", "C", "E"), func(x string) bool { return x == "A" })
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("A", "A", "C", "A", "E"), func(x string) bool { return x == "B" })
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("A", "B", "A", "C", "A", "E"), func(x string) bool { return x == "F" })
 }
 
 func TestSSliceEach(t *testing.T) {

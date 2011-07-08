@@ -77,8 +77,64 @@ func (s *SSlice) Delete(i int) {
 	n := len(a)
 	if i > -1 && i < n {
 		copy(a[i:n - 1], a[i + 1:n])
-		*s = a[0 : n - 1]
+		*s = a[:n - 1]
 	}
+}
+
+func (s *SSlice) DeleteAll(x interface{}) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *SSlice) SDeleteAll(x string) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *SSlice) DeleteIf(f func(interface{}) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *SSlice) SDeleteIf(f func(string) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
 }
 
 func (s SSlice) Each(f func(interface{})) {

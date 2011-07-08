@@ -139,20 +139,68 @@ func TestI8SliceTrim(t *testing.T) {
 }
 
 func TestI8SliceDelete(t *testing.T) {
-	ConfirmCut := func(s *I8Slice, index int, r *I8Slice) {
+	ConfirmDelete := func(s *I8Slice, index int, r *I8Slice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmCut(I8List(0, 1, 2, 3, 4, 5), -1, I8List(0, 1, 2, 3, 4, 5))
-	ConfirmCut(I8List(0, 1, 2, 3, 4, 5), 0, I8List(1, 2, 3, 4, 5))
-	ConfirmCut(I8List(0, 1, 2, 3, 4, 5), 1, I8List(0, 2, 3, 4, 5))
-	ConfirmCut(I8List(0, 1, 2, 3, 4, 5), 2, I8List(0, 1, 3, 4, 5))
-	ConfirmCut(I8List(0, 1, 2, 3, 4, 5), 3, I8List(0, 1, 2, 4, 5))
-	ConfirmCut(I8List(0, 1, 2, 3, 4, 5), 4, I8List(0, 1, 2, 3, 5))
-	ConfirmCut(I8List(0, 1, 2, 3, 4, 5), 5, I8List(0, 1, 2, 3, 4))
-	ConfirmCut(I8List(0, 1, 2, 3, 4, 5), 6, I8List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(I8List(0, 1, 2, 3, 4, 5), -1, I8List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(I8List(0, 1, 2, 3, 4, 5), 0, I8List(1, 2, 3, 4, 5))
+	ConfirmDelete(I8List(0, 1, 2, 3, 4, 5), 1, I8List(0, 2, 3, 4, 5))
+	ConfirmDelete(I8List(0, 1, 2, 3, 4, 5), 2, I8List(0, 1, 3, 4, 5))
+	ConfirmDelete(I8List(0, 1, 2, 3, 4, 5), 3, I8List(0, 1, 2, 4, 5))
+	ConfirmDelete(I8List(0, 1, 2, 3, 4, 5), 4, I8List(0, 1, 2, 3, 5))
+	ConfirmDelete(I8List(0, 1, 2, 3, 4, 5), 5, I8List(0, 1, 2, 3, 4))
+	ConfirmDelete(I8List(0, 1, 2, 3, 4, 5), 6, I8List(0, 1, 2, 3, 4, 5))
+}
+
+func TestI8SliceDeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *I8Slice, v interface{}, r *I8Slice) {
+		if s.DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(0), I8List(1, 3, 5))
+	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(1), I8List(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(6), I8List(0, 1, 0, 3, 0, 5))
+}
+
+func TestI8SliceI8DeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *I8Slice, v int8, r *I8Slice) {
+		if s.I8DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(0), I8List(1, 3, 5))
+	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(1), I8List(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(6), I8List(0, 1, 0, 3, 0, 5))
+}
+
+func TestI8SliceDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *I8Slice, f func(interface{}) bool) {
+		if s.DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(1, 3, 5), func(x interface{}) bool { return x == int8(0) })
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == int8(1) })
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int8(6) })
+}
+
+func TestI8SliceI8DeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *I8Slice, f func(int8) bool) {
+		if s.I8DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(1, 3, 5), func(x int8) bool { return x == int8(0) })
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(0, 0, 3, 0, 5), func(x int8) bool { return x == int8(1) })
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(0, 1, 0, 3, 0, 5), func(x int8) bool { return x == int8(6) })
 }
 
 func TestI8SliceEach(t *testing.T) {

@@ -68,6 +68,34 @@ func (s *Slice) Delete(i int) {
 	}
 }
 
+func (s *Slice) DeleteAll(x interface{}) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *Slice) DeleteIf(f func(interface{}) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
 func (s Slice) Each(f func(interface{})) {
 	for _, v := range s {
 		f(v)

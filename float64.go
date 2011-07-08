@@ -99,8 +99,64 @@ func (s *F64Slice) Delete(i int) {
 	n := len(a)
 	if i > -1 && i < n {
 		copy(a[i:n - 1], a[i + 1:n])
-		*s = a[0 : n - 1]
+		*s = a[:n - 1]
 	}
+}
+
+func (s *F64Slice) DeleteAll(x interface{}) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *F64Slice) F64DeleteAll(x float64) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *F64Slice) DeleteIf(f func(interface{}) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *F64Slice) F64DeleteIf(f func(float64) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
 }
 
 func (s F64Slice) Each(f func(interface{})) {

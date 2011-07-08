@@ -67,8 +67,64 @@ func (s *C64Slice) Delete(i int) {
 	n := len(a)
 	if i > -1 && i < n {
 		copy(a[i:n - 1], a[i + 1:n])
-		*s = a[0 : n - 1]
+		*s = a[:n - 1]
 	}
+}
+
+func (s *C64Slice) DeleteAll(x interface{}) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *C64Slice) C64DeleteAll(x complex64) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if v != x {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *C64Slice) DeleteIf(f func(interface{}) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
+}
+
+func (s *C64Slice) C64DeleteIf(f func(complex64) bool) {
+	a := *s
+	p := 0
+	for i, v := range a {
+		if i != p {
+			a[p] = v
+		}
+		if !f(v) {
+			p++
+		}
+	}
+	*s = a[:p]
 }
 
 func (s C64Slice) Each(f func(interface{})) {

@@ -139,20 +139,68 @@ func TestU64SliceTrim(t *testing.T) {
 }
 
 func TestU64SliceDelete(t *testing.T) {
-	ConfirmCut := func(s *U64Slice, index int, r *U64Slice) {
+	ConfirmDelete := func(s *U64Slice, index int, r *U64Slice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmCut(U64List(0, 1, 2, 3, 4, 5), -1, U64List(0, 1, 2, 3, 4, 5))
-	ConfirmCut(U64List(0, 1, 2, 3, 4, 5), 0, U64List(1, 2, 3, 4, 5))
-	ConfirmCut(U64List(0, 1, 2, 3, 4, 5), 1, U64List(0, 2, 3, 4, 5))
-	ConfirmCut(U64List(0, 1, 2, 3, 4, 5), 2, U64List(0, 1, 3, 4, 5))
-	ConfirmCut(U64List(0, 1, 2, 3, 4, 5), 3, U64List(0, 1, 2, 4, 5))
-	ConfirmCut(U64List(0, 1, 2, 3, 4, 5), 4, U64List(0, 1, 2, 3, 5))
-	ConfirmCut(U64List(0, 1, 2, 3, 4, 5), 5, U64List(0, 1, 2, 3, 4))
-	ConfirmCut(U64List(0, 1, 2, 3, 4, 5), 6, U64List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(U64List(0, 1, 2, 3, 4, 5), -1, U64List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(U64List(0, 1, 2, 3, 4, 5), 0, U64List(1, 2, 3, 4, 5))
+	ConfirmDelete(U64List(0, 1, 2, 3, 4, 5), 1, U64List(0, 2, 3, 4, 5))
+	ConfirmDelete(U64List(0, 1, 2, 3, 4, 5), 2, U64List(0, 1, 3, 4, 5))
+	ConfirmDelete(U64List(0, 1, 2, 3, 4, 5), 3, U64List(0, 1, 2, 4, 5))
+	ConfirmDelete(U64List(0, 1, 2, 3, 4, 5), 4, U64List(0, 1, 2, 3, 5))
+	ConfirmDelete(U64List(0, 1, 2, 3, 4, 5), 5, U64List(0, 1, 2, 3, 4))
+	ConfirmDelete(U64List(0, 1, 2, 3, 4, 5), 6, U64List(0, 1, 2, 3, 4, 5))
+}
+
+func TestU64SliceDeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *U64Slice, v interface{}, r *U64Slice) {
+		if s.DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(U64List(0, 1, 0, 3, 0, 5), uint64(0), U64List(1, 3, 5))
+	ConfirmDeleteAll(U64List(0, 1, 0, 3, 0, 5), uint64(1), U64List(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(U64List(0, 1, 0, 3, 0, 5), uint64(6), U64List(0, 1, 0, 3, 0, 5))
+}
+
+func TestU64SliceU64DeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *U64Slice, v uint64, r *U64Slice) {
+		if s.U64DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(U64List(0, 1, 0, 3, 0, 5), uint64(0), U64List(1, 3, 5))
+	ConfirmDeleteAll(U64List(0, 1, 0, 3, 0, 5), uint64(1), U64List(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(U64List(0, 1, 0, 3, 0, 5), uint64(6), U64List(0, 1, 0, 3, 0, 5))
+}
+
+func TestU64SliceDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *U64Slice, f func(interface{}) bool) {
+		if s.DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(U64List(0, 1, 0, 3, 0, 5), U64List(1, 3, 5), func(x interface{}) bool { return x == uint64(0) })
+	ConfirmDeleteIf(U64List(0, 1, 0, 3, 0, 5), U64List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == uint64(1) })
+	ConfirmDeleteIf(U64List(0, 1, 0, 3, 0, 5), U64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint64(6) })
+}
+
+func TestU64SliceU64DeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *U64Slice, f func(uint64) bool) {
+		if s.U64DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(U64List(0, 1, 0, 3, 0, 5), U64List(1, 3, 5), func(x uint64) bool { return x == uint64(0) })
+	ConfirmDeleteIf(U64List(0, 1, 0, 3, 0, 5), U64List(0, 0, 3, 0, 5), func(x uint64) bool { return x == uint64(1) })
+	ConfirmDeleteIf(U64List(0, 1, 0, 3, 0, 5), U64List(0, 1, 0, 3, 0, 5), func(x uint64) bool { return x == uint64(6) })
 }
 
 func TestU64SliceEach(t *testing.T) {

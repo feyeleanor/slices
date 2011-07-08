@@ -139,20 +139,68 @@ func TestI16SliceTrim(t *testing.T) {
 }
 
 func TestI16SliceDelete(t *testing.T) {
-	ConfirmCut := func(s *I16Slice, index int, r *I16Slice) {
+	ConfirmDelete := func(s *I16Slice, index int, r *I16Slice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmCut(I16List(0, 1, 2, 3, 4, 5), -1, I16List(0, 1, 2, 3, 4, 5))
-	ConfirmCut(I16List(0, 1, 2, 3, 4, 5), 0, I16List(1, 2, 3, 4, 5))
-	ConfirmCut(I16List(0, 1, 2, 3, 4, 5), 1, I16List(0, 2, 3, 4, 5))
-	ConfirmCut(I16List(0, 1, 2, 3, 4, 5), 2, I16List(0, 1, 3, 4, 5))
-	ConfirmCut(I16List(0, 1, 2, 3, 4, 5), 3, I16List(0, 1, 2, 4, 5))
-	ConfirmCut(I16List(0, 1, 2, 3, 4, 5), 4, I16List(0, 1, 2, 3, 5))
-	ConfirmCut(I16List(0, 1, 2, 3, 4, 5), 5, I16List(0, 1, 2, 3, 4))
-	ConfirmCut(I16List(0, 1, 2, 3, 4, 5), 6, I16List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(I16List(0, 1, 2, 3, 4, 5), -1, I16List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(I16List(0, 1, 2, 3, 4, 5), 0, I16List(1, 2, 3, 4, 5))
+	ConfirmDelete(I16List(0, 1, 2, 3, 4, 5), 1, I16List(0, 2, 3, 4, 5))
+	ConfirmDelete(I16List(0, 1, 2, 3, 4, 5), 2, I16List(0, 1, 3, 4, 5))
+	ConfirmDelete(I16List(0, 1, 2, 3, 4, 5), 3, I16List(0, 1, 2, 4, 5))
+	ConfirmDelete(I16List(0, 1, 2, 3, 4, 5), 4, I16List(0, 1, 2, 3, 5))
+	ConfirmDelete(I16List(0, 1, 2, 3, 4, 5), 5, I16List(0, 1, 2, 3, 4))
+	ConfirmDelete(I16List(0, 1, 2, 3, 4, 5), 6, I16List(0, 1, 2, 3, 4, 5))
+}
+
+func TestI16SliceDeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *I16Slice, v interface{}, r *I16Slice) {
+		if s.DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(0), I16List(1, 3, 5))
+	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(1), I16List(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(6), I16List(0, 1, 0, 3, 0, 5))
+}
+
+func TestI16SliceI16DeleteAll(t *testing.T) {
+	ConfirmDeleteAll := func(s *I16Slice, v int16, r *I16Slice) {
+		if s.I16DeleteAll(v); !r.Equal(s) {
+			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(0), I16List(1, 3, 5))
+	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(1), I16List(0, 0, 3, 0, 5))
+	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(6), I16List(0, 1, 0, 3, 0, 5))
+}
+
+func TestI16SliceDeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *I16Slice, f func(interface{}) bool) {
+		if s.DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(1, 3, 5), func(x interface{}) bool { return x == int16(0) })
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == int16(1) })
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int16(6) })
+}
+
+func TestI16SliceI16DeleteIf(t *testing.T) {
+	ConfirmDeleteIf := func(s, r *I16Slice, f func(int16) bool) {
+		if s.I16DeleteIf(f); !r.Equal(s) {
+			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(1, 3, 5), func(x int16) bool { return x == int16(0) })
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(0, 0, 3, 0, 5), func(x int16) bool { return x == int16(1) })
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(0, 1, 0, 3, 0, 5), func(x int16) bool { return x == int16(6) })
 }
 
 func TestI16SliceEach(t *testing.T) {
