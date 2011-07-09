@@ -430,3 +430,31 @@ func (s U32Slice) SetDifference(o U32Slice) (r U32Slice) {
 	}
 	return
 }
+
+func (s U32Slice) Find(v interface{}) (i int, found bool) {
+	if v, ok := v.(uint32); ok {
+		for j, x := range s {
+			if x == v {
+				i = j
+				found = true
+				break
+			}
+		}
+	}
+	return
+}
+
+func (s U32Slice) FindN(v interface{}, n int) (i ISlice) {
+	if v, ok := v.(uint32); ok {
+		i = make(ISlice, 0, 0)
+		for j, x := range s {
+			if x == v {
+				i = append(i, j)
+				if len(i) == n {
+					break
+				}
+			}
+		}
+	}
+	return
+}

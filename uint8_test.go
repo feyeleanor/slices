@@ -444,3 +444,32 @@ func TestU8SliceSetDifference(t *testing.T) {
 	ConfirmSetUnion(U8List(1, 2, 3), U8List(1, 1), U8List(2, 3))
 	ConfirmSetUnion(U8List(1, 2, 3), U8List(1, 2, 1), U8List(3))
 }
+
+func TestU8SliceFind(t *testing.T) {
+	ConfirmFind := func(s *U8Slice, v uint8, i int) {
+		if x, ok := s.Find(v); !ok || x != i {
+			t.Fatalf("%v.Find(%v) should be %v but is %v", s, v, i, x)
+		}
+	}
+
+	ConfirmFind(U8List(0, 1, 2, 3, 4), 0, 0)
+	ConfirmFind(U8List(0, 1, 2, 3, 4), 1, 1)
+	ConfirmFind(U8List(0, 1, 2, 4, 3), 2, 2)
+	ConfirmFind(U8List(0, 1, 2, 4, 3), 3, 4)
+	ConfirmFind(U8List(0, 1, 2, 4, 3), 4, 3)
+}
+
+func TestU8SliceFindN(t *testing.T) {
+	ConfirmFindN := func(s *U8Slice, v uint8, n int, i *ISlice) {
+		if x := s.FindN(v, n); !x.Equal(i) {
+			t.Fatalf("%v.Find(%v, %v) should be %v but is %v", s, v, n, i, x)
+		}
+	}
+
+	ConfirmFindN(U8List(1, 0, 1, 0, 1), 2, 3, IList())
+	ConfirmFindN(U8List(1, 0, 1, 0, 1), 1, 0, IList(0, 2, 4))
+	ConfirmFindN(U8List(1, 0, 1, 0, 1), 1, 1, IList(0))
+	ConfirmFindN(U8List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
+	ConfirmFindN(U8List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
+	ConfirmFindN(U8List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}

@@ -428,3 +428,31 @@ func (s ASlice) SetDifference(o ASlice) (r ASlice) {
 	}
 	return
 }
+
+func (s ASlice) Find(v interface{}) (i int, found bool) {
+	if v, ok := v.(uintptr); ok {
+		for j, x := range s {
+			if x == v {
+				i = j
+				found = true
+				break
+			}
+		}
+	}
+	return
+}
+
+func (s ASlice) FindN(v interface{}, n int) (i ISlice) {
+	if v, ok := v.(uintptr); ok {
+		i = make(ISlice, 0, 0)
+		for j, x := range s {
+			if x == v {
+				i = append(i, j)
+				if len(i) == n {
+					break
+				}
+			}
+		}
+	}
+	return
+}

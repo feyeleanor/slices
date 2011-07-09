@@ -424,3 +424,31 @@ func (s C128Slice) SetDifference(o C128Slice) (r C128Slice) {
 	}
 	return
 }
+
+func (s C128Slice) Find(v interface{}) (i int, found bool) {
+	if v, ok := v.(complex128); ok {
+		for j, x := range s {
+			if x == v {
+				i = j
+				found = true
+				break
+			}
+		}
+	}
+	return
+}
+
+func (s C128Slice) FindN(v interface{}, n int) (i ISlice) {
+	if v, ok := v.(complex128); ok {
+		i = make(ISlice, 0, 0)
+		for j, x := range s {
+			if x == v {
+				i = append(i, j)
+				if len(i) == n {
+					break
+				}
+			}
+		}
+	}
+	return
+}

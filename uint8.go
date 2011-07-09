@@ -430,3 +430,31 @@ func (s U8Slice) SetDifference(o U8Slice) (r U8Slice) {
 	}
 	return
 }
+
+func (s U8Slice) Find(v interface{}) (i int, found bool) {
+	if v, ok := v.(uint8); ok {
+		for j, x := range s {
+			if x == v {
+				i = j
+				found = true
+				break
+			}
+		}
+	}
+	return
+}
+
+func (s U8Slice) FindN(v interface{}, n int) (i ISlice) {
+	if v, ok := v.(uint8); ok {
+		i = make(ISlice, 0, 0)
+		for j, x := range s {
+			if x == v {
+				i = append(i, j)
+				if len(i) == n {
+					break
+				}
+			}
+		}
+	}
+	return
+}

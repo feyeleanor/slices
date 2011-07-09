@@ -424,3 +424,31 @@ func (s F32Slice) SetDifference(o F32Slice) (r F32Slice) {
 	}
 	return
 }
+
+func (s F32Slice) Find(v interface{}) (i int, found bool) {
+	if v, ok := v.(float32); ok {
+		for j, x := range s {
+			if x == v {
+				i = j
+				found = true
+				break
+			}
+		}
+	}
+	return
+}
+
+func (s F32Slice) FindN(v interface{}, n int) (i ISlice) {
+	if v, ok := v.(float32); ok {
+		i = make(ISlice, 0, 0)
+		for j, x := range s {
+			if x == v {
+				i = append(i, j)
+				if len(i) == n {
+					break
+				}
+			}
+		}
+	}
+	return
+}

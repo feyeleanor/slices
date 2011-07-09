@@ -488,3 +488,32 @@ func TestSliceSetDifference(t *testing.T) {
 	ConfirmSetUnion(List(1, 2, 3), List(1, 1), List(2, 3))
 	ConfirmSetUnion(List(1, 2, 3), List(1, 2, 1), List(3))
 }
+
+func TestSliceFind(t *testing.T) {
+	ConfirmFind := func(s *Slice, v interface{}, i int) {
+		if x, ok := s.Find(v); !ok || x != i {
+			t.Fatalf("%v.Find(%v) should be %v but is %v", s, v, i, x)
+		}
+	}
+
+	ConfirmFind(List(0, 1, 2, 3, 4), 0, 0)
+	ConfirmFind(List(0, 1, 2, 3, 4), 1, 1)
+	ConfirmFind(List(0, 1, 2, 4, 3), 2, 2)
+	ConfirmFind(List(0, 1, 2, 4, 3), 3, 4)
+	ConfirmFind(List(0, 1, 2, 4, 3), 4, 3)
+}
+
+func TestSliceFindN(t *testing.T) {
+	ConfirmFindN := func(s *Slice, v interface{}, n int, i *ISlice) {
+		if x := s.FindN(v, n); !x.Equal(i) {
+			t.Fatalf("%v.Find(%v, %v) should be %v but is %v", s, v, n, i, x)
+		}
+	}
+
+	ConfirmFindN(List(1, 0, 1, 0, 1), 2, 3, IList())
+	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 0, IList(0, 2, 4))
+	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 1, IList(0))
+	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
+	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
+	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}

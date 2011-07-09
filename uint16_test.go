@@ -444,3 +444,32 @@ func TestU16SliceSetDifference(t *testing.T) {
 	ConfirmSetUnion(U16List(1, 2, 3), U16List(1, 1), U16List(2, 3))
 	ConfirmSetUnion(U16List(1, 2, 3), U16List(1, 2, 1), U16List(3))
 }
+
+func TestU16SliceFind(t *testing.T) {
+	ConfirmFind := func(s *U16Slice, v uint16, i int) {
+		if x, ok := s.Find(v); !ok || x != i {
+			t.Fatalf("%v.Find(%v) should be %v but is %v", s, v, i, x)
+		}
+	}
+
+	ConfirmFind(U16List(0, 1, 2, 3, 4), 0, 0)
+	ConfirmFind(U16List(0, 1, 2, 3, 4), 1, 1)
+	ConfirmFind(U16List(0, 1, 2, 4, 3), 2, 2)
+	ConfirmFind(U16List(0, 1, 2, 4, 3), 3, 4)
+	ConfirmFind(U16List(0, 1, 2, 4, 3), 4, 3)
+}
+
+func TestU16SliceFindN(t *testing.T) {
+	ConfirmFindN := func(s *U16Slice, v uint16, n int, i *ISlice) {
+		if x := s.FindN(v, n); !x.Equal(i) {
+			t.Fatalf("%v.Find(%v, %v) should be %v but is %v", s, v, n, i, x)
+		}
+	}
+
+	ConfirmFindN(U16List(1, 0, 1, 0, 1), 2, 3, IList())
+	ConfirmFindN(U16List(1, 0, 1, 0, 1), 1, 0, IList(0, 2, 4))
+	ConfirmFindN(U16List(1, 0, 1, 0, 1), 1, 1, IList(0))
+	ConfirmFindN(U16List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
+	ConfirmFindN(U16List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
+	ConfirmFindN(U16List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}

@@ -495,3 +495,27 @@ func (s VSlice) SetDifference(o VSlice) (r VSlice) {
 	}
 	return *VList(results...)
 }
+
+func (s VSlice) Find(v interface{}) (i int, found bool) {
+	for j := 0; j < s.Len(); j++ {
+		if s.At(j) == v {
+			i = j
+			found = true
+			break
+		}
+	}
+	return
+}
+
+func (s VSlice) FindN(v interface{}, n int) (i ISlice) {
+	i = make(ISlice, 0, 0)
+	for j := 0; j < s.Len(); j++ {
+		if s.At(j) == v {
+			i = append(i, j)
+			if len(i) == n {
+				break
+			}
+		}
+	}
+	return
+}

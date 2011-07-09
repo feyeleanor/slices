@@ -430,3 +430,31 @@ func (s U64Slice) SetDifference(o U64Slice) (r U64Slice) {
 	}
 	return
 }
+
+func (s U64Slice) Find(v interface{}) (i int, found bool) {
+	if v, ok := v.(uint64); ok {
+		for j, x := range s {
+			if x == v {
+				i = j
+				found = true
+				break
+			}
+		}
+	}
+	return
+}
+
+func (s U64Slice) FindN(v interface{}, n int) (i ISlice) {
+	if v, ok := v.(uint64); ok {
+		i = make(ISlice, 0, 0)
+		for j, x := range s {
+			if x == v {
+				i = append(i, j)
+				if len(i) == n {
+					break
+				}
+			}
+		}
+	}
+	return
+}

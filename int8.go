@@ -431,3 +431,31 @@ func (s I8Slice) SetDifference(o I8Slice) (r I8Slice) {
 	}
 	return
 }
+
+func (s I8Slice) Find(v interface{}) (i int, found bool) {
+	if v, ok := v.(int8); ok {
+		for j, x := range s {
+			if x == v {
+				i = j
+				found = true
+				break
+			}
+		}
+	}
+	return
+}
+
+func (s I8Slice) FindN(v interface{}, n int) (i ISlice) {
+	if v, ok := v.(int8); ok {
+		i = make(ISlice, 0, 0)
+		for j, x := range s {
+			if x == v {
+				i = append(i, j)
+				if len(i) == n {
+					break
+				}
+			}
+		}
+	}
+	return
+}
