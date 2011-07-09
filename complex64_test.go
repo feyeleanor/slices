@@ -369,7 +369,9 @@ func TestC64SliceRplacd(t *testing.T) {
 
 func TestC64SliceSetIntersection(t *testing.T) {
 	ConfirmSetIntersection := func(s, o, r *C64Slice) {
-		if x := s.SetIntersection(*o); !r.Equal(x) {
+		x := s.SetIntersection(*o)
+		x.Sort()
+		if !r.Equal(x) {
 			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
@@ -382,7 +384,9 @@ func TestC64SliceSetIntersection(t *testing.T) {
 
 func TestC64SliceSetUnion(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r *C64Slice) {
-		if x := s.SetUnion(*o); !r.Equal(x) {
+		x := s.SetUnion(*o)
+		x.Sort()
+		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
@@ -395,7 +399,9 @@ func TestC64SliceSetUnion(t *testing.T) {
 
 func TestC64SliceSetDifference(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r *C64Slice) {
-		if x := s.SetDifference(*o); !r.Equal(x) {
+		x := s.SetDifference(*o)
+		x.Sort()
+		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
 	}

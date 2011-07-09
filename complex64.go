@@ -1,6 +1,7 @@
 package slices
 
 import "fmt"
+import "sort"
 
 func C64List(n... complex64) *C64Slice {
 	return (*C64Slice)(&n)
@@ -25,8 +26,39 @@ func (s C64Slice) Subtract(i, j int)				{ s[i] -= s[j] }
 func (s C64Slice) Multiply(i, j int)				{ s[i] *= s[j] }
 func (s C64Slice) Divide(i, j int)					{ s[i] /= s[j] }
 
-func (s C64Slice) Same(i, j int) bool				{ return s[i] == s[j] }
+func (s C64Slice) Less(i, j int) bool				{ return real(s[i]) < real(s[j]) }
+func (s C64Slice) AtLeast(i, j int) bool			{ return real(s[i]) <= real(s[j]) }
+func (s C64Slice) Same(i, j int) bool				{ return real(s[i]) == real(s[j]) }
+func (s C64Slice) AtMost(i, j int) bool				{ return real(s[i]) >= real(s[j]) }
+func (s C64Slice) More(i, j int) bool				{ return real(s[i]) > real(s[j]) }
+
+func (s C64Slice) ZeroLess(i int) bool				{ return 0 < real(s[i]) }
+func (s C64Slice) ZeroAtLeast(i, j int) bool		{ return 0 <= real(s[j]) }
+func (s C64Slice) ZeroSame(i int) bool				{ return 0 == real(s[i]) }
+func (s C64Slice) ZeroAtMost(i, j int) bool			{ return 0 >= real(s[j]) }
+func (s C64Slice) ZeroMore(i int) bool				{ return 0 > real(s[i]) }
+
+func (s C64Slice) Sort()							{ sort.Sort(s) }
+
 func (s *C64Slice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
+
+func (s C64Slice) Compare(i, j int) (r int) {
+	switch x, y := real(s[i]), real(s[j]); {
+	case x < y:			r = IS_LESS_THAN
+	case x > y:			r = IS_GREATER_THAN
+	default:			r = IS_SAME_AS
+	}
+	return
+}
+
+func (s C64Slice) ZeroCompare(i int) (r int) {
+	switch x := real(s[i]); {
+	case 0 < x:			r = IS_LESS_THAN
+	case 0 > x:			r = IS_GREATER_THAN
+	default:			r = IS_SAME_AS
+	}
+	return
+}
 
 func (s *C64Slice) Cut(i, j int) {
 	a := *s
