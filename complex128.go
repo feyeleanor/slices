@@ -72,95 +72,50 @@ func (s *C128Slice) Delete(i int) {
 	}
 }
 
-func (s *C128Slice) DeleteAll(x interface{}) {
+func (s *C128Slice) DeleteIf(f interface{}) {
 	a := *s
 	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
+	switch f := f.(type) {
+	case complex128:				for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v != f {
+											p++
+										}
+									}
+
+	case func(complex128) bool:		for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
 	}
 	*s = a[:p]
 }
 
-func (s *C128Slice) DeleteIf(f func(interface{}) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *C128Slice) C128DeleteIf(f func(complex128) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *C128Slice) C128DeleteAll(x complex128) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s C128Slice) Each(f func(interface{})) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s C128Slice) EachWithIndex(f func(int, interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s C128Slice) EachWithKey(f func(key, value interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s C128Slice) C128Each(f func(complex128)) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s C128Slice) C128EachWithIndex(f func(int, complex128)) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s C128Slice) C128EachWithKey(f func(interface{}, complex128)) {
-	for i, v := range s {
-		f(i, v)
+func (s C128Slice) Each(f interface{}) {
+	switch f := f.(type) {
+	case func(complex128):					for _, v := range s { f(v) }
+	case func(int, complex128):				for i, v := range s { f(i, v) }
+	case func(interface{}, complex128):		for i, v := range s { f(i, v) }
+	case func(interface{}):					for _, v := range s { f(v) }
+	case func(int, interface{}):			for i, v := range s { f(i, v) }
+	case func(interface{}, interface{}):	for i, v := range s { f(i, v) }
 	}
 }
 
@@ -255,35 +210,35 @@ func (s C128Slice) Depth() int {
 }
 
 func (s *C128Slice) Append(v interface{}) {
-	s.C128Append(v.(complex128))
-}
-
-func (s *C128Slice) C128Append(v complex128) {
-	*s = append(*s, v)
-}
-
-func (s *C128Slice) AppendSlice(o C128Slice) {
-	*s = append(*s, o...)
+	switch v := v.(type) {
+	case complex128:		*s = append(*s, v)
+	case C128Slice:			*s = append(*s, v...)
+	case *C128Slice:		*s = append(*s, (*v)...)
+	case []complex128:		s.Append(C128Slice(v))
+	case *[]complex128:		s.Append(C128Slice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s *C128Slice) Prepend(v interface{}) {
-	s.C128Prepend(v.(complex128))
-}
+	switch v := v.(type) {
+	case complex128:		l := s.Len() + 1
+							n := make(C128Slice, l, l)
+							n[0] = v
+							copy(n[1:], *s)
+							*s = n
 
-func (s *C128Slice) C128Prepend(v complex128) {
-	l := s.Len() + 1
-	n := make(C128Slice, l, l)
-	n[0] = v
-	copy(n[1:], *s)
-	*s = n
-}
+	case C128Slice:			l := s.Len() + len(v)
+							n := make(C128Slice, l, l)
+							copy(n, v)
+							copy(n[len(v):], *s)
+							*s = n
 
-func (s *C128Slice) PrependSlice(o C128Slice) {
-	l := s.Len() + o.Len()
-	n := make(C128Slice, l, l)
-	copy(n, o)
-	copy(n[o.Len():], *s)
-	*s = n
+	case *C128Slice:		s.Prepend(*v)
+	case []complex128:		s.Prepend(C128Slice(v))
+	case *[]complex128:		s.Prepend(C128Slice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s C128Slice) Repeat(count int) C128Slice {

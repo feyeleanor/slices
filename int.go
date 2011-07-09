@@ -110,95 +110,50 @@ func (s *ISlice) Delete(i int) {
 	}
 }
 
-func (s *ISlice) DeleteAll(x interface{}) {
+func (s *ISlice) DeleteIf(f interface{}) {
 	a := *s
 	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
+	switch f := f.(type) {
+	case int:						for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v != f {
+											p++
+										}
+									}
+
+	case func(int) bool:			for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
 	}
 	*s = a[:p]
 }
 
-func (s *ISlice) IDeleteAll(x int) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *ISlice) DeleteIf(f func(interface{}) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *ISlice) IDeleteIf(f func(int) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s ISlice) Each(f func(interface{})) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s ISlice) EachWithIndex(f func(int, interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s ISlice) EachWithKey(f func(key, value interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s ISlice) IEach(f func(int)) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s ISlice) IEachWithIndex(f func(int, int)) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s ISlice) IEachWithKey(f func(interface{}, int)) {
-	for i, v := range s {
-		f(i, v)
+func (s ISlice) Each(f interface{}) {
+	switch f := f.(type) {
+	case func(int):							for _, v := range s { f(v) }
+	case func(int, int):					for i, v := range s { f(i, v) }
+	case func(interface{}, int):			for i, v := range s { f(i, v) }
+	case func(interface{}):					for _, v := range s { f(v) }
+	case func(int, interface{}):			for i, v := range s { f(i, v) }
+	case func(interface{}, interface{}):	for i, v := range s { f(i, v) }
 	}
 }
 
@@ -293,35 +248,35 @@ func (s ISlice) Depth() int {
 }
 
 func (s *ISlice) Append(v interface{}) {
-	s.IAppend(v.(int))
-}
-
-func (s *ISlice) IAppend(v int) {
-	*s = append(*s, v)
-}
-
-func (s *ISlice) AppendSlice(o ISlice) {
-	*s = append(*s, o...)
+	switch v := v.(type) {
+	case int:				*s = append(*s, v)
+	case ISlice:			*s = append(*s, v...)
+	case *ISlice:			*s = append(*s, (*v)...)
+	case []int:				s.Append(ISlice(v))
+	case *[]int:			s.Append(ISlice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s *ISlice) Prepend(v interface{}) {
-	s.IPrepend(v.(int))
-}
+	switch v := v.(type) {
+	case int:				l := s.Len() + 1
+							n := make(ISlice, l, l)
+							n[0] = v
+							copy(n[1:], *s)
+							*s = n
 
-func (s *ISlice) IPrepend(v int) {
-	l := s.Len() + 1
-	n := make(ISlice, l, l)
-	n[0] = v
-	copy(n[1:], *s)
-	*s = n
-}
+	case ISlice:			l := s.Len() + len(v)
+							n := make(ISlice, l, l)
+							copy(n, v)
+							copy(n[len(v):], *s)
+							*s = n
 
-func (s *ISlice) PrependSlice(o ISlice) {
-	l := s.Len() + o.Len()
-	n := make(ISlice, l, l)
-	copy(n, o)
-	copy(n[o.Len():], *s)
-	*s = n
+	case *ISlice:			s.Prepend(*v)
+	case []int:				s.Prepend(ISlice(v))
+	case *[]int:			s.Prepend(ISlice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s ISlice) Repeat(count int) ISlice {

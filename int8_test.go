@@ -155,52 +155,24 @@ func TestI8SliceDelete(t *testing.T) {
 	ConfirmDelete(I8List(0, 1, 2, 3, 4, 5), 6, I8List(0, 1, 2, 3, 4, 5))
 }
 
-func TestI8SliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *I8Slice, v interface{}, r *I8Slice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(0), I8List(1, 3, 5))
-	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(1), I8List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(6), I8List(0, 1, 0, 3, 0, 5))
-}
-
-func TestI8SliceI8DeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *I8Slice, v int8, r *I8Slice) {
-		if s.I8DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(0), I8List(1, 3, 5))
-	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(1), I8List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(I8List(0, 1, 0, 3, 0, 5), int8(6), I8List(0, 1, 0, 3, 0, 5))
-}
-
 func TestI8SliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *I8Slice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *I8Slice, f interface{}, r *I8Slice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(1, 3, 5), func(x interface{}) bool { return x == int8(0) })
-	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == int8(1) })
-	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int8(6) })
-}
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), int8(0), I8List(1, 3, 5))
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), int8(1), I8List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), int8(6), I8List(0, 1, 0, 3, 0, 5))
 
-func TestI8SliceI8DeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *I8Slice, f func(int8) bool) {
-		if s.I8DeleteIf(f); !r.Equal(s) {
-			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
-		}
-	}
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int8(0) }, I8List(1, 3, 5))
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int8(1) }, I8List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int8(6) }, I8List(0, 1, 0, 3, 0, 5))
 
-	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(1, 3, 5), func(x int8) bool { return x == int8(0) })
-	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(0, 0, 3, 0, 5), func(x int8) bool { return x == int8(1) })
-	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), I8List(0, 1, 0, 3, 0, 5), func(x int8) bool { return x == int8(6) })
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), func(x int8) bool { return x == int8(0) }, I8List(1, 3, 5))
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), func(x int8) bool { return x == int8(1) }, I8List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(I8List(0, 1, 0, 3, 0, 5), func(x int8) bool { return x == int8(6) }, I8List(0, 1, 0, 3, 0, 5))
 }
 
 func TestI8SliceEach(t *testing.T) {
@@ -211,45 +183,34 @@ func TestI8SliceEach(t *testing.T) {
 		}
 		count++
 	})
-}
 
-func TestI8SliceEachWithIndex(t *testing.T) {
-	I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithIndex(func(index int, i interface{}) {
+	I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
 		if i != int8(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestI8SliceEachWithKey(t *testing.T) {
-	I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithKey(func(key, i interface{}) {
+	I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
 		if i != int8(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
-}
 
-func TestI8SliceI8Each(t *testing.T) {
-	var count	int8
-	I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).I8Each(func(i int8) {
+	count = 0
+	I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i int8) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestI8SliceI8EachWithIndex(t *testing.T) {
-	I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).I8EachWithIndex(func(index int, i int8) {
+	I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i int8) {
 		if i != int8(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestI8SliceI8EachWithKey(t *testing.T) {
-	c := I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.I8EachWithKey(func(key interface{}, i int8) {
+	I8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i int8) {
 		if i != int8(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -386,19 +347,10 @@ func TestI8SliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(I8List(), int8(0), I8List(0))
-}
 
-func TestI8SliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *I8Slice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(I8List(), I8List(0), I8List(0))
-	ConfirmAppendSlice(I8List(), I8List(0, 1), I8List(0, 1))
-	ConfirmAppendSlice(I8List(0, 1, 2), I8List(3, 4), I8List(0, 1, 2, 3, 4))
+	ConfirmAppend(I8List(), I8List(0), I8List(0))
+	ConfirmAppend(I8List(), I8List(0, 1), I8List(0, 1))
+	ConfirmAppend(I8List(0, 1, 2), I8List(3, 4), I8List(0, 1, 2, 3, 4))
 }
 
 func TestI8SlicePrepend(t *testing.T) {
@@ -410,18 +362,10 @@ func TestI8SlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(I8List(), int8(0), I8List(0))
 	ConfirmPrepend(I8List(0), int8(1), I8List(1, 0))
-}
 
-func TestI8SlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *I8Slice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
-			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrependSlice(I8List(), I8List(0), I8List(0))
-	ConfirmPrependSlice(I8List(), I8List(0, 1), I8List(0, 1))
-	ConfirmPrependSlice(I8List(0, 1, 2), I8List(3, 4), I8List(3, 4, 0, 1, 2))
+	ConfirmPrepend(I8List(), I8List(0), I8List(0))
+	ConfirmPrepend(I8List(), I8List(0, 1), I8List(0, 1))
+	ConfirmPrepend(I8List(0, 1, 2), I8List(3, 4), I8List(3, 4, 0, 1, 2))
 }
 
 func TestI8SliceRepeat(t *testing.T) {

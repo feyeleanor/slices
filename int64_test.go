@@ -155,52 +155,24 @@ func TestI64SliceDelete(t *testing.T) {
 	ConfirmDelete(I64List(0, 1, 2, 3, 4, 5), 6, I64List(0, 1, 2, 3, 4, 5))
 }
 
-func TestI64SliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *I64Slice, v interface{}, r *I64Slice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(I64List(0, 1, 0, 3, 0, 5), int64(0), I64List(1, 3, 5))
-	ConfirmDeleteAll(I64List(0, 1, 0, 3, 0, 5), int64(1), I64List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(I64List(0, 1, 0, 3, 0, 5), int64(6), I64List(0, 1, 0, 3, 0, 5))
-}
-
-func TestI64SliceI64DeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *I64Slice, v int64, r *I64Slice) {
-		if s.I64DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(I64List(0, 1, 0, 3, 0, 5), int64(0), I64List(1, 3, 5))
-	ConfirmDeleteAll(I64List(0, 1, 0, 3, 0, 5), int64(1), I64List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(I64List(0, 1, 0, 3, 0, 5), int64(6), I64List(0, 1, 0, 3, 0, 5))
-}
-
 func TestI64SliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *I64Slice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *I64Slice, f interface{}, r *I64Slice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), I64List(1, 3, 5), func(x interface{}) bool { return x == int64(0) })
-	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), I64List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == int64(1) })
-	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), I64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int64(6) })
-}
+	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), int64(0), I64List(1, 3, 5))
+	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), int64(1), I64List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), int64(6), I64List(0, 1, 0, 3, 0, 5))
 
-func TestI64SliceI64DeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *I64Slice, f func(int64) bool) {
-		if s.I64DeleteIf(f); !r.Equal(s) {
-			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
-		}
-	}
+	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int64(0) }, I64List(1, 3, 5))
+	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int64(1) }, I64List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int64(6) }, I64List(0, 1, 0, 3, 0, 5))
 
-	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), I64List(1, 3, 5), func(x int64) bool { return x == int64(0) })
-	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), I64List(0, 0, 3, 0, 5), func(x int64) bool { return x == int64(1) })
-	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), I64List(0, 1, 0, 3, 0, 5), func(x int64) bool { return x == int64(6) })
+	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), func(x int64) bool { return x == int64(0) }, I64List(1, 3, 5))
+	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), func(x int64) bool { return x == int64(1) }, I64List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(I64List(0, 1, 0, 3, 0, 5), func(x int64) bool { return x == int64(6) }, I64List(0, 1, 0, 3, 0, 5))
 }
 
 func TestI64SliceEach(t *testing.T) {
@@ -211,45 +183,34 @@ func TestI64SliceEach(t *testing.T) {
 		}
 		count++
 	})
-}
 
-func TestI64SliceEachWithIndex(t *testing.T) {
-	I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithIndex(func(index int, i interface{}) {
+	I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
 		if i != int64(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestI64SliceEachWithKey(t *testing.T) {
-	I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithKey(func(key, i interface{}) {
+	I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
 		if i != int64(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
-}
 
-func TestI64SliceI64Each(t *testing.T) {
-	var count	int64
-	I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).I64Each(func(i int64) {
+	count = 0
+	I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i int64) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestI64SliceI64EachWithIndex(t *testing.T) {
-	I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).I64EachWithIndex(func(index int, i int64) {
+	I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i int64) {
 		if i != int64(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestI64SliceI64EachWithKey(t *testing.T) {
-	c := I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.I64EachWithKey(func(key interface{}, i int64) {
+	I64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i int64) {
 		if i != int64(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -386,19 +347,10 @@ func TestI64SliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(I64List(), int64(0), I64List(0))
-}
 
-func TestI64SliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *I64Slice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(I64List(), I64List(0), I64List(0))
-	ConfirmAppendSlice(I64List(), I64List(0, 1), I64List(0, 1))
-	ConfirmAppendSlice(I64List(0, 1, 2), I64List(3, 4), I64List(0, 1, 2, 3, 4))
+	ConfirmAppend(I64List(), I64List(0), I64List(0))
+	ConfirmAppend(I64List(), I64List(0, 1), I64List(0, 1))
+	ConfirmAppend(I64List(0, 1, 2), I64List(3, 4), I64List(0, 1, 2, 3, 4))
 }
 
 func TestI64SlicePrepend(t *testing.T) {
@@ -410,18 +362,10 @@ func TestI64SlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(I64List(), int64(0), I64List(0))
 	ConfirmPrepend(I64List(0), int64(1), I64List(1, 0))
-}
 
-func TestI64SlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *I64Slice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
-			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrependSlice(I64List(), I64List(0), I64List(0))
-	ConfirmPrependSlice(I64List(), I64List(0, 1), I64List(0, 1))
-	ConfirmPrependSlice(I64List(0, 1, 2), I64List(3, 4), I64List(3, 4, 0, 1, 2))
+	ConfirmPrepend(I64List(), I64List(0), I64List(0))
+	ConfirmPrepend(I64List(), I64List(0, 1), I64List(0, 1))
+	ConfirmPrepend(I64List(0, 1, 2), I64List(3, 4), I64List(3, 4, 0, 1, 2))
 }
 
 func TestI64SliceRepeat(t *testing.T) {

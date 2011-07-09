@@ -122,52 +122,24 @@ func TestC128SliceDelete(t *testing.T) {
 	ConfirmDelete(C128List(0, 1, 2, 3, 4, 5), 6, C128List(0, 1, 2, 3, 4, 5))
 }
 
-func TestC128SliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *C128Slice, v interface{}, r *C128Slice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(C128List(0, 1, 0, 3, 0, 5), complex128(0), C128List(1, 3, 5))
-	ConfirmDeleteAll(C128List(0, 1, 0, 3, 0, 5), complex128(1), C128List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(C128List(0, 1, 0, 3, 0, 5), complex128(6), C128List(0, 1, 0, 3, 0, 5))
-}
-
-func TestC128SliceC128DeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *C128Slice, v complex128, r *C128Slice) {
-		if s.C128DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(C128List(0, 1, 0, 3, 0, 5), complex128(0), C128List(1, 3, 5))
-	ConfirmDeleteAll(C128List(0, 1, 0, 3, 0, 5), complex128(1), C128List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(C128List(0, 1, 0, 3, 0, 5), complex128(6), C128List(0, 1, 0, 3, 0, 5))
-}
-
 func TestC128SliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *C128Slice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *C128Slice, f interface{}, r *C128Slice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), C128List(1, 3, 5), func(x interface{}) bool { return x == complex128(0) })
-	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), C128List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(1) })
-	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(6) })
-}
+	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), complex128(0), C128List(1, 3, 5))
+	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), complex128(1), C128List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), complex128(6), C128List(0, 1, 0, 3, 0, 5))
 
-func TestC128SliceC128DeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *C128Slice, f func(complex128) bool) {
-		if s.C128DeleteIf(f); !r.Equal(s) {
-			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
-		}
-	}
+	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(0) }, C128List(1, 3, 5))
+	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(1) }, C128List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(6) }, C128List(0, 1, 0, 3, 0, 5))
 
-	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), C128List(1, 3, 5), func(x complex128) bool { return x == complex128(0) })
-	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), C128List(0, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(1) })
-	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(6) })
+	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(0) }, C128List(1, 3, 5))
+	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(1) }, C128List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(6) }, C128List(0, 1, 0, 3, 0, 5))
 }
 
 func TestC128SliceEach(t *testing.T) {
@@ -178,44 +150,34 @@ func TestC128SliceEach(t *testing.T) {
 		}
 		count++
 	})
-}
 
-func TestC128SliceEachWithIndex(t *testing.T) {
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithIndex(func(index int, i interface{}) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
 		if index != int(real(i.(complex128))) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestC128SliceEachWithKey(t *testing.T) {
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithKey(func(key, i interface{}) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
 		if complex(float64(key.(int)), 0) != i {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
-}
 
-func TestC128SliceC128Each(t *testing.T) {
-	var count	complex128
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).C128Each(func(i complex128) {
+	count = 0
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i complex128) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestC128SliceC128EachWithIndex(t *testing.T) {
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).C128EachWithIndex(func(index int, i complex128) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i complex128) {
 		if int(real(i)) != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestC128SliceC128EachWithKey(t *testing.T) {
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).C128EachWithKey(func(key interface{}, i complex128) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i complex128) {
 		if key.(int) != int(real(i)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -352,19 +314,10 @@ func TestC128SliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(C128List(), complex128(0), C128List(0))
-}
 
-func TestC128SliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *C128Slice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(C128List(), C128List(0), C128List(0))
-	ConfirmAppendSlice(C128List(), C128List(0, 1), C128List(0, 1))
-	ConfirmAppendSlice(C128List(0, 1, 2), C128List(3, 4), C128List(0, 1, 2, 3, 4))
+	ConfirmAppend(C128List(), C128List(0), C128List(0))
+	ConfirmAppend(C128List(), C128List(0, 1), C128List(0, 1))
+	ConfirmAppend(C128List(0, 1, 2), C128List(3, 4), C128List(0, 1, 2, 3, 4))
 }
 
 func TestC128SlicePrepend(t *testing.T) {
@@ -376,18 +329,10 @@ func TestC128SlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(C128List(), complex128(0), C128List(0))
 	ConfirmPrepend(C128List(0), complex128(1), C128List(1, 0))
-}
 
-func TestC128SlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *C128Slice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
-			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrependSlice(C128List(), C128List(0), C128List(0))
-	ConfirmPrependSlice(C128List(), C128List(0, 1), C128List(0, 1))
-	ConfirmPrependSlice(C128List(0, 1, 2), C128List(3, 4), C128List(3, 4, 0, 1, 2))
+	ConfirmPrepend(C128List(), C128List(0), C128List(0))
+	ConfirmPrepend(C128List(), C128List(0, 1), C128List(0, 1))
+	ConfirmPrepend(C128List(0, 1, 2), C128List(3, 4), C128List(3, 4, 0, 1, 2))
 }
 
 func TestC128SliceRepeat(t *testing.T) {

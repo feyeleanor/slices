@@ -155,106 +155,62 @@ func TestF32SliceDelete(t *testing.T) {
 	ConfirmDelete(F32List(0, 1, 2, 3, 4, 5), 6, F32List(0, 1, 2, 3, 4, 5))
 }
 
-func TestF32SliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *F32Slice, v interface{}, r *F32Slice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(F32List(0, 1, 0, 3, 0, 5), float32(0), F32List(1, 3, 5))
-	ConfirmDeleteAll(F32List(0, 1, 0, 3, 0, 5), float32(1), F32List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(F32List(0, 1, 0, 3, 0, 5), float32(6), F32List(0, 1, 0, 3, 0, 5))
-}
-
-func TestF32SliceF32DeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *F32Slice, v float32, r *F32Slice) {
-		if s.F32DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(F32List(0, 1, 0, 3, 0, 5), float32(0), F32List(1, 3, 5))
-	ConfirmDeleteAll(F32List(0, 1, 0, 3, 0, 5), float32(1), F32List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(F32List(0, 1, 0, 3, 0, 5), float32(6), F32List(0, 1, 0, 3, 0, 5))
-}
-
 func TestF32SliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *F32Slice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *F32Slice, f interface{}, r *F32Slice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), F32List(1, 3, 5), func(x interface{}) bool { return x == float32(0) })
-	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), F32List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == float32(1) })
-	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), F32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float32(6) })
-}
+	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), float32(0), F32List(1, 3, 5))
+	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), float32(1), F32List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), float32(6), F32List(0, 1, 0, 3, 0, 5))
 
-func TestF32SliceF32DeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *F32Slice, f func(float32) bool) {
-		if s.F32DeleteIf(f); !r.Equal(s) {
-			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
-		}
-	}
+	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float32(0) }, F32List(1, 3, 5))
+	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float32(1) }, F32List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float32(6) }, F32List(0, 1, 0, 3, 0, 5))
 
-	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), F32List(1, 3, 5), func(x float32) bool { return x == float32(0) })
-	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), F32List(0, 0, 3, 0, 5), func(x float32) bool { return x == float32(1) })
-	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), F32List(0, 1, 0, 3, 0, 5), func(x float32) bool { return x == float32(6) })
+	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), func(x float32) bool { return x == float32(0) }, F32List(1, 3, 5))
+	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), func(x float32) bool { return x == float32(1) }, F32List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(F32List(0, 1, 0, 3, 0, 5), func(x float32) bool { return x == float32(6) }, F32List(0, 1, 0, 3, 0, 5))
 }
 
 func TestF32SliceEach(t *testing.T) {
-	c := F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	count := 0
-	c.Each(func(i interface{}) {
+	F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
 		if i != float32(count) {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestF32SliceEachWithIndex(t *testing.T) {
-	c := F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachWithIndex(func(index int, i interface{}) {
+	F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
 		if i != float32(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestF32SliceEachWithKey(t *testing.T) {
-	c := F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachWithKey(func(key, i interface{}) {
+	F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
 		if i != float32(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
-}
 
-func TestF32SliceF32Each(t *testing.T) {
-	c := F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	count := 0
-	c.F32Each(func(f float32) {
+	count = 0
+	F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(f float32) {
 		if f != float32(count) {
 			t.Fatalf("element %v erroneously reported as %v", count, f)
 		}
 		count++
 	})
-}
 
-func TestF32SliceF32EachWithIndex(t *testing.T) {
-	c := F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.F32EachWithIndex(func(index int, f float32) {
+	F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, f float32) {
 		if f != float32(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, f)
 		}
 	})
-}
 
-func TestF32SliceF32EachWithKey(t *testing.T) {
-	c := F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.F32EachWithKey(func(key interface{}, f float32) {
+	F32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, f float32) {
 		if f != float32(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, f)
 		}
@@ -391,19 +347,10 @@ func TestF32SliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(F32List(), float32(0), F32List(0))
-}
 
-func TestF32SliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *F32Slice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(F32List(), F32List(0), F32List(0))
-	ConfirmAppendSlice(F32List(), F32List(0, 1), F32List(0, 1))
-	ConfirmAppendSlice(F32List(0, 1, 2), F32List(3, 4), F32List(0, 1, 2, 3, 4))
+	ConfirmAppend(F32List(), F32List(0), F32List(0))
+	ConfirmAppend(F32List(), F32List(0, 1), F32List(0, 1))
+	ConfirmAppend(F32List(0, 1, 2), F32List(3, 4), F32List(0, 1, 2, 3, 4))
 }
 
 func TestF32SlicePrepend(t *testing.T) {
@@ -415,18 +362,10 @@ func TestF32SlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(F32List(), float32(0), F32List(0))
 	ConfirmPrepend(F32List(0), float32(1), F32List(1, 0))
-}
 
-func TestF32SlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *F32Slice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
-			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrependSlice(F32List(), F32List(0), F32List(0))
-	ConfirmPrependSlice(F32List(), F32List(0, 1), F32List(0, 1))
-	ConfirmPrependSlice(F32List(0, 1, 2), F32List(3, 4), F32List(3, 4, 0, 1, 2))
+	ConfirmPrepend(F32List(), F32List(0), F32List(0))
+	ConfirmPrepend(F32List(), F32List(0, 1), F32List(0, 1))
+	ConfirmPrepend(F32List(0, 1, 2), F32List(3, 4), F32List(3, 4, 0, 1, 2))
 }
 
 func TestF32SliceRepeat(t *testing.T) {

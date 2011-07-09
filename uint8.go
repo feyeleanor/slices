@@ -109,95 +109,50 @@ func (s *U8Slice) Delete(i int) {
 	}
 }
 
-func (s *U8Slice) DeleteAll(x interface{}) {
+func (s *U8Slice) DeleteIf(f interface{}) {
 	a := *s
 	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
+	switch f := f.(type) {
+	case uint8:						for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v != f {
+											p++
+										}
+									}
+
+	case func(uint8) bool:			for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
 	}
 	*s = a[:p]
 }
 
-func (s *U8Slice) U8DeleteAll(x uint8) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *U8Slice) DeleteIf(f func(interface{}) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *U8Slice) U8DeleteIf(f func(uint8) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s U8Slice) Each(f func(interface{})) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s U8Slice) EachWithIndex(f func(int, interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s U8Slice) EachWithKey(f func(key, value interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s U8Slice) U8Each(f func(uint8)) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s U8Slice) U8EachWithIndex(f func(int, uint8)) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s U8Slice) U8EachWithKey(f func(interface{}, uint8)) {
-	for i, v := range s {
-		f(i, v)
+func (s U8Slice) Each(f interface{}) {
+	switch f := f.(type) {
+	case func(uint8):						for _, v := range s { f(v) }
+	case func(int, uint8):					for i, v := range s { f(i, v) }
+	case func(interface{}, uint8):			for i, v := range s { f(i, v) }
+	case func(interface{}):					for _, v := range s { f(v) }
+	case func(int, interface{}):			for i, v := range s { f(i, v) }
+	case func(interface{}, interface{}):	for i, v := range s { f(i, v) }
 	}
 }
 
@@ -292,35 +247,35 @@ func (s U8Slice) Depth() int {
 }
 
 func (s *U8Slice) Append(v interface{}) {
-	s.U8Append(v.(uint8))
-}
-
-func (s *U8Slice) U8Append(v uint8) {
-	*s = append(*s, v)
-}
-
-func (s *U8Slice) AppendSlice(o U8Slice) {
-	*s = append(*s, o...)
+	switch v := v.(type) {
+	case uint8:				*s = append(*s, v)
+	case U8Slice:			*s = append(*s, v...)
+	case *U8Slice:			*s = append(*s, (*v)...)
+	case []uint8:			s.Append(U8Slice(v))
+	case *[]uint8:			s.Append(U8Slice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s *U8Slice) Prepend(v interface{}) {
-	s.U8Prepend(v.(uint8))
-}
+	switch v := v.(type) {
+	case uint8:				l := s.Len() + 1
+							n := make(U8Slice, l, l)
+							n[0] = v
+							copy(n[1:], *s)
+							*s = n
 
-func (s *U8Slice) U8Prepend(v uint8) {
-	l := s.Len() + 1
-	n := make(U8Slice, l, l)
-	n[0] = v
-	copy(n[1:], *s)
-	*s = n
-}
+	case U8Slice:			l := s.Len() + len(v)
+							n := make(U8Slice, l, l)
+							copy(n, v)
+							copy(n[len(v):], *s)
+							*s = n
 
-func (s *U8Slice) PrependSlice(o U8Slice) {
-	l := s.Len() + o.Len()
-	n := make(U8Slice, l, l)
-	copy(n, o)
-	copy(n[o.Len():], *s)
-	*s = n
+	case *U8Slice:			s.Prepend(*v)
+	case []uint8:			s.Prepend(U8Slice(v))
+	case *[]uint8:			s.Prepend(U8Slice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s U8Slice) Repeat(count int) U8Slice {

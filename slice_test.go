@@ -179,53 +179,38 @@ func TestSliceDelete(t *testing.T) {
 	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 6, List(0, 1, 2, 3, 4, 5))
 }
 
-func TestSliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *Slice, v interface{}, r *Slice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(List(0, 1, 0, 3, 0, 5), 0, List(1, 3, 5))
-	ConfirmDeleteAll(List(0, 1, 0, 3, 0, 5), 1, List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(List(0, 1, 0, 3, 0, 5), 6, List(0, 1, 0, 3, 0, 5))
-}
-
 func TestSliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *Slice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *Slice, f interface{}, r *Slice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), List(1, 3, 5), func(x interface{}) bool { return x == 0 })
-	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == 1 })
-	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 6 })
+	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), 0, List(1, 3, 5))
+	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), 1, List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), 6, List(0, 1, 0, 3, 0, 5))
+
+	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 0 }, List(1, 3, 5))
+	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 1 }, List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 6 }, List(0, 1, 0, 3, 0, 5))
 }
 
 func TestSliceEach(t *testing.T) {
-	c := List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	count := 0
-	c.Each(func(i interface{}) {
+	List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestSliceEachWithIndex(t *testing.T) {
-	c := List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachWithIndex(func(index int, i interface{}) {
+	List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
 		if i != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestSliceEachWithKey(t *testing.T) {
-	c := List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachWithKey(func(key, i interface{}) {
+	List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
 		if i != key {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -374,20 +359,9 @@ func TestSliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(List(), 0, List(0))
-	ConfirmAppend(List(), List(0, 1), List(List(0, 1)))
-	ConfirmAppend(List(0, 1, 2), List(3, 4), List(0, 1, 2, List(3, 4)))
-}
-
-func TestSliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *Slice) {
-		if s.AppendSlice(*v); !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(List(), List(0), List(0))
-	ConfirmAppendSlice(List(), List(0, 1), List(0, 1))
-	ConfirmAppendSlice(List(0, 1, 2), List(3, 4), List(0, 1, 2, 3, 4))
+	ConfirmAppend(List(), List(0), List(0))
+	ConfirmAppend(List(), List(0, 1), List(0, 1))
+	ConfirmAppend(List(0, 1, 2), List(3, 4), List(0, 1, 2, 3, 4))
 }
 
 func TestSlicePrepend(t *testing.T) {
@@ -399,19 +373,32 @@ func TestSlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(List(), 0, List(0))
 	ConfirmPrepend(List(0), 1, List(1, 0))
-	ConfirmPrepend(List(0, 1, 2), List(3, 4), List(List(3, 4), 0, 1, 2))
+
+	ConfirmPrepend(List(), List(0), List(0))
+	ConfirmPrepend(List(), List(0, 1), List(0, 1))
+	ConfirmPrepend(List(0, 1, 2), List(3, 4), List(3, 4, 0, 1, 2))
+}
+
+func TestSliceAppendSlice(t *testing.T) {
+	ConfirmAppendSlice := func(s *Slice, v interface{}, r *Slice) {
+		if s.AppendSlice(v); !r.Equal(s) {
+			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmAppendSlice(List(), List(0, 1), List(List(0, 1)))
+	ConfirmAppendSlice(List(0, 1, 2), List(3, 4), List(0, 1, 2, List(3, 4)))
 }
 
 func TestSlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *Slice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
+	ConfirmPrependSlice := func(s *Slice, v interface{}, r *Slice) {
+		if s.PrependSlice(v); !r.Equal(s) {
 			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
 		}
 	}
 
-	ConfirmPrependSlice(List(), List(0), List(0))
-	ConfirmPrependSlice(List(), List(0, 1), List(0, 1))
-	ConfirmPrependSlice(List(0, 1, 2), List(3, 4), List(3, 4, 0, 1, 2))
+	ConfirmPrependSlice(List(), List(0, 1), List(List(0, 1)))
+	ConfirmPrependSlice(List(0, 1, 2), List(3, 4), List(List(3, 4), 0, 1, 2))
 }
 
 func TestSliceRepeat(t *testing.T) {

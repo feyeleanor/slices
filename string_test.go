@@ -143,94 +143,62 @@ func TestSSliceDelete(t *testing.T) {
 	ConfirmDelete(SList("A", "B", "C", "D", "E", "F"), 6, SList("A", "B", "C", "D", "E", "F"))
 }
 
-func TestSSliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *SSlice, v interface{}, r *SSlice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(SList("A", "B", "A", "C", "A", "E"), string("A"), SList("B", "C", "E"))
-	ConfirmDeleteAll(SList("A", "B", "A", "C", "A", "E"), string("B"), SList("A", "A", "C", "A", "E"))
-	ConfirmDeleteAll(SList("A", "B", "A", "C", "A", "E"), string("F"), SList("A", "B", "A", "C", "A", "E"))
-}
-
 func TestSSliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *SSlice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *SSlice, f interface{}, r *SSlice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("B", "C", "E"), func(x interface{}) bool { return x == "A" })
-	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("A", "A", "C", "A", "E"), func(x interface{}) bool { return x == "B" })
-	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("A", "B", "A", "C", "A", "E"), func(x interface{}) bool { return x == "F" })
-}
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), string("A"), SList("B", "C", "E"))
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), string("B"), SList("A", "A", "C", "A", "E"))
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), string("F"), SList("A", "B", "A", "C", "A", "E"))
 
-func TestSSliceSDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *SSlice, f func(string) bool) {
-		if s.SDeleteIf(f); !r.Equal(s) {
-			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
-		}
-	}
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), func(x interface{}) bool { return x == "A" }, SList("B", "C", "E"))
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), func(x interface{}) bool { return x == "B" }, SList("A", "A", "C", "A", "E"))
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), func(x interface{}) bool { return x == "F" }, SList("A", "B", "A", "C", "A", "E"))
 
-	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("B", "C", "E"), func(x string) bool { return x == "A" })
-	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("A", "A", "C", "A", "E"), func(x string) bool { return x == "B" })
-	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), SList("A", "B", "A", "C", "A", "E"), func(x string) bool { return x == "F" })
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), func(x string) bool { return x == "A" }, SList("B", "C", "E"))
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), func(x string) bool { return x == "B" }, SList("A", "A", "C", "A", "E"))
+	ConfirmDeleteIf(SList("A", "B", "A", "C", "A", "E"), func(x string) bool { return x == "F" }, SList("A", "B", "A", "C", "A", "E"))
 }
 
 func TestSSliceEach(t *testing.T) {
-	c := SList("A", "B", "C", "D", "E", "F")
 	count := 0
-	c.Each(func(i interface{}) {
+	SList("A", "B", "C", "D", "E", "F").Each(func(i interface{}) {
 		if i != string([]byte{ byte(count) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestSSliceEachWithIndex(t *testing.T) {
-	c := SList("A", "B", "C", "D", "E", "F")
-	c.EachWithIndex(func(index int, i interface{}) {
+	SList("A", "B", "C", "D", "E", "F").Each(func(index int, i interface{}) {
 		if i != string([]byte{ byte(index) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestSSliceEachWithKey(t *testing.T) {
-	c := SList("A", "B", "C", "D", "E", "F")
-	c.EachWithKey(func(key, i interface{}) {
+	SList("A", "B", "C", "D", "E", "F").Each(func(key, i interface{}) {
 		if i != string([]byte{ byte(key.(int)) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
-}
 
-func TestSSliceIEach(t *testing.T) {
-	c := SList("A", "B", "C", "D", "E", "F")
-	count := 0
-	c.SEach(func(i string) {
+	count = 0
+	SList("A", "B", "C", "D", "E", "F").Each(func(i string) {
 		if i != string([]byte{ byte(count) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestSSliceIEachWithIndex(t *testing.T) {
-	c := SList("A", "B", "C", "D", "E", "F")
-	c.SEachWithIndex(func(index int, i string) {
+	SList("A", "B", "C", "D", "E", "F").Each(func(index int, i string) {
 		if i != string([]byte{ byte(index) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestSSliceIEachWithKey(t *testing.T) {
-	c := SList("A", "B", "C", "D", "E", "F")
-	c.SEachWithKey(func(key interface{}, i string) {
+	SList("A", "B", "C", "D", "E", "F").Each(func(key interface{}, i string) {
 		if i != string([]byte{ byte(key.(int)) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -367,19 +335,10 @@ func TestSSliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(SList(), "A", SList("A"))
-}
 
-func TestSSliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *SSlice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(SList(), SList("A"), SList("A"))
-	ConfirmAppendSlice(SList(), SList("A", "B"), SList("A", "B"))
-	ConfirmAppendSlice(SList("A", "B", "C"), SList("D", "E", "F"), SList("A", "B", "C", "D", "E", "F"))
+	ConfirmAppend(SList(), SList("A"), SList("A"))
+	ConfirmAppend(SList(), SList("A", "B"), SList("A", "B"))
+	ConfirmAppend(SList("A", "B", "C"), SList("D", "E", "F"), SList("A", "B", "C", "D", "E", "F"))
 }
 
 func TestSSlicePrepend(t *testing.T) {
@@ -391,18 +350,10 @@ func TestSSlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(SList(), "A", SList("A"))
 	ConfirmPrepend(SList("A"), "B", SList("B", "A"))
-}
 
-func TestSSlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *SSlice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
-			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrependSlice(SList(), SList("A"), SList("A"))
-	ConfirmPrependSlice(SList(), SList("A", "B"), SList("A", "B"))
-	ConfirmPrependSlice(SList("A", "B", "C"), SList("D", "E", "F"), SList("D", "E", "F", "A", "B", "C"))
+	ConfirmPrepend(SList(), SList("A"), SList("A"))
+	ConfirmPrepend(SList(), SList("A", "B"), SList("A", "B"))
+	ConfirmPrepend(SList("A", "B", "C"), SList("D", "E", "F"), SList("D", "E", "F", "A", "B", "C"))
 }
 
 func TestSSliceRepeat(t *testing.T) {

@@ -103,95 +103,50 @@ func (s *F32Slice) Delete(i int) {
 	}
 }
 
-func (s *F32Slice) DeleteAll(x interface{}) {
+func (s *F32Slice) DeleteIf(f interface{}) {
 	a := *s
 	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
+	switch f := f.(type) {
+	case float32:					for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v != f {
+											p++
+										}
+									}
+
+	case func(float32) bool:		for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
 	}
 	*s = a[:p]
 }
 
-func (s *F32Slice) F32DeleteAll(x float32) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *F32Slice) DeleteIf(f func(interface{}) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *F32Slice) F32DeleteIf(f func(float32) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s F32Slice) Each(f func(interface{})) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s F32Slice) EachWithIndex(f func(int, interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s F32Slice) EachWithKey(f func(key, value interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s F32Slice) F32Each(f func(float32)) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s F32Slice) F32EachWithIndex(f func(int, float32)) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s F32Slice) F32EachWithKey(f func(interface{}, float32)) {
-	for i, v := range s {
-		f(i, v)
+func (s F32Slice) Each(f interface{}) {
+	switch f := f.(type) {
+	case func(float32):						for _, v := range s { f(v) }
+	case func(int, float32):				for i, v := range s { f(i, v) }
+	case func(interface{}, float32):		for i, v := range s { f(i, v) }
+	case func(interface{}):					for _, v := range s { f(v) }
+	case func(int, interface{}):			for i, v := range s { f(i, v) }
+	case func(interface{}, interface{}):	for i, v := range s { f(i, v) }
 	}
 }
 
@@ -286,35 +241,35 @@ func (s F32Slice) Depth() int {
 }
 
 func (s *F32Slice) Append(v interface{}) {
-	s.F32Append(v.(float32))
-}
-
-func (s *F32Slice) F32Append(v float32) {
-	*s = append(*s, v)
-}
-
-func (s *F32Slice) AppendSlice(o F32Slice) {
-	*s = append(*s, o...)
+	switch v := v.(type) {
+	case float32:			*s = append(*s, v)
+	case F32Slice:			*s = append(*s, v...)
+	case *F32Slice:			*s = append(*s, (*v)...)
+	case []float32:			s.Append(F32Slice(v))
+	case *[]float32:		s.Append(F32Slice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s *F32Slice) Prepend(v interface{}) {
-	s.F32Prepend(v.(float32))
-}
+	switch v := v.(type) {
+	case float32:			l := s.Len() + 1
+							n := make(F32Slice, l, l)
+							n[0] = v
+							copy(n[1:], *s)
+							*s = n
 
-func (s *F32Slice) F32Prepend(v float32) {
-	l := s.Len() + 1
-	n := make(F32Slice, l, l)
-	n[0] = v
-	copy(n[1:], *s)
-	*s = n
-}
+	case F32Slice:			l := s.Len() + len(v)
+							n := make(F32Slice, l, l)
+							copy(n, v)
+							copy(n[len(v):], *s)
+							*s = n
 
-func (s *F32Slice) PrependSlice(o F32Slice) {
-	l := s.Len() + o.Len()
-	n := make(F32Slice, l, l)
-	copy(n, o)
-	copy(n[o.Len():], *s)
-	*s = n
+	case *F32Slice:			s.Prepend(*v)
+	case []float32:			s.Prepend(F32Slice(v))
+	case *[]float32:		s.Prepend(F32Slice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s F32Slice) Repeat(count int) F32Slice {

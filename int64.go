@@ -110,95 +110,50 @@ func (s *I64Slice) Delete(i int) {
 	}
 }
 
-func (s *I64Slice) DeleteAll(x interface{}) {
+func (s *I64Slice) DeleteIf(f interface{}) {
 	a := *s
 	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
+	switch f := f.(type) {
+	case int64:						for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v != f {
+											p++
+										}
+									}
+
+	case func(int64) bool:			for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
 	}
 	*s = a[:p]
 }
 
-func (s *I64Slice) I64DeleteAll(x int64) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *I64Slice) DeleteIf(f func(interface{}) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *I64Slice) I64DeleteIf(f func(int64) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s I64Slice) Each(f func(interface{})) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s I64Slice) EachWithIndex(f func(int, interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s I64Slice) EachWithKey(f func(key, value interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s I64Slice) I64Each(f func(int64)) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s I64Slice) I64EachWithIndex(f func(int, int64)) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s I64Slice) I64EachWithKey(f func(interface{}, int64)) {
-	for i, v := range s {
-		f(i, v)
+func (s I64Slice) Each(f interface{}) {
+	switch f := f.(type) {
+	case func(int64):						for _, v := range s { f(v) }
+	case func(int, int64):					for i, v := range s { f(i, v) }
+	case func(interface{}, int64):			for i, v := range s { f(i, v) }
+	case func(interface{}):					for _, v := range s { f(v) }
+	case func(int, interface{}):			for i, v := range s { f(i, v) }
+	case func(interface{}, interface{}):	for i, v := range s { f(i, v) }
 	}
 }
 
@@ -293,35 +248,35 @@ func (s I64Slice) Depth() int {
 }
 
 func (s *I64Slice) Append(v interface{}) {
-	s.I64Append(v.(int64))
-}
-
-func (s *I64Slice) I64Append(v int64) {
-	*s = append(*s, v)
-}
-
-func (s *I64Slice) AppendSlice(o I64Slice) {
-	*s = append(*s, o...)
+	switch v := v.(type) {
+	case int64:				*s = append(*s, v)
+	case I64Slice:			*s = append(*s, v...)
+	case *I64Slice:			*s = append(*s, (*v)...)
+	case []int64:			s.Append(I64Slice(v))
+	case *[]int64:			s.Append(I64Slice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s *I64Slice) Prepend(v interface{}) {
-	s.I64Prepend(v.(int64))
-}
+	switch v := v.(type) {
+	case int64:				l := s.Len() + 1
+							n := make(I64Slice, l, l)
+							n[0] = v
+							copy(n[1:], *s)
+							*s = n
 
-func (s *I64Slice) I64Prepend(v int64) {
-	l := s.Len() + 1
-	n := make(I64Slice, l, l)
-	n[0] = v
-	copy(n[1:], *s)
-	*s = n
-}
+	case I64Slice:			l := s.Len() + len(v)
+							n := make(I64Slice, l, l)
+							copy(n, v)
+							copy(n[len(v):], *s)
+							*s = n
 
-func (s *I64Slice) PrependSlice(o I64Slice) {
-	l := s.Len() + o.Len()
-	n := make(I64Slice, l, l)
-	copy(n, o)
-	copy(n[o.Len():], *s)
-	*s = n
+	case *I64Slice:			s.Prepend(*v)
+	case []int64:			s.Prepend(I64Slice(v))
+	case *[]int64:			s.Prepend(I64Slice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s I64Slice) Repeat(count int) I64Slice {

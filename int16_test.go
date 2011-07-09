@@ -155,52 +155,24 @@ func TestI16SliceDelete(t *testing.T) {
 	ConfirmDelete(I16List(0, 1, 2, 3, 4, 5), 6, I16List(0, 1, 2, 3, 4, 5))
 }
 
-func TestI16SliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *I16Slice, v interface{}, r *I16Slice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(0), I16List(1, 3, 5))
-	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(1), I16List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(6), I16List(0, 1, 0, 3, 0, 5))
-}
-
-func TestI16SliceI16DeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *I16Slice, v int16, r *I16Slice) {
-		if s.I16DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(0), I16List(1, 3, 5))
-	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(1), I16List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(I16List(0, 1, 0, 3, 0, 5), int16(6), I16List(0, 1, 0, 3, 0, 5))
-}
-
 func TestI16SliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *I16Slice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *I16Slice, f interface{}, r *I16Slice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(1, 3, 5), func(x interface{}) bool { return x == int16(0) })
-	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == int16(1) })
-	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int16(6) })
-}
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), int16(0), I16List(1, 3, 5))
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), int16(1), I16List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), int16(6), I16List(0, 1, 0, 3, 0, 5))
 
-func TestI16SliceI16DeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *I16Slice, f func(int16) bool) {
-		if s.I16DeleteIf(f); !r.Equal(s) {
-			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
-		}
-	}
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int16(0) }, I16List(1, 3, 5))
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int16(1) }, I16List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int16(6) }, I16List(0, 1, 0, 3, 0, 5))
 
-	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(1, 3, 5), func(x int16) bool { return x == int16(0) })
-	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(0, 0, 3, 0, 5), func(x int16) bool { return x == int16(1) })
-	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), I16List(0, 1, 0, 3, 0, 5), func(x int16) bool { return x == int16(6) })
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), func(x int16) bool { return x == int16(0) }, I16List(1, 3, 5))
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), func(x int16) bool { return x == int16(1) }, I16List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(I16List(0, 1, 0, 3, 0, 5), func(x int16) bool { return x == int16(6) }, I16List(0, 1, 0, 3, 0, 5))
 }
 
 func TestI16SliceEach(t *testing.T) {
@@ -211,45 +183,34 @@ func TestI16SliceEach(t *testing.T) {
 		}
 		count++
 	})
-}
 
-func TestI16SliceEachWithIndex(t *testing.T) {
-	I16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithIndex(func(index int, i interface{}) {
+	I16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
 		if i != int16(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestI16SliceEachWithKey(t *testing.T) {
-	I16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithKey(func(key, i interface{}) {
+	I16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
 		if i != int16(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
-}
 
-func TestI16SliceI16Each(t *testing.T) {
-	var count	int16
-	I16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).I16Each(func(i int16) {
+	count = 0
+	I16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i int16) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestI16SliceI16EachWithIndex(t *testing.T) {
-	I16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).I16EachWithIndex(func(index int, i int16) {
+	I16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i int16) {
 		if i != int16(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestI16SliceI16EachWithKey(t *testing.T) {
-	c := I16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.I16EachWithKey(func(key interface{}, i int16) {
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i int16) {
 		if i != int16(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -386,19 +347,10 @@ func TestI16SliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(I16List(), int16(0), I16List(0))
-}
 
-func TestI16SliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *I16Slice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(I16List(), I16List(0), I16List(0))
-	ConfirmAppendSlice(I16List(), I16List(0, 1), I16List(0, 1))
-	ConfirmAppendSlice(I16List(0, 1, 2), I16List(3, 4), I16List(0, 1, 2, 3, 4))
+	ConfirmAppend(I16List(), I16List(0), I16List(0))
+	ConfirmAppend(I16List(), I16List(0, 1), I16List(0, 1))
+	ConfirmAppend(I16List(0, 1, 2), I16List(3, 4), I16List(0, 1, 2, 3, 4))
 }
 
 func TestI16SlicePrepend(t *testing.T) {
@@ -410,18 +362,10 @@ func TestI16SlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(I16List(), int16(0), I16List(0))
 	ConfirmPrepend(I16List(0), int16(1), I16List(1, 0))
-}
 
-func TestI16SlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *I16Slice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
-			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrependSlice(I16List(), I16List(0), I16List(0))
-	ConfirmPrependSlice(I16List(), I16List(0, 1), I16List(0, 1))
-	ConfirmPrependSlice(I16List(0, 1, 2), I16List(3, 4), I16List(3, 4, 0, 1, 2))
+	ConfirmPrepend(I16List(), I16List(0), I16List(0))
+	ConfirmPrepend(I16List(), I16List(0, 1), I16List(0, 1))
+	ConfirmPrepend(I16List(0, 1, 2), I16List(3, 4), I16List(3, 4, 0, 1, 2))
 }
 
 func TestI16SliceRepeat(t *testing.T) {

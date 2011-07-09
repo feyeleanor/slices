@@ -155,52 +155,24 @@ func TestU8SliceDelete(t *testing.T) {
 	ConfirmDelete(U8List(0, 1, 2, 3, 4, 5), 6, U8List(0, 1, 2, 3, 4, 5))
 }
 
-func TestU8SliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *U8Slice, v interface{}, r *U8Slice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(U8List(0, 1, 0, 3, 0, 5), uint8(0), U8List(1, 3, 5))
-	ConfirmDeleteAll(U8List(0, 1, 0, 3, 0, 5), uint8(1), U8List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(U8List(0, 1, 0, 3, 0, 5), uint8(6), U8List(0, 1, 0, 3, 0, 5))
-}
-
-func TestU8SliceU8DeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *U8Slice, v uint8, r *U8Slice) {
-		if s.U8DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(U8List(0, 1, 0, 3, 0, 5), uint8(0), U8List(1, 3, 5))
-	ConfirmDeleteAll(U8List(0, 1, 0, 3, 0, 5), uint8(1), U8List(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(U8List(0, 1, 0, 3, 0, 5), uint8(6), U8List(0, 1, 0, 3, 0, 5))
-}
-
 func TestU8SliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *U8Slice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *U8Slice, f interface{}, r *U8Slice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), U8List(1, 3, 5), func(x interface{}) bool { return x == uint8(0) })
-	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), U8List(0, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(1) })
-	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(6) })
-}
+	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), uint8(0), U8List(1, 3, 5))
+	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), uint8(1), U8List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), uint8(6), U8List(0, 1, 0, 3, 0, 5))
 
-func TestU8SliceU8DeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *U8Slice, f func(uint8) bool) {
-		if s.U8DeleteIf(f); !r.Equal(s) {
-			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
-		}
-	}
+	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(0) }, U8List(1, 3, 5))
+	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(1) }, U8List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(6) }, U8List(0, 1, 0, 3, 0, 5))
 
-	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), U8List(1, 3, 5), func(x uint8) bool { return x == uint8(0) })
-	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), U8List(0, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(1) })
-	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(6) })
+	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(0) }, U8List(1, 3, 5))
+	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(1) }, U8List(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(6) }, U8List(0, 1, 0, 3, 0, 5))
 }
 
 func TestU8SliceEach(t *testing.T) {
@@ -211,45 +183,34 @@ func TestU8SliceEach(t *testing.T) {
 		}
 		count++
 	})
-}
 
-func TestU8SliceEachWithIndex(t *testing.T) {
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithIndex(func(index int, i interface{}) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
 		if i != uint8(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestU8SliceEachWithKey(t *testing.T) {
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).EachWithKey(func(key, i interface{}) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
 		if i != uint8(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
-}
 
-func TestU8SliceU8Each(t *testing.T) {
-	var count	uint8
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).U8Each(func(i uint8) {
+	count = 0
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i uint8) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestU8SliceU8EachWithIndex(t *testing.T) {
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).U8EachWithIndex(func(index int, i uint8) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i uint8) {
 		if i != uint8(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestU8SliceU8EachWithKey(t *testing.T) {
-	c := U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.U8EachWithKey(func(key interface{}, i uint8) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i uint8) {
 		if i != uint8(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -386,19 +347,10 @@ func TestU8SliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(U8List(), uint8(0), U8List(0))
-}
 
-func TestU8SliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *U8Slice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(U8List(), U8List(0), U8List(0))
-	ConfirmAppendSlice(U8List(), U8List(0, 1), U8List(0, 1))
-	ConfirmAppendSlice(U8List(0, 1, 2), U8List(3, 4), U8List(0, 1, 2, 3, 4))
+	ConfirmAppend(U8List(), U8List(0), U8List(0))
+	ConfirmAppend(U8List(), U8List(0, 1), U8List(0, 1))
+	ConfirmAppend(U8List(0, 1, 2), U8List(3, 4), U8List(0, 1, 2, 3, 4))
 }
 
 func TestU8SlicePrepend(t *testing.T) {
@@ -410,18 +362,10 @@ func TestU8SlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(U8List(), uint8(0), U8List(0))
 	ConfirmPrepend(U8List(0), uint8(1), U8List(1, 0))
-}
 
-func TestU8SlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *U8Slice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
-			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrependSlice(U8List(), U8List(0), U8List(0))
-	ConfirmPrependSlice(U8List(), U8List(0, 1), U8List(0, 1))
-	ConfirmPrependSlice(U8List(0, 1, 2), U8List(3, 4), U8List(3, 4, 0, 1, 2))
+	ConfirmPrepend(U8List(), U8List(0), U8List(0))
+	ConfirmPrepend(U8List(), U8List(0, 1), U8List(0, 1))
+	ConfirmPrepend(U8List(0, 1, 2), U8List(3, 4), U8List(3, 4, 0, 1, 2))
 }
 
 func TestU8SliceRepeat(t *testing.T) {

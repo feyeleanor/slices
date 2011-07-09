@@ -81,95 +81,50 @@ func (s *SSlice) Delete(i int) {
 	}
 }
 
-func (s *SSlice) DeleteAll(x interface{}) {
+func (s *SSlice) DeleteIf(f interface{}) {
 	a := *s
 	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
+	switch f := f.(type) {
+	case string:					for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v != f {
+											p++
+										}
+									}
+
+	case func(string) bool:			for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if !f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
 	}
 	*s = a[:p]
 }
 
-func (s *SSlice) SDeleteAll(x string) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if v != x {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *SSlice) DeleteIf(f func(interface{}) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s *SSlice) SDeleteIf(f func(string) bool) {
-	a := *s
-	p := 0
-	for i, v := range a {
-		if i != p {
-			a[p] = v
-		}
-		if !f(v) {
-			p++
-		}
-	}
-	*s = a[:p]
-}
-
-func (s SSlice) Each(f func(interface{})) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s SSlice) EachWithIndex(f func(int, interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s SSlice) EachWithKey(f func(key, value interface{})) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s SSlice) SEach(f func(string)) {
-	for _, v := range s {
-		f(v)
-	}
-}
-
-func (s SSlice) SEachWithIndex(f func(int, string)) {
-	for i, v := range s {
-		f(i, v)
-	}
-}
-
-func (s SSlice) SEachWithKey(f func(interface{}, string)) {
-	for i, v := range s {
-		f(i, v)
+func (s SSlice) Each(f interface{}) {
+	switch f := f.(type) {
+	case func(string):						for _, v := range s { f(v) }
+	case func(int, string):					for i, v := range s { f(i, v) }
+	case func(interface{}, string):			for i, v := range s { f(i, v) }
+	case func(interface{}):					for _, v := range s { f(v) }
+	case func(int, interface{}):			for i, v := range s { f(i, v) }
+	case func(interface{}, interface{}):	for i, v := range s { f(i, v) }
 	}
 }
 
@@ -264,35 +219,35 @@ func (s SSlice) Depth() int {
 }
 
 func (s *SSlice) Append(v interface{}) {
-	s.SAppend(v.(string))
-}
-
-func (s *SSlice) SAppend(v string) {
-	*s = append(*s, v)
-}
-
-func (s *SSlice) AppendSlice(o SSlice) {
-	*s = append(*s, o...)
+	switch v := v.(type) {
+	case string:			*s = append(*s, v)
+	case SSlice:			*s = append(*s, v...)
+	case *SSlice:			*s = append(*s, (*v)...)
+	case []string:			s.Append(SSlice(v))
+	case *[]string:			s.Append(SSlice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s *SSlice) Prepend(v interface{}) {
-	s.SPrepend(v.(string))
-}
+	switch v := v.(type) {
+	case string:			l := s.Len() + 1
+							n := make(SSlice, l, l)
+							n[0] = v
+							copy(n[1:], *s)
+							*s = n
 
-func (s *SSlice) SPrepend(v string) {
-	l := s.Len() + 1
-	n := make(SSlice, l, l)
-	n[0] = v
-	copy(n[1:], *s)
-	*s = n
-}
+	case SSlice:			l := s.Len() + len(v)
+							n := make(SSlice, l, l)
+							copy(n, v)
+							copy(n[len(v):], *s)
+							*s = n
 
-func (s *SSlice) PrependSlice(o SSlice) {
-	l := s.Len() + o.Len()
-	n := make(SSlice, l, l)
-	copy(n, o)
-	copy(n[o.Len():], *s)
-	*s = n
+	case *SSlice:			s.Prepend(*v)
+	case []string:			s.Prepend(SSlice(v))
+	case *[]string:			s.Prepend(SSlice(*v))
+	default:				panic(v)
+	}
 }
 
 func (s SSlice) Repeat(count int) SSlice {

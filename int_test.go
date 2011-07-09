@@ -155,106 +155,62 @@ func TestISliceDelete(t *testing.T) {
 	ConfirmDelete(IList(0, 1, 2, 3, 4, 5), 6, IList(0, 1, 2, 3, 4, 5))
 }
 
-func TestISliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *ISlice, v interface{}, r *ISlice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(IList(0, 1, 0, 3, 0, 5), int(0), IList(1, 3, 5))
-	ConfirmDeleteAll(IList(0, 1, 0, 3, 0, 5), int(1), IList(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(IList(0, 1, 0, 3, 0, 5), int(6), IList(0, 1, 0, 3, 0, 5))
-}
-
-func TestISliceIDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *ISlice, v int, r *ISlice) {
-		if s.IDeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(IList(0, 1, 0, 3, 0, 5), int(0), IList(1, 3, 5))
-	ConfirmDeleteAll(IList(0, 1, 0, 3, 0, 5), int(1), IList(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(IList(0, 1, 0, 3, 0, 5), int(6), IList(0, 1, 0, 3, 0, 5))
-}
-
 func TestISliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *ISlice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *ISlice, f interface{}, r *ISlice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), IList(1, 3, 5), func(x interface{}) bool { return x == int(0) })
-	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), IList(0, 0, 3, 0, 5), func(x interface{}) bool { return x == int(1) })
-	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), IList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int(6) })
-}
+	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), int(0), IList(1, 3, 5))
+	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), int(1), IList(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), int(6), IList(0, 1, 0, 3, 0, 5))
 
-func TestISliceIDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *ISlice, f func(int) bool) {
-		if s.IDeleteIf(f); !r.Equal(s) {
-			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
-		}
-	}
+	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int(0) }, IList(1, 3, 5))
+	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int(1) }, IList(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int(6) }, IList(0, 1, 0, 3, 0, 5))
 
-	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), IList(1, 3, 5), func(x int) bool { return x == int(0) })
-	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), IList(0, 0, 3, 0, 5), func(x int) bool { return x == int(1) })
-	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), IList(0, 1, 0, 3, 0, 5), func(x int) bool { return x == int(6) })
+	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), func(x int) bool { return x == int(0) }, IList(1, 3, 5))
+	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), func(x int) bool { return x == int(1) }, IList(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(IList(0, 1, 0, 3, 0, 5), func(x int) bool { return x == int(6) }, IList(0, 1, 0, 3, 0, 5))
 }
 
 func TestISliceEach(t *testing.T) {
-	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
 	count := 0
-	c.Each(func(i interface{}) {
+	IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestISliceEachWithIndex(t *testing.T) {
-	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachWithIndex(func(index int, i interface{}) {
+	IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
 		if i != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestISliceEachWithKey(t *testing.T) {
-	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachWithKey(func(key, i interface{}) {
+	IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
 		if i != key {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
-}
 
-func TestISliceIEach(t *testing.T) {
-	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	count := 0
-	c.IEach(func(i int) {
+	count = 0
+	IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i int) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestISliceIEachWithIndex(t *testing.T) {
-	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.IEachWithIndex(func(index int, i int) {
+	IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i int) {
 		if i != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestISliceIEachWithKey(t *testing.T) {
-	c := IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.IEachWithKey(func(key interface{}, i int) {
+	IList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i int) {
 		if i != key {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -391,19 +347,10 @@ func TestISliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(IList(), 0, IList(0))
-}
 
-func TestISliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *ISlice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(IList(), IList(0), IList(0))
-	ConfirmAppendSlice(IList(), IList(0, 1), IList(0, 1))
-	ConfirmAppendSlice(IList(0, 1, 2), IList(3, 4), IList(0, 1, 2, 3, 4))
+	ConfirmAppend(IList(), IList(0), IList(0))
+	ConfirmAppend(IList(), IList(0, 1), IList(0, 1))
+	ConfirmAppend(IList(0, 1, 2), IList(3, 4), IList(0, 1, 2, 3, 4))
 }
 
 func TestISlicePrepend(t *testing.T) {
@@ -415,18 +362,10 @@ func TestISlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(IList(), 0, IList(0))
 	ConfirmPrepend(IList(0), 1, IList(1, 0))
-}
 
-func TestISlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *ISlice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
-			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrependSlice(IList(), IList(0), IList(0))
-	ConfirmPrependSlice(IList(), IList(0, 1), IList(0, 1))
-	ConfirmPrependSlice(IList(0, 1, 2), IList(3, 4), IList(3, 4, 0, 1, 2))
+	ConfirmPrepend(IList(), IList(0), IList(0))
+	ConfirmPrepend(IList(), IList(0, 1), IList(0, 1))
+	ConfirmPrepend(IList(0, 1, 2), IList(3, 4), IList(3, 4, 0, 1, 2))
 }
 
 func TestISliceRepeat(t *testing.T) {

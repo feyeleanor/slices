@@ -155,104 +155,62 @@ func TestUSliceDelete(t *testing.T) {
 	ConfirmDelete(UList(0, 1, 2, 3, 4, 5), 6, UList(0, 1, 2, 3, 4, 5))
 }
 
-func TestUSliceDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *USlice, v interface{}, r *USlice) {
-		if s.DeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(UList(0, 1, 0, 3, 0, 5), uint(0), UList(1, 3, 5))
-	ConfirmDeleteAll(UList(0, 1, 0, 3, 0, 5), uint(1), UList(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(UList(0, 1, 0, 3, 0, 5), uint(6), UList(0, 1, 0, 3, 0, 5))
-}
-
-func TestUSliceUDeleteAll(t *testing.T) {
-	ConfirmDeleteAll := func(s *USlice, v uint, r *USlice) {
-		if s.UDeleteAll(v); !r.Equal(s) {
-			t.Fatalf("DeleteAll(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmDeleteAll(UList(0, 1, 0, 3, 0, 5), uint(0), UList(1, 3, 5))
-	ConfirmDeleteAll(UList(0, 1, 0, 3, 0, 5), uint(1), UList(0, 0, 3, 0, 5))
-	ConfirmDeleteAll(UList(0, 1, 0, 3, 0, 5), uint(6), UList(0, 1, 0, 3, 0, 5))
-}
-
 func TestUSliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *USlice, f func(interface{}) bool) {
+	ConfirmDeleteIf := func(s *USlice, f interface{}, r *USlice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), UList(1, 3, 5), func(x interface{}) bool { return x == uint(0) })
-	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), UList(0, 0, 3, 0, 5), func(x interface{}) bool { return x == uint(1) })
-	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), UList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint(6) })
-}
+	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), uint(0), UList(1, 3, 5))
+	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), uint(1), UList(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), uint(6), UList(0, 1, 0, 3, 0, 5))
 
-func TestUSliceUDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s, r *USlice, f func(uint) bool) {
-		if s.UDeleteIf(f); !r.Equal(s) {
-			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
-		}
-	}
+	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint(0) }, UList(1, 3, 5))
+	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint(1) }, UList(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint(6) }, UList(0, 1, 0, 3, 0, 5))
 
-	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), UList(1, 3, 5), func(x uint) bool { return x == uint(0) })
-	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), UList(0, 0, 3, 0, 5), func(x uint) bool { return x == uint(1) })
-	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), UList(0, 1, 0, 3, 0, 5), func(x uint) bool { return x == uint(6) })
+	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), func(x uint) bool { return x == uint(0) }, UList(1, 3, 5))
+	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), func(x uint) bool { return x == uint(1) }, UList(0, 0, 3, 0, 5))
+	ConfirmDeleteIf(UList(0, 1, 0, 3, 0, 5), func(x uint) bool { return x == uint(6) }, UList(0, 1, 0, 3, 0, 5))
 }
 
 func TestUSliceEach(t *testing.T) {
-	c := UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	count := 0
-	c.Each(func(i interface{}) {
+	var	count	uint
+	UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
 		if i != uint(count) {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestUSliceEachWithIndex(t *testing.T) {
-	c := UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachWithIndex(func(index int, i interface{}) {
+	UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
 		if i != uint(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestUSliceEachWithKey(t *testing.T) {
-	c := UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.EachWithKey(func(key, i interface{}) {
+	UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
 		if i != uint(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
-}
 
-func TestUSliceUEach(t *testing.T) {
-	var count	uint
-	UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).UEach(func(i uint) {
+	count = 0
+	UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i uint) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
-}
 
-func TestUSliceUEachWithIndex(t *testing.T) {
-	UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).UEachWithIndex(func(index int, i uint) {
+	UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i uint) {
 		if i != uint(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
-}
 
-func TestUSliceUEachWithKey(t *testing.T) {
-	c := UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9)
-	c.UEachWithKey(func(key interface{}, i uint) {
+	UList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i uint) {
 		if i != uint(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -389,19 +347,10 @@ func TestUSliceAppend(t *testing.T) {
 	}
 
 	ConfirmAppend(UList(), uint(0), UList(0))
-}
 
-func TestUSliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s, v, r *USlice) {
-		s.AppendSlice(*v)
-		if !r.Equal(s) {
-			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppendSlice(UList(), UList(0), UList(0))
-	ConfirmAppendSlice(UList(), UList(0, 1), UList(0, 1))
-	ConfirmAppendSlice(UList(0, 1, 2), UList(3, 4), UList(0, 1, 2, 3, 4))
+	ConfirmAppend(UList(), UList(0), UList(0))
+	ConfirmAppend(UList(), UList(0, 1), UList(0, 1))
+	ConfirmAppend(UList(0, 1, 2), UList(3, 4), UList(0, 1, 2, 3, 4))
 }
 
 func TestUSlicePrepend(t *testing.T) {
@@ -413,18 +362,10 @@ func TestUSlicePrepend(t *testing.T) {
 
 	ConfirmPrepend(UList(), uint(0), UList(0))
 	ConfirmPrepend(UList(0), uint(1), UList(1, 0))
-}
 
-func TestUSlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s, v, r *USlice) {
-		if s.PrependSlice(*v); !r.Equal(s) {
-			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrependSlice(UList(), UList(0), UList(0))
-	ConfirmPrependSlice(UList(), UList(0, 1), UList(0, 1))
-	ConfirmPrependSlice(UList(0, 1, 2), UList(3, 4), UList(3, 4, 0, 1, 2))
+	ConfirmPrepend(UList(), UList(0), UList(0))
+	ConfirmPrepend(UList(), UList(0, 1), UList(0, 1))
+	ConfirmPrepend(UList(0, 1, 2), UList(3, 4), UList(3, 4, 0, 1, 2))
 }
 
 func TestUSliceRepeat(t *testing.T) {
