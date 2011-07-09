@@ -2,29 +2,6 @@ package slices
 
 import "testing"
 
-func TestF64Slice(t *testing.T) {
-	sxp := F64List(1)
-	switch {
-	case sxp.Len() != 1:			t.Fatalf("F64List(1) should allocate 1 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != float64(1):	t.Fatalf("F64List(1) element 0 should be 1 and not %v", sxp.At(0))
-	}
-
-	sxp = F64List(1, 2)
-	switch {
-	case sxp.Len() != 2:			t.Fatalf("F64List(1 2) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != float64(1):	t.Fatalf("F64List(1 2) element 0 should be 1 and not %v", sxp.At(0))
-	case sxp.At(1) != float64(2):	t.Fatalf("F64List(1 2) element 1 should be 2 and not %v", sxp.At(1))
-	}
-
-	sxp = F64List(1, 2, 3)
-	switch {
-	case sxp.Len() != 3:			t.Fatalf("F64List(1 2 3) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != float64(1):	t.Fatalf("F64List(1 2 3) element 0 should be 1 and not %v", sxp.At(0))
-	case sxp.At(1) != float64(2):	t.Fatalf("F64List(1 2 3) element 1 should be 2 and not %v", sxp.At(1))
-	case sxp.At(2) != float64(3):	t.Fatalf("F64List(1 2 3) element 2 should be 3 and not %v", sxp.At(2))
-	}
-}
-
 func TestF64SliceString(t *testing.T) {
 	ConfirmString := func(s *F64Slice, r string) {
 		if x := s.String(); x != r {

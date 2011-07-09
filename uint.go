@@ -13,9 +13,7 @@ func (s USlice) Len() int							{ return len(s) }
 func (s USlice) Cap() int							{ return cap(s) }
 
 func (s USlice) At(i int) interface{}				{ return s[i] }
-func (s USlice) UAt(i int) uint						{ return s[i] }
 func (s USlice) Set(i int, v interface{})			{ s[i] = v.(uint) }
-func (s USlice) USet(i int, v uint)					{ s[i] = v }
 func (s USlice) Clear(i int)						{ s[i] = 0 }
 func (s USlice) Swap(i, j int)						{ s[i], s[j] = s[j], s[i] }
 

@@ -12,9 +12,7 @@ func (s C128Slice) Len() int						{ return len(s) }
 func (s C128Slice) Cap() int						{ return cap(s) }
 
 func (s C128Slice) At(i int) interface{}			{ return s[i] }
-func (s C128Slice) C128At(i int) complex128			{ return s[i] }
 func (s C128Slice) Set(i int, v interface{})		{ s[i] = v.(complex128) }
-func (s C128Slice) C128Set(i int, v complex128)		{ s[i] = v }
 func (s C128Slice) Clear(i int)						{ s[i] = 0 }
 func (s C128Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 

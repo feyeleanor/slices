@@ -13,9 +13,7 @@ func (s U64Slice) Len() int							{ return len(s) }
 func (s U64Slice) Cap() int							{ return cap(s) }
 
 func (s U64Slice) At(i int) interface{}				{ return s[i] }
-func (s U64Slice) U64At(i int) uint64				{ return s[i] }
 func (s U64Slice) Set(i int, v interface{})			{ s[i] = v.(uint64) }
-func (s U64Slice) U64Set(i int, v uint64)			{ s[i] = v }
 func (s U64Slice) Clear(i int)						{ s[i] = 0 }
 func (s U64Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 

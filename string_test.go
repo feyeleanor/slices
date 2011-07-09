@@ -2,29 +2,6 @@ package slices
 
 import "testing"
 
-func TestSSlice(t *testing.T) {
-	sxp := SList("A")
-	switch {
-	case sxp.Len() != 1:			t.Fatalf("SList(A) should allocate 1 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != "A":			t.Fatalf("SList(A) element 0 should be A and not %v", sxp.At(0))
-	}
-
-	sxp = SList("A", "B")
-	switch {
-	case sxp.Len() != 2:			t.Fatalf("SList(A B) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != "A":			t.Fatalf("SList(A B) element 0 should be A and not %v", sxp.At(0))
-	case sxp.At(1) != "B":			t.Fatalf("SList(A B) element 1 should be B and not %v", sxp.At(1))
-	}
-
-	sxp = SList("A", "B", "C")
-	switch {
-	case sxp.Len() != 3:			t.Fatalf("SList(A B C) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != "A":			t.Fatalf("SList(A B C) element 0 should be A and not %v", sxp.At(0))
-	case sxp.At(1) != "B":			t.Fatalf("SList(A B C) element 1 should be B and not %v", sxp.At(1))
-	case sxp.At(2) != "C":			t.Fatalf("SList(A B C) element 2 should be C and not %v", sxp.At(2))
-	}
-}
-
 func TestSSliceString(t *testing.T) {
 	ConfirmString := func(s *SSlice, r string) {
 		if x := s.String(); x != r {

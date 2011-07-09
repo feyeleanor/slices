@@ -3,56 +3,6 @@ package slices
 import "github.com/feyeleanor/lists"
 import "testing"
 
-func TestList(t *testing.T) {
-	sxp := List(nil, nil)
-	switch {
-	case sxp.Len() != 2:			t.Fatalf("List(nil nil) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != nil:			t.Fatalf("List(nil nil) element 0 should be nil and not %v", sxp.At(0))
-	case sxp.At(1) != nil:			t.Fatalf("List(nil nil) element 1 should be nil and not %v", sxp.At(1))
-	}
-
-	sxp = List(1, nil)
-	switch {
-	case sxp.Len() != 2:			t.Fatalf("List(1 nil) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("List(1 nil) element 0 should be 1 and not %v", sxp.At(0))
-	case sxp.At(1) != nil:			t.Fatalf("List(1 nil) element 1 should be nil and not %v", sxp.At(1))
-	}
-
-	sxp = List(1, 2)
-	switch {
-	case sxp.Len() != 2:			t.Fatalf("List(1 2) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("List(1 2) element 0 should be 1 and not %v", sxp.At(0))
-	case sxp.At(1) != 2:			t.Fatalf("List(1 2) element 1 should be 2 and not %v", sxp.At(1))
-	}
-
-	sxp = List(1, 2, 3)
-	switch {
-	case sxp.Len() != 3:			t.Fatalf("List(1 2 3) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("List(1 2 3) element 0 should be 1 and not %v", sxp.At(0))
-	case sxp.At(1) != 2:			t.Fatalf("List(1 2 3) element 1 should be 2 and not %v", sxp.At(1))
-	case sxp.At(2) != 3:			t.Fatalf("List(1 2 3) element 2 should be 3 and not %v", sxp.At(2))
-	}
-
-	sxp = List(1, List(10, 20), 3)
-	rxp := List(10, 20)
-	switch {
-	case sxp.Len() != 3:			t.Fatalf("List(1 (10 20) 3) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("List(1 (10 20) 3) element 0 should be 1 and not %v", sxp.At(0))
-	case !rxp.Equal(sxp.At(1)):		t.Fatalf("List(1 (10 20) 3) element 1 should be (10 20) and not %v", sxp.At(1))
-	case sxp.At(2) != 3:			t.Fatalf("List(1 (10 20) 3) element 2 should be 3 and not %v", sxp.At(2))
-	}
-
-
-	sxp = List(1, List(10, List(-10, -30)), 3)
-	rxp = List(10, List(-10, -30))
-	switch {
-	case sxp.Len() != 3:			t.Fatalf("List(1 (10 20) 3) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.At(0) != 1:			t.Fatalf("List(1 (10 20) 3) element 0 should be 1 and not %v", sxp.At(0))
-	case !rxp.Equal(sxp.At(1)):		t.Fatalf("List(1 (10 20) 3) element 1 should be (10 20) and not %v", sxp.At(1))
-	case sxp.At(2) != 3:			t.Fatalf("List(1 (10 20) 3) element 2 should be 3 and not %v", sxp.At(2))
-	}
-}
-
 func TestSliceString(t *testing.T) {
 	ConfirmString := func(s *Slice, r string) {
 		if x := s.String(); x != r {

@@ -12,9 +12,7 @@ func (s C64Slice) Len() int							{ return len(s) }
 func (s C64Slice) Cap() int							{ return cap(s) }
 
 func (s C64Slice) At(i int) interface{}				{ return s[i] }
-func (s C64Slice) C64At(i int) complex64			{ return s[i] }
 func (s C64Slice) Set(i int, v interface{})			{ s[i] = v.(complex64) }
-func (s C64Slice) C64Set(i int, v complex64)		{ s[i] = v }
 func (s C64Slice) Clear(i int)						{ s[i] = 0 }
 func (s C64Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 

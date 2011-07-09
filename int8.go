@@ -13,9 +13,7 @@ func (s I8Slice) Len() int							{ return len(s) }
 func (s I8Slice) Cap() int							{ return cap(s) }
 
 func (s I8Slice) At(i int) interface{}				{ return s[i] }
-func (s I8Slice) I8At(i int) int8					{ return s[i] }
 func (s I8Slice) Set(i int, v interface{})			{ s[i] = v.(int8) }
-func (s I8Slice) I8Set(i int, v int8)				{ s[i] = v }
 func (s I8Slice) Clear(i int)						{ s[i] = 0 }
 func (s I8Slice) Swap(i, j int)						{ s[i], s[j] = s[j], s[i] }
 

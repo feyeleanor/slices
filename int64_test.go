@@ -2,29 +2,6 @@ package slices
 
 import "testing"
 
-func TestI64Slice(t *testing.T) {
-	sxp := I64List(1)
-	switch {
-	case sxp.Len() != 1:			t.Fatalf("I64List(1) should allocate 1 cells, not %v cells", sxp.Len())
-	case sxp.I64At(0) != 1:			t.Fatalf("I64List(1) element 0 should be 1 and not %v", sxp.I64At(0))
-	}
-
-	sxp = I64List(1, 2)
-	switch {
-	case sxp.Len() != 2:			t.Fatalf("I64List(1 2) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.I64At(0) != 1:			t.Fatalf("I64List(1 2) element 0 should be 1 and not %v", sxp.I64At(0))
-	case sxp.I64At(1) != 2:			t.Fatalf("I64List(1 2) element 1 should be 2 and not %v", sxp.I64At(1))
-	}
-
-	sxp = I64List(1, 2, 3)
-	switch {
-	case sxp.Len() != 3:			t.Fatalf("I64List(1 2 3) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.I64At(0) != 1:			t.Fatalf("I64List(1 2 3) element 0 should be 1 and not %v", sxp.I64At(0))
-	case sxp.I64At(1) != 2:			t.Fatalf("I64List(1 2 3) element 1 should be 2 and not %v", sxp.I64At(1))
-	case sxp.I64At(2) != 3:			t.Fatalf("I64List(1 2 3) element 2 should be 3 and not %v", sxp.I64At(2))
-	}
-}
-
 func TestI64SliceString(t *testing.T) {
 	ConfirmString := func(s *I64Slice, r string) {
 		if x := s.String(); x != r {

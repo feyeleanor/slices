@@ -40,7 +40,6 @@ func (s *VSlice) setValue(v reflect.Value) {
 func (s *VSlice) MakeAddressable()					{ s.Value = raw.MakeAddressable(s.Value) }
 func (s *VSlice) SetValue(i interface{})			{ s.setValue(reflect.ValueOf(i)) }
 func (s *VSlice) At(i int) interface{}				{ return s.Index(i).Interface() }
-func (s *VSlice) VAt(i int) reflect.Value			{ return s.Index(i) }
 func (s *VSlice) Set(i int, value interface{})		{ s.Index(i).Set(reflect.ValueOf(value)) }
 func (s *VSlice) VSet(i int, value reflect.Value)	{ s.Index(i).Set(value) }
 func (s *VSlice) Clear(i int)						{ s.Index(i).Set(reflect.Zero(s.Type().Elem())) }
@@ -108,7 +107,7 @@ func (s *VSlice) DeleteIf(f interface{}) {
 	p := 0
 	switch f := f.(type) {
 	case reflect.Value:				for i := 0; i < s.Len(); i++ {
-										v := s.VAt(i)
+										v := s.Index(i)
 										if i != p {
 											s.VSet(p, v)
 										}
@@ -118,7 +117,7 @@ func (s *VSlice) DeleteIf(f interface{}) {
 									}
 
 	case func(reflect.Value) bool:	for i := 0; i < s.Len(); i++ {
-										v := s.VAt(i)
+										v := s.Index(i)
 										if i != p {
 											s.VSet(p, v)
 										}
@@ -138,7 +137,7 @@ func (s *VSlice) DeleteIf(f interface{}) {
 									}
 
 	default:						for i := 0; i < s.Len(); i++ {
-										v := s.VAt(i)
+										v := s.Index(i)
 										if i != p {
 											s.VSet(p, v)
 										}
@@ -153,9 +152,9 @@ func (s *VSlice) DeleteIf(f interface{}) {
 
 func (s *VSlice) Each(f interface{}) {
 	switch f := f.(type) {
-	case func(reflect.Value):				for i := 0; i < s.Len(); i++ { f(s.VAt(i)) }
-	case func(int, reflect.Value):			for i := 0; i < s.Len(); i++ { f(i, s.VAt(i)) }
-	case func(interface{}, reflect.Value):	for i := 0; i < s.Len(); i++ { f(i, s.VAt(i)) }
+	case func(reflect.Value):				for i := 0; i < s.Len(); i++ { f(s.Index(i)) }
+	case func(int, reflect.Value):			for i := 0; i < s.Len(); i++ { f(i, s.Index(i)) }
+	case func(interface{}, reflect.Value):	for i := 0; i < s.Len(); i++ { f(i, s.Index(i)) }
 	case func(interface{}):					for i := 0; i < s.Len(); i++ { f(s.At(i)) }
 	case func(int, interface{}):			for i := 0; i < s.Len(); i++ { f(i, s.At(i)) }
 	case func(interface{}, interface{}):	for i := 0; i < s.Len(); i++ { f(i, s.At(i)) }
@@ -411,7 +410,7 @@ func (s *VSlice) Rplacd(v interface{}) {
 			} else {
 				l++
 				n := reflect.MakeSlice(s.Type(), l, l)
-				n.Index(0).Set(s.VAt(0))
+				n.Index(0).Set(s.Index(0))
 				reflect.Copy(n.Slice(1, l), v.Value)
 				s.Value = n
 			}

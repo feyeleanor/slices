@@ -13,9 +13,7 @@ func (s U16Slice) Len() int							{ return len(s) }
 func (s U16Slice) Cap() int							{ return cap(s) }
 
 func (s U16Slice) At(i int) interface{}				{ return s[i] }
-func (s U16Slice) U16At(i int) uint16				{ return s[i] }
 func (s U16Slice) Set(i int, v interface{})			{ s[i] = v.(uint16) }
-func (s U16Slice) U16Set(i int, v uint16)			{ s[i] = v }
 func (s U16Slice) Clear(i int)						{ s[i] = 0 }
 func (s U16Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 

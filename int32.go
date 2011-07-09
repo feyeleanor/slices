@@ -13,9 +13,7 @@ func (s I32Slice) Len() int							{ return len(s) }
 func (s I32Slice) Cap() int							{ return cap(s) }
 
 func (s I32Slice) At(i int) interface{}				{ return s[i] }
-func (s I32Slice) I32At(i int) int32				{ return s[i] }
 func (s I32Slice) Set(i int, v interface{})			{ s[i] = v.(int32) }
-func (s I32Slice) I32Set(i int, v int32)			{ s[i] = v }
 func (s I32Slice) Clear(i int)						{ s[i] = 0 }
 func (s I32Slice) Swap(i, j int)					{ s[i], s[j] = s[j], s[i] }
 

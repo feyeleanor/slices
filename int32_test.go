@@ -2,29 +2,6 @@ package slices
 
 import "testing"
 
-func TestI32Slice(t *testing.T) {
-	sxp := I32List(1)
-	switch {
-	case sxp.Len() != 1:			t.Fatalf("I32List(1) should allocate 1 cells, not %v cells", sxp.Len())
-	case sxp.I32At(0) != 1:			t.Fatalf("I32List(1) element 0 should be 1 and not %v", sxp.I32At(0))
-	}
-
-	sxp = I32List(1, 2)
-	switch {
-	case sxp.Len() != 2:			t.Fatalf("I32List(1 2) should allocate 2 cells, not %v cells", sxp.Len())
-	case sxp.I32At(0) != 1:			t.Fatalf("I32List(1 2) element 0 should be 1 and not %v", sxp.I32At(0))
-	case sxp.I32At(1) != 2:			t.Fatalf("I32List(1 2) element 1 should be 2 and not %v", sxp.I32At(1))
-	}
-
-	sxp = I32List(1, 2, 3)
-	switch {
-	case sxp.Len() != 3:			t.Fatalf("I32List(1 2 3) should allocate 3 cells, not %v cells", sxp.Len())
-	case sxp.I32At(0) != 1:			t.Fatalf("I32List(1 2 3) element 0 should be 1 and not %v", sxp.I32At(0))
-	case sxp.I32At(1) != 2:			t.Fatalf("I32List(1 2 3) element 1 should be 2 and not %v", sxp.I32At(1))
-	case sxp.I32At(2) != 3:			t.Fatalf("I32List(1 2 3) element 2 should be 3 and not %v", sxp.I32At(2))
-	}
-}
-
 func TestI32SliceString(t *testing.T) {
 	ConfirmString := func(s *I32Slice, r string) {
 		if x := s.String(); x != r {
