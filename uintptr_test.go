@@ -154,40 +154,40 @@ func TestASliceDeleteIf(t *testing.T) {
 
 func TestASliceEach(t *testing.T) {
 	var	count	uintptr
-	AList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i interface{}) {
 		if i != uintptr(count) {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	AList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i interface{}) {
 		if i != uintptr(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	AList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key, i interface{}) {
 		if i != uintptr(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 0
-	AList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i uintptr) {
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i uintptr) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	AList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i uintptr) {
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i uintptr) {
 		if i != uintptr(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	AList(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i uintptr) {
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key interface{}, i uintptr) {
 		if i != uintptr(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -249,7 +249,8 @@ func TestASliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(AList(), 0, 10, AList())
+	a := make(ASlice, 0, 10)
+	ConfirmReallocate(AList(), 0, 10, &a)
 	ConfirmReallocate(AList(0, 1, 2, 3, 4), 3, 10, AList(0, 1, 2))
 	ConfirmReallocate(AList(0, 1, 2, 3, 4), 5, 10, AList(0, 1, 2, 3, 4))
 	ConfirmReallocate(AList(0, 1, 2, 3, 4), 10, 10, AList(0, 1, 2, 3, 4, 0, 0, 0, 0, 0))
@@ -472,4 +473,184 @@ func TestASliceFindN(t *testing.T) {
 	ConfirmFindN(AList(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
 	ConfirmFindN(AList(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
 	ConfirmFindN(AList(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}
+
+func TestASliceKeepIf(t *testing.T) {
+	ConfirmKeepIf := func(s *ASlice, f interface{}, r *ASlice) {
+		if s.KeepIf(f); !r.Equal(s) {
+			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmKeepIf(AList(0, 1, 0, 3, 0, 5), uintptr(0), AList(0, 0, 0))
+	ConfirmKeepIf(AList(0, 1, 0, 3, 0, 5), uintptr(1), AList(1))
+	ConfirmKeepIf(AList(0, 1, 0, 3, 0, 5), uintptr(6), AList())
+
+	ConfirmKeepIf(AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(0) }, AList(0, 0, 0))
+	ConfirmKeepIf(AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(1) }, AList(1))
+	ConfirmKeepIf(AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(6) }, AList())
+
+	ConfirmKeepIf(AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(0) }, AList(0, 0, 0))
+	ConfirmKeepIf(AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(1) }, AList(1))
+	ConfirmKeepIf(AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(6) }, AList())
+}
+
+func TestASliceReverseEach(t *testing.T) {
+	var count	uintptr
+	count = 9
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+		if i != count {
+			t.Fatalf("0: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+		if index != int(i.(uintptr)) {
+			t.Fatalf("1: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key, i interface{}) {
+		if uintptr(key.(int)) != i {
+			t.Fatalf("2: element %v erroneously reported as %v", key, i)
+		}
+	})
+
+	count = 9
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i uintptr) {
+		if i != count {
+			t.Fatalf("3: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i uintptr) {
+		if int(i) != index {
+			t.Fatalf("4: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	AList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key interface{}, i uintptr) {
+		if key.(int) != int(i) {
+			t.Fatalf("5: element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
+func TestASliceReplaceIf(t *testing.T) {
+	ConfirmReplaceIf := func(s *ASlice, f, v interface{}, r *ASlice) {
+		if s.ReplaceIf(f, v); !r.Equal(s) {
+			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
+		}
+	}
+
+	ConfirmReplaceIf(AList(0, 1, 0, 3, 0, 5), uintptr(0), uintptr(1), AList(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(AList(0, 1, 0, 3, 0, 5), uintptr(1), uintptr(0), AList(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(AList(0, 1, 0, 3, 0, 5), uintptr(6), uintptr(0), AList(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(0) }, uintptr(1), AList(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(1) }, uintptr(0), AList(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(6) }, uintptr(0), AList(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(0) }, uintptr(1), AList(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(1) }, uintptr(0), AList(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(6) }, uintptr(0), AList(0, 1, 0, 3, 0, 5))
+}
+
+func TestASliceReplace(t *testing.T) {
+	ConfirmReplace := func(s *ASlice, v interface{}) {
+		if s.Replace(v); !s.Equal(v) {
+			t.Fatalf("Replace() should be %v but is %v", s, v)
+		}
+	}
+
+	ConfirmReplace(AList(0, 1, 2, 3, 4, 5), AList(9, 8, 7, 6, 5))
+	ConfirmReplace(AList(0, 1, 2, 3, 4, 5), ASlice{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(AList(0, 1, 2, 3, 4, 5), &[]uintptr{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(AList(0, 1, 2, 3, 4, 5), []uintptr{ 9, 8, 7, 6, 5 })
+}
+
+func TestASliceSelect(t *testing.T) {
+	ConfirmSelect := func(s *ASlice, f interface{}, r *ASlice) {
+		if x := s.Select(f); !r.Equal(x) {
+			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmSelect(AList(0, 1, 0, 3, 0, 5), uintptr(0), AList(0, 0, 0))
+	ConfirmSelect(AList(0, 1, 0, 3, 0, 5), uintptr(1), AList(1))
+	ConfirmSelect(AList(0, 1, 0, 3, 0, 5), uintptr(6), AList())
+
+	ConfirmSelect(AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(0) }, AList(0, 0, 0))
+	ConfirmSelect(AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(1) }, AList(1))
+	ConfirmSelect(AList(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uintptr(6) }, AList())
+
+	ConfirmSelect(AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(0) }, AList(0, 0, 0))
+	ConfirmSelect(AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(1) }, AList(1))
+	ConfirmSelect(AList(0, 1, 0, 3, 0, 5), func(x uintptr) bool { return x == uintptr(6) }, AList())
+}
+
+func TestASliceUniq(t *testing.T) {
+	ConfirmUniq := func(s, r *ASlice) {
+		if s.Uniq(); !r.Equal(s) {
+			t.Fatalf("Uniq() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmUniq(AList(0, 0, 0, 0, 0, 0), AList(0))
+	ConfirmUniq(AList(0, 1, 0, 3, 0, 5), AList(0, 1, 3, 5))
+}
+
+func TestASliceShuffle(t *testing.T) {
+	ConfirmShuffle := func(s, r *ASlice) {
+		if s.Shuffle(); s.Equal(r) {
+			t.Fatalf("%v.Shuffle() should change order of elements", s)
+		}
+		if s.Sort(); !s.Equal(r) {
+			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmShuffle(AList(0, 1, 2, 3, 4, 5), AList(0, 1, 2, 3, 4, 5))
+}
+
+func TestASliceValuesAt(t *testing.T) {
+	ConfirmValuesAt := func(s *ASlice, i []int, r *ASlice) {
+		if x := s.ValuesAt(i...); !r.Equal(x) {
+			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+		}
+	}
+
+	ConfirmValuesAt(AList(0, 1, 2, 3, 4, 5), []int{}, AList())
+	ConfirmValuesAt(AList(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, AList(0, 1))
+	ConfirmValuesAt(AList(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, AList(0, 3))
+	ConfirmValuesAt(AList(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, AList(0, 3, 4, 3))
+}
+
+func TestASliceInsert(t *testing.T) {
+	ConfirmInsert := func(s *ASlice, n int, v interface{}, r *ASlice) {
+		if s.Insert(n, v); !r.Equal(s) {
+			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
+		}
+	}
+
+	ConfirmInsert(AList(), 0, uintptr(0), AList(0))
+	ConfirmInsert(AList(), 0, AList(0), AList(0))
+	ConfirmInsert(AList(), 0, AList(0, 1), AList(0, 1))
+
+	ConfirmInsert(AList(0), 0, uintptr(1), AList(1, 0))
+	ConfirmInsert(AList(0), 0, AList(1), AList(1, 0))
+	ConfirmInsert(AList(0), 1, uintptr(1), AList(0, 1))
+	ConfirmInsert(AList(0), 1, AList(1), AList(0, 1))
+
+	ConfirmInsert(AList(0, 1, 2), 0, uintptr(3), AList(3, 0, 1, 2))
+	ConfirmInsert(AList(0, 1, 2), 1, uintptr(3), AList(0, 3, 1, 2))
+	ConfirmInsert(AList(0, 1, 2), 2, uintptr(3), AList(0, 1, 3, 2))
+	ConfirmInsert(AList(0, 1, 2), 3, uintptr(3), AList(0, 1, 2, 3))
+
+	ConfirmInsert(AList(0, 1, 2), 0, AList(3, 4), AList(3, 4, 0, 1, 2))
+	ConfirmInsert(AList(0, 1, 2), 1, AList(3, 4), AList(0, 3, 4, 1, 2))
+	ConfirmInsert(AList(0, 1, 2), 2, AList(3, 4), AList(0, 1, 3, 4, 2))
+	ConfirmInsert(AList(0, 1, 2), 3, AList(3, 4), AList(0, 1, 2, 3, 4))
 }

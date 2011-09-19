@@ -1,9 +1,15 @@
 package slices
 
-import "fmt"
-import "sort"
+import (
+	"fmt"
+	"rand"
+	"sort"
+)
 
 func I64List(n... int64) *I64Slice {
+	if len(n) == 0 {
+		n = make(I64Slice, 0, 0)
+	}
 	return (*I64Slice)(&n)
 }
 
@@ -458,4 +464,163 @@ func (s I64Slice) FindN(v interface{}, n int) (i ISlice) {
 		}
 	}
 	return
+}
+
+func (s *I64Slice) KeepIf(f interface{}) {
+	a := *s
+	p := 0
+	switch f := f.(type) {
+	case int64:						for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v == f {
+											p++
+										}
+									}
+
+	case func(int64) bool:			for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
+	}
+	*s = a[:p]
+}
+
+func (s I64Slice) ReverseEach(f interface{}) {
+	switch f := f.(type) {
+	case func(int64):						for i := len(s) - 1; i > -1; i-- { f(s[i]) }
+	case func(int, int64):					for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, int64):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}):					for i := len(s) - 1; i > -1; i-- { f(s[i]) }
+	case func(int, interface{}):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, interface{}):	for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	}
+}
+
+func (s I64Slice) ReplaceIf(f interface{}, r interface{}) {
+	replacement := r.(int64)
+	switch f := f.(type) {
+	case int64:						for i, v := range s {
+										if v == f {
+											s[i] = replacement
+										}
+									}
+
+	case func(int64) bool:			for i, v := range s {
+										if f(v) {
+											s[i] = replacement
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range s {
+										if f(v) {
+											s[i] = replacement
+										}
+									}
+	}
+}
+
+func (s *I64Slice) Replace(o interface{}) {
+	switch o := o.(type) {
+	case I64Slice:			*s = o
+	case *I64Slice:			*s = *o
+	case []int64:			*s = I64Slice(o)
+	case *[]int64:			*s = I64Slice(*o)
+	default:				panic(o)
+	}
+}
+
+func (s I64Slice) Select(f interface{}) interface{} {
+	r := make(I64Slice, 0, len(s) / 4)
+	switch f := f.(type) {
+	case int64:						for _, v := range s {
+										if v == f {
+											r = append(r, v)
+										}
+									}
+
+	case func(int64) bool:			for _, v := range s {
+										if f(v) {
+											r = append(r, v)
+										}
+									}
+
+	case func(interface{}) bool:	for _, v := range s {
+										if f(v) {
+											r = append(r, v)
+										}
+									}
+	}
+	return r
+}
+
+func (s *I64Slice) Uniq() {
+	a := *s
+	if len(a) > 0 {
+		p := 0
+		m := make(map[int64] bool)
+		for _, v := range a {
+			if ok := m[v]; !ok {
+				m[v] = true
+				a[p] = v
+				p++
+			}
+		}
+		*s = a[:p]
+	}
+}
+
+func (s I64Slice) Shuffle() {
+	l := len(s) - 1
+	for i, _ := range s {
+		r := i + rand.Intn(l - i)
+		s.Swap(i, r)
+	}
+}
+
+func (s I64Slice) ValuesAt(n ...int) interface{} {
+	r := make(I64Slice, 0, len(n))
+	for _, v := range n {
+		r = append(r, s[v])
+	}
+	return r
+}
+
+func (s *I64Slice) Insert(i int, v interface{}) {
+	switch v := v.(type) {
+	case int64:				l := s.Len() + 1
+							n := make(I64Slice, l, l)
+							copy(n, (*s)[:i])
+							n[i] = v
+							copy(n[i + 1:], (*s)[i:])
+							*s = n
+
+	case I64Slice:			l := s.Len() + len(v)
+							n := make(I64Slice, l, l)
+							copy(n, (*s)[:i])
+							copy(n[i:], v)
+							copy(n[i + len(v):], (*s)[i:])
+							*s = n
+
+	case *I64Slice:			s.Insert(i, *v)
+	case []int64:			s.Insert(i, I64Slice(v))
+	case *[]int64:			s.Insert(i, I64Slice(*v))
+	default:				panic(v)
+	}
 }

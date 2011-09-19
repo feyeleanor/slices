@@ -1,9 +1,15 @@
 package slices
 
-import "fmt"
-import "sort"
+import (
+	"fmt"
+	"rand"
+	"sort"
+)
 
 func UList(n... uint) *USlice {
+	if len(n) == 0 {
+		n = make(USlice, 0, 0)
+	}
 	return (*USlice)(&n)
 }
 
@@ -457,4 +463,163 @@ func (s USlice) FindN(v interface{}, n int) (i ISlice) {
 		}
 	}
 	return
+}
+
+func (s *USlice) KeepIf(f interface{}) {
+	a := *s
+	p := 0
+	switch f := f.(type) {
+	case uint:						for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v == f {
+											p++
+										}
+									}
+
+	case func(uint) bool:			for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
+	}
+	*s = a[:p]
+}
+
+func (s USlice) ReverseEach(f interface{}) {
+	switch f := f.(type) {
+	case func(uint):						for i := len(s) - 1; i > -1; i-- { f(s[i]) }
+	case func(int, uint):					for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, uint):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}):					for i := len(s) - 1; i > -1; i-- { f(s[i]) }
+	case func(int, interface{}):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, interface{}):	for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	}
+}
+
+func (s USlice) ReplaceIf(f interface{}, r interface{}) {
+	replacement := r.(uint)
+	switch f := f.(type) {
+	case uint:						for i, v := range s {
+										if v == f {
+											s[i] = replacement
+										}
+									}
+
+	case func(uint) bool:			for i, v := range s {
+										if f(v) {
+											s[i] = replacement
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range s {
+										if f(v) {
+											s[i] = replacement
+										}
+									}
+	}
+}
+
+func (s *USlice) Replace(o interface{}) {
+	switch o := o.(type) {
+	case USlice:			*s = o
+	case *USlice:			*s = *o
+	case []uint:			*s = USlice(o)
+	case *[]uint:			*s = USlice(*o)
+	default:				panic(o)
+	}
+}
+
+func (s USlice) Select(f interface{}) interface{} {
+	r := make(USlice, 0, len(s) / 4)
+	switch f := f.(type) {
+	case uint:						for _, v := range s {
+										if v == f {
+											r = append(r, v)
+										}
+									}
+
+	case func(uint) bool:			for _, v := range s {
+										if f(v) {
+											r = append(r, v)
+										}
+									}
+
+	case func(interface{}) bool:	for _, v := range s {
+										if f(v) {
+											r = append(r, v)
+										}
+									}
+	}
+	return r
+}
+
+func (s *USlice) Uniq() {
+	a := *s
+	if len(a) > 0 {
+		p := 0
+		m := make(map[uint] bool)
+		for _, v := range a {
+			if ok := m[v]; !ok {
+				m[v] = true
+				a[p] = v
+				p++
+			}
+		}
+		*s = a[:p]
+	}
+}
+
+func (s USlice) Shuffle() {
+	l := len(s) - 1
+	for i, _ := range s {
+		r := i + rand.Intn(l - i)
+		s.Swap(i, r)
+	}
+}
+
+func (s USlice) ValuesAt(n ...int) interface{} {
+	r := make(USlice, 0, len(n))
+	for _, v := range n {
+		r = append(r, s[v])
+	}
+	return r
+}
+
+func (s *USlice) Insert(i int, v interface{}) {
+	switch v := v.(type) {
+	case uint:				l := s.Len() + 1
+							n := make(USlice, l, l)
+							copy(n, (*s)[:i])
+							n[i] = v
+							copy(n[i + 1:], (*s)[i:])
+							*s = n
+
+	case USlice:			l := s.Len() + len(v)
+							n := make(USlice, l, l)
+							copy(n, (*s)[:i])
+							copy(n[i:], v)
+							copy(n[i + len(v):], (*s)[i:])
+							*s = n
+
+	case *USlice:			s.Insert(i, *v)
+	case []uint:			s.Insert(i, USlice(v))
+	case *[]uint:			s.Insert(i, USlice(*v))
+	default:				panic(v)
+	}
 }

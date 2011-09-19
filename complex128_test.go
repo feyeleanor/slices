@@ -121,40 +121,40 @@ func TestC128SliceDeleteIf(t *testing.T) {
 
 func TestC128SliceEach(t *testing.T) {
 	var count	complex128
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i interface{}) {
 		if index != int(real(i.(complex128))) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key, i interface{}) {
 		if complex(float64(key.(int)), 0) != i {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 0
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i complex128) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i complex128) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i complex128) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i complex128) {
 		if int(real(i)) != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i complex128) {
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key interface{}, i complex128) {
 		if key.(int) != int(real(i)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -216,7 +216,8 @@ func TestC128SliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(C128List(), 0, 10, C128List())
+	c := make(C128Slice, 0, 10)
+	ConfirmReallocate(C128List(), 0, 10, &c)
 	ConfirmReallocate(C128List(0, 1, 2, 3, 4), 3, 10, C128List(0, 1, 2))
 	ConfirmReallocate(C128List(0, 1, 2, 3, 4), 5, 10, C128List(0, 1, 2, 3, 4))
 	ConfirmReallocate(C128List(0, 1, 2, 3, 4), 10, 10, C128List(0, 1, 2, 3, 4, 0, 0, 0, 0, 0))
@@ -264,15 +265,6 @@ func TestC128SliceExpand(t *testing.T) {
 	ConfirmExpand(C128List(0, 1, 2), 4, 2, C128List(0, 1, 2, 0, 0))
 }
 
-func TestC128SliceDepth(t *testing.T) {
-	ConfirmDepth := func(s *C128Slice, i int) {
-		if x := s.Depth(); x != i {
-			t.Fatalf("%v.Depth() should be %v but is %v", s, i, x)
-		}
-	}
-	ConfirmDepth(C128List(0, 1), 0)
-}
-
 func TestC128SliceReverse(t *testing.T) {
 	sxp := C128List(1, 2, 3, 4, 5)
 	rxp := C128List(5, 4, 3, 2, 1)
@@ -280,51 +272,6 @@ func TestC128SliceReverse(t *testing.T) {
 	if !rxp.Equal(sxp) {
 		t.Fatalf("Reversal failed: %v", sxp)
 	}
-}
-
-func TestC128SliceAppend(t *testing.T) {
-	ConfirmAppend := func(s *C128Slice, v interface{}, r *C128Slice) {
-		s.Append(v)
-		if !r.Equal(s) {
-			t.Fatalf("Append(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmAppend(C128List(), complex128(0), C128List(0))
-
-	ConfirmAppend(C128List(), C128List(0), C128List(0))
-	ConfirmAppend(C128List(), C128List(0, 1), C128List(0, 1))
-	ConfirmAppend(C128List(0, 1, 2), C128List(3, 4), C128List(0, 1, 2, 3, 4))
-}
-
-func TestC128SlicePrepend(t *testing.T) {
-	ConfirmPrepend := func(s *C128Slice, v interface{}, r *C128Slice) {
-		if s.Prepend(v); !r.Equal(s) {
-			t.Fatalf("Prepend(%v) should be %v but is %v", v, r, s)
-		}
-	}
-
-	ConfirmPrepend(C128List(), complex128(0), C128List(0))
-	ConfirmPrepend(C128List(0), complex128(1), C128List(1, 0))
-
-	ConfirmPrepend(C128List(), C128List(0), C128List(0))
-	ConfirmPrepend(C128List(), C128List(0, 1), C128List(0, 1))
-	ConfirmPrepend(C128List(0, 1, 2), C128List(3, 4), C128List(3, 4, 0, 1, 2))
-}
-
-func TestC128SliceRepeat(t *testing.T) {
-	ConfirmRepeat := func(s *C128Slice, count int, r *C128Slice) {
-		if x := s.Repeat(count); !x.Equal(r) {
-			t.Fatalf("%v.Repeat(%v) should be %v but is %v", s, count, r, x)
-		}
-	}
-
-	ConfirmRepeat(C128List(), 5, C128List())
-	ConfirmRepeat(C128List(0), 1, C128List(0))
-	ConfirmRepeat(C128List(0), 2, C128List(0, 0))
-	ConfirmRepeat(C128List(0), 3, C128List(0, 0, 0))
-	ConfirmRepeat(C128List(0), 4, C128List(0, 0, 0, 0))
-	ConfirmRepeat(C128List(0), 5, C128List(0, 0, 0, 0, 0))
 }
 
 func TestC128SliceCar(t *testing.T) {
@@ -439,4 +386,184 @@ func TestC128SliceFindN(t *testing.T) {
 	ConfirmFindN(C128List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
 	ConfirmFindN(C128List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
 	ConfirmFindN(C128List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}
+
+func TestC128SliceKeepIf(t *testing.T) {
+	ConfirmKeepIf := func(s *C128Slice, f interface{}, r *C128Slice) {
+		if s.KeepIf(f); !r.Equal(s) {
+			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmKeepIf(C128List(0, 1, 0, 3, 0, 5), complex128(0), C128List(0, 0, 0))
+	ConfirmKeepIf(C128List(0, 1, 0, 3, 0, 5), complex128(1), C128List(1))
+	ConfirmKeepIf(C128List(0, 1, 0, 3, 0, 5), complex128(6), C128List())
+
+	ConfirmKeepIf(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(0) }, C128List(0, 0, 0))
+	ConfirmKeepIf(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(1) }, C128List(1))
+	ConfirmKeepIf(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(6) }, C128List())
+
+	ConfirmKeepIf(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(0) }, C128List(0, 0, 0))
+	ConfirmKeepIf(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(1) }, C128List(1))
+	ConfirmKeepIf(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(6) }, C128List())
+}
+
+func TestC128SliceReverseEach(t *testing.T) {
+	var count	complex128
+	count = 9
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+		if i != count {
+			t.Fatalf("0: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+		if index != int(real(i.(complex128))) {
+			t.Fatalf("1: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key, i interface{}) {
+		if complex(float64(key.(int)), 0) != i {
+			t.Fatalf("2: element %v erroneously reported as %v", key, i)
+		}
+	})
+
+	count = 9
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i complex128) {
+		if i != count {
+			t.Fatalf("3: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i complex128) {
+		if int(real(i)) != index {
+			t.Fatalf("4: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	C128List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key interface{}, i complex128) {
+		if key.(int) != int(real(i)) {
+			t.Fatalf("5: element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
+func TestC128SliceReplaceIf(t *testing.T) {
+	ConfirmReplaceIf := func(s *C128Slice, f, v interface{}, r *C128Slice) {
+		if s.ReplaceIf(f, v); !r.Equal(s) {
+			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
+		}
+	}
+
+	ConfirmReplaceIf(C128List(0, 1, 0, 3, 0, 5), complex128(0), complex128(1), C128List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(C128List(0, 1, 0, 3, 0, 5), complex128(1), complex128(0), C128List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(C128List(0, 1, 0, 3, 0, 5), complex128(6), complex128(0), C128List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(0) }, complex128(1), C128List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(1) }, complex128(0), C128List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(6) }, complex128(0), C128List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(0) }, complex128(1), C128List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(1) }, complex128(0), C128List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(6) }, complex128(0), C128List(0, 1, 0, 3, 0, 5))
+}
+
+func TestC128SliceReplace(t *testing.T) {
+	ConfirmReplace := func(s *C128Slice, v interface{}) {
+		if s.Replace(v); !s.Equal(v) {
+			t.Fatalf("Replace() should be %v but is %v", s, v)
+		}
+	}
+
+	ConfirmReplace(C128List(0, 1, 2, 3, 4, 5), C128List(9, 8, 7, 6, 5))
+	ConfirmReplace(C128List(0, 1, 2, 3, 4, 5), C128Slice{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(C128List(0, 1, 2, 3, 4, 5), &[]complex128{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(C128List(0, 1, 2, 3, 4, 5), []complex128{ 9, 8, 7, 6, 5 })
+}
+
+func TestC128SliceSelect(t *testing.T) {
+	ConfirmSelect := func(s *C128Slice, f interface{}, r *C128Slice) {
+		if x := s.Select(f); !r.Equal(x) {
+			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmSelect(C128List(0, 1, 0, 3, 0, 5), complex128(0), C128List(0, 0, 0))
+	ConfirmSelect(C128List(0, 1, 0, 3, 0, 5), complex128(1), C128List(1))
+	ConfirmSelect(C128List(0, 1, 0, 3, 0, 5), complex128(6), C128List())
+
+	ConfirmSelect(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(0) }, C128List(0, 0, 0))
+	ConfirmSelect(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(1) }, C128List(1))
+	ConfirmSelect(C128List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex128(6) }, C128List())
+
+	ConfirmSelect(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(0) }, C128List(0, 0, 0))
+	ConfirmSelect(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(1) }, C128List(1))
+	ConfirmSelect(C128List(0, 1, 0, 3, 0, 5), func(x complex128) bool { return x == complex128(6) }, C128List())
+}
+
+func TestC128SliceUniq(t *testing.T) {
+	ConfirmUniq := func(s, r *C128Slice) {
+		if s.Uniq(); !r.Equal(s) {
+			t.Fatalf("Uniq() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmUniq(C128List(0, 0, 0, 0, 0, 0), C128List(0))
+	ConfirmUniq(C128List(0, 1, 0, 3, 0, 5), C128List(0, 1, 3, 5))
+}
+
+func TestC128SliceShuffle(t *testing.T) {
+	ConfirmShuffle := func(s, r *C128Slice) {
+		if s.Shuffle(); s.Equal(r) {
+			t.Fatalf("%v.Shuffle() should change order of elements", s)
+		}
+		if s.Sort(); !s.Equal(r) {
+			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmShuffle(C128List(0, 1, 2, 3, 4, 5), C128List(0, 1, 2, 3, 4, 5))
+}
+
+func TestC128SliceValuesAt(t *testing.T) {
+	ConfirmValuesAt := func(s *C128Slice, i []int, r *C128Slice) {
+		if x := s.ValuesAt(i...); !r.Equal(x) {
+			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+		}
+	}
+
+	ConfirmValuesAt(C128List(0, 1, 2, 3, 4, 5), []int{}, C128List())
+	ConfirmValuesAt(C128List(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, C128List(0, 1))
+	ConfirmValuesAt(C128List(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, C128List(0, 3))
+	ConfirmValuesAt(C128List(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, C128List(0, 3, 4, 3))
+}
+
+func TestC128SliceInsert(t *testing.T) {
+	ConfirmInsert := func(s *C128Slice, n int, v interface{}, r *C128Slice) {
+		if s.Insert(n, v); !r.Equal(s) {
+			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
+		}
+	}
+
+	ConfirmInsert(C128List(), 0, complex128(0), C128List(0))
+	ConfirmInsert(C128List(), 0, C128List(0), C128List(0))
+	ConfirmInsert(C128List(), 0, C128List(0, 1), C128List(0, 1))
+
+	ConfirmInsert(C128List(0), 0, complex128(1), C128List(1, 0))
+	ConfirmInsert(C128List(0), 0, C128List(1), C128List(1, 0))
+	ConfirmInsert(C128List(0), 1, complex128(1), C128List(0, 1))
+	ConfirmInsert(C128List(0), 1, C128List(1), C128List(0, 1))
+
+	ConfirmInsert(C128List(0, 1, 2), 0, complex128(3), C128List(3, 0, 1, 2))
+	ConfirmInsert(C128List(0, 1, 2), 1, complex128(3), C128List(0, 3, 1, 2))
+	ConfirmInsert(C128List(0, 1, 2), 2, complex128(3), C128List(0, 1, 3, 2))
+	ConfirmInsert(C128List(0, 1, 2), 3, complex128(3), C128List(0, 1, 2, 3))
+
+	ConfirmInsert(C128List(0, 1, 2), 0, C128List(3, 4), C128List(3, 4, 0, 1, 2))
+	ConfirmInsert(C128List(0, 1, 2), 1, C128List(3, 4), C128List(0, 3, 4, 1, 2))
+	ConfirmInsert(C128List(0, 1, 2), 2, C128List(3, 4), C128List(0, 1, 3, 4, 2))
+	ConfirmInsert(C128List(0, 1, 2), 3, C128List(3, 4), C128List(0, 1, 2, 3, 4))
 }

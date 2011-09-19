@@ -1,9 +1,15 @@
 package slices
 
-import "fmt"
-import "sort"
+import (
+	"fmt"
+	"rand"
+	"sort"
+)
 
 func U8List(n... uint8) *U8Slice {
+	if len(n) == 0 {
+		n = make(U8Slice, 0, 0)
+	}
 	return (*U8Slice)(&n)
 }
 
@@ -457,4 +463,163 @@ func (s U8Slice) FindN(v interface{}, n int) (i ISlice) {
 		}
 	}
 	return
+}
+
+func (s *U8Slice) KeepIf(f interface{}) {
+	a := *s
+	p := 0
+	switch f := f.(type) {
+	case uint8:					for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v == f {
+											p++
+										}
+									}
+
+	case func(uint8) bool:		for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
+	}
+	*s = a[:p]
+}
+
+func (s U8Slice) ReverseEach(f interface{}) {
+	switch f := f.(type) {
+	case func(uint8):						for i := len(s) - 1; i > -1; i-- { f(s[i]) }
+	case func(int, uint8):				for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, uint8):		for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}):					for i := len(s) - 1; i > -1; i-- { f(s[i]) }
+	case func(int, interface{}):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, interface{}):	for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	}
+}
+
+func (s U8Slice) ReplaceIf(f interface{}, r interface{}) {
+	replacement := r.(uint8)
+	switch f := f.(type) {
+	case uint8:					for i, v := range s {
+										if v == f {
+											s[i] = replacement
+										}
+									}
+
+	case func(uint8) bool:		for i, v := range s {
+										if f(v) {
+											s[i] = replacement
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range s {
+										if f(v) {
+											s[i] = replacement
+										}
+									}
+	}
+}
+
+func (s *U8Slice) Replace(o interface{}) {
+	switch o := o.(type) {
+	case U8Slice:			*s = o
+	case *U8Slice:			*s = *o
+	case []uint8:			*s = U8Slice(o)
+	case *[]uint8:		*s = U8Slice(*o)
+	default:				panic(o)
+	}
+}
+
+func (s U8Slice) Select(f interface{}) interface{} {
+	r := make(U8Slice, 0, len(s) / 4)
+	switch f := f.(type) {
+	case uint8:					for _, v := range s {
+										if v == f {
+											r = append(r, v)
+										}
+									}
+
+	case func(uint8) bool:		for _, v := range s {
+										if f(v) {
+											r = append(r, v)
+										}
+									}
+
+	case func(interface{}) bool:	for _, v := range s {
+										if f(v) {
+											r = append(r, v)
+										}
+									}
+	}
+	return r
+}
+
+func (s *U8Slice) Uniq() {
+	a := *s
+	if len(a) > 0 {
+		p := 0
+		m := make(map[uint8] bool)
+		for _, v := range a {
+			if ok := m[v]; !ok {
+				m[v] = true
+				a[p] = v
+				p++
+			}
+		}
+		*s = a[:p]
+	}
+}
+
+func (s U8Slice) Shuffle() {
+	l := len(s) - 1
+	for i, _ := range s {
+		r := i + rand.Intn(l - i)
+		s.Swap(i, r)
+	}
+}
+
+func (s U8Slice) ValuesAt(n ...int) interface{} {
+	r := make(U8Slice, 0, len(n))
+	for _, v := range n {
+		r = append(r, s[v])
+	}
+	return r
+}
+
+func (s *U8Slice) Insert(i int, v interface{}) {
+	switch v := v.(type) {
+	case uint8:			l := s.Len() + 1
+							n := make(U8Slice, l, l)
+							copy(n, (*s)[:i])
+							n[i] = v
+							copy(n[i + 1:], (*s)[i:])
+							*s = n
+
+	case U8Slice:			l := s.Len() + len(v)
+							n := make(U8Slice, l, l)
+							copy(n, (*s)[:i])
+							copy(n[i:], v)
+							copy(n[i + len(v):], (*s)[i:])
+							*s = n
+
+	case *U8Slice:			s.Insert(i, *v)
+	case []uint8:			s.Insert(i, U8Slice(v))
+	case *[]uint8:		s.Insert(i, U8Slice(*v))
+	default:				panic(v)
+	}
 }

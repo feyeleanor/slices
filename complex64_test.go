@@ -121,40 +121,40 @@ func TestC64SliceDeleteIf(t *testing.T) {
 
 func TestC64SliceEach(t *testing.T) {
 	var count	complex64
-	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i interface{}) {
 		if index != int(real(i.(complex64))) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key, i interface{}) {
 		if complex(float32(key.(int)), 0) != i {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 0
-	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i complex64) {
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i complex64) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i complex64) {
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i complex64) {
 		if int(real(i)) != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i complex64) {
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key interface{}, i complex64) {
 		if key.(int) != int(real(i)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -216,7 +216,8 @@ func TestC64SliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(C64List(), 0, 10, C64List())
+	c := make(C64Slice, 0, 10)
+	ConfirmReallocate(C64List(), 0, 10, &c)
 	ConfirmReallocate(C64List(0, 1, 2, 3, 4), 3, 10, C64List(0, 1, 2))
 	ConfirmReallocate(C64List(0, 1, 2, 3, 4), 5, 10, C64List(0, 1, 2, 3, 4))
 	ConfirmReallocate(C64List(0, 1, 2, 3, 4), 10, 10, C64List(0, 1, 2, 3, 4, 0, 0, 0, 0, 0))
@@ -439,4 +440,184 @@ func TestC64SliceFindN(t *testing.T) {
 	ConfirmFindN(C64List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
 	ConfirmFindN(C64List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
 	ConfirmFindN(C64List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}
+
+func TestC64SliceKeepIf(t *testing.T) {
+	ConfirmKeepIf := func(s *C64Slice, f interface{}, r *C64Slice) {
+		if s.KeepIf(f); !r.Equal(s) {
+			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmKeepIf(C64List(0, 1, 0, 3, 0, 5), complex64(0), C64List(0, 0, 0))
+	ConfirmKeepIf(C64List(0, 1, 0, 3, 0, 5), complex64(1), C64List(1))
+	ConfirmKeepIf(C64List(0, 1, 0, 3, 0, 5), complex64(6), C64List())
+
+	ConfirmKeepIf(C64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex64(0) }, C64List(0, 0, 0))
+	ConfirmKeepIf(C64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex64(1) }, C64List(1))
+	ConfirmKeepIf(C64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex64(6) }, C64List())
+
+	ConfirmKeepIf(C64List(0, 1, 0, 3, 0, 5), func(x complex64) bool { return x == complex64(0) }, C64List(0, 0, 0))
+	ConfirmKeepIf(C64List(0, 1, 0, 3, 0, 5), func(x complex64) bool { return x == complex64(1) }, C64List(1))
+	ConfirmKeepIf(C64List(0, 1, 0, 3, 0, 5), func(x complex64) bool { return x == complex64(6) }, C64List())
+}
+
+func TestC64SliceReverseEach(t *testing.T) {
+	var count	complex64
+	count = 9
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+		if i != count {
+			t.Fatalf("0: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+		if index != int(real(i.(complex64))) {
+			t.Fatalf("1: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key, i interface{}) {
+		if complex(float32(key.(int)), 0) != i {
+			t.Fatalf("2: element %v erroneously reported as %v", key, i)
+		}
+	})
+
+	count = 9
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i complex64) {
+		if i != count {
+			t.Fatalf("3: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i complex64) {
+		if int(real(i)) != index {
+			t.Fatalf("4: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	C64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key interface{}, i complex64) {
+		if key.(int) != int(real(i)) {
+			t.Fatalf("5: element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
+func TestC64SliceReplaceIf(t *testing.T) {
+	ConfirmReplaceIf := func(s *C64Slice, f, v interface{}, r *C64Slice) {
+		if s.ReplaceIf(f, v); !r.Equal(s) {
+			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
+		}
+	}
+
+	ConfirmReplaceIf(C64List(0, 1, 0, 3, 0, 5), complex64(0), complex64(1), C64List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(C64List(0, 1, 0, 3, 0, 5), complex64(1), complex64(0), C64List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(C64List(0, 1, 0, 3, 0, 5), complex64(6), complex64(0), C64List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(C64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex64(0) }, complex64(1), C64List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(C64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex64(1) }, complex64(0), C64List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(C64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex64(6) }, complex64(0), C64List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(C64List(0, 1, 0, 3, 0, 5), func(x complex64) bool { return x == complex64(0) }, complex64(1), C64List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(C64List(0, 1, 0, 3, 0, 5), func(x complex64) bool { return x == complex64(1) }, complex64(0), C64List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(C64List(0, 1, 0, 3, 0, 5), func(x complex64) bool { return x == complex64(6) }, complex64(0), C64List(0, 1, 0, 3, 0, 5))
+}
+
+func TestC64SliceReplace(t *testing.T) {
+	ConfirmReplace := func(s *C64Slice, v interface{}) {
+		if s.Replace(v); !s.Equal(v) {
+			t.Fatalf("Replace() should be %v but is %v", s, v)
+		}
+	}
+
+	ConfirmReplace(C64List(0, 1, 2, 3, 4, 5), C64List(9, 8, 7, 6, 5))
+	ConfirmReplace(C64List(0, 1, 2, 3, 4, 5), C64Slice{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(C64List(0, 1, 2, 3, 4, 5), &[]complex64{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(C64List(0, 1, 2, 3, 4, 5), []complex64{ 9, 8, 7, 6, 5 })
+}
+
+func TestC64SliceSelect(t *testing.T) {
+	ConfirmSelect := func(s *C64Slice, f interface{}, r *C64Slice) {
+		if x := s.Select(f); !r.Equal(x) {
+			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmSelect(C64List(0, 1, 0, 3, 0, 5), complex64(0), C64List(0, 0, 0))
+	ConfirmSelect(C64List(0, 1, 0, 3, 0, 5), complex64(1), C64List(1))
+	ConfirmSelect(C64List(0, 1, 0, 3, 0, 5), complex64(6), C64List())
+
+	ConfirmSelect(C64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex64(0) }, C64List(0, 0, 0))
+	ConfirmSelect(C64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex64(1) }, C64List(1))
+	ConfirmSelect(C64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == complex64(6) }, C64List())
+
+	ConfirmSelect(C64List(0, 1, 0, 3, 0, 5), func(x complex64) bool { return x == complex64(0) }, C64List(0, 0, 0))
+	ConfirmSelect(C64List(0, 1, 0, 3, 0, 5), func(x complex64) bool { return x == complex64(1) }, C64List(1))
+	ConfirmSelect(C64List(0, 1, 0, 3, 0, 5), func(x complex64) bool { return x == complex64(6) }, C64List())
+}
+
+func TestC64SliceUniq(t *testing.T) {
+	ConfirmUniq := func(s, r *C64Slice) {
+		if s.Uniq(); !r.Equal(s) {
+			t.Fatalf("Uniq() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmUniq(C64List(0, 0, 0, 0, 0, 0), C64List(0))
+	ConfirmUniq(C64List(0, 1, 0, 3, 0, 5), C64List(0, 1, 3, 5))
+}
+
+func TestC64SliceShuffle(t *testing.T) {
+	ConfirmShuffle := func(s, r *C64Slice) {
+		if s.Shuffle(); s.Equal(r) {
+			t.Fatalf("%v.Shuffle() should change order of elements", s)
+		}
+		if s.Sort(); !s.Equal(r) {
+			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmShuffle(C64List(0, 1, 2, 3, 4, 5), C64List(0, 1, 2, 3, 4, 5))
+}
+
+func TestC64SliceValuesAt(t *testing.T) {
+	ConfirmValuesAt := func(s *C64Slice, i []int, r *C64Slice) {
+		if x := s.ValuesAt(i...); !r.Equal(x) {
+			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+		}
+	}
+
+	ConfirmValuesAt(C64List(0, 1, 2, 3, 4, 5), []int{}, C64List())
+	ConfirmValuesAt(C64List(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, C64List(0, 1))
+	ConfirmValuesAt(C64List(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, C64List(0, 3))
+	ConfirmValuesAt(C64List(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, C64List(0, 3, 4, 3))
+}
+
+func TestC64SliceInsert(t *testing.T) {
+	ConfirmInsert := func(s *C64Slice, n int, v interface{}, r *C64Slice) {
+		if s.Insert(n, v); !r.Equal(s) {
+			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
+		}
+	}
+
+	ConfirmInsert(C64List(), 0, complex64(0), C64List(0))
+	ConfirmInsert(C64List(), 0, C64List(0), C64List(0))
+	ConfirmInsert(C64List(), 0, C64List(0, 1), C64List(0, 1))
+
+	ConfirmInsert(C64List(0), 0, complex64(1), C64List(1, 0))
+	ConfirmInsert(C64List(0), 0, C64List(1), C64List(1, 0))
+	ConfirmInsert(C64List(0), 1, complex64(1), C64List(0, 1))
+	ConfirmInsert(C64List(0), 1, C64List(1), C64List(0, 1))
+
+	ConfirmInsert(C64List(0, 1, 2), 0, complex64(3), C64List(3, 0, 1, 2))
+	ConfirmInsert(C64List(0, 1, 2), 1, complex64(3), C64List(0, 3, 1, 2))
+	ConfirmInsert(C64List(0, 1, 2), 2, complex64(3), C64List(0, 1, 3, 2))
+	ConfirmInsert(C64List(0, 1, 2), 3, complex64(3), C64List(0, 1, 2, 3))
+
+	ConfirmInsert(C64List(0, 1, 2), 0, C64List(3, 4), C64List(3, 4, 0, 1, 2))
+	ConfirmInsert(C64List(0, 1, 2), 1, C64List(3, 4), C64List(0, 3, 4, 1, 2))
+	ConfirmInsert(C64List(0, 1, 2), 2, C64List(3, 4), C64List(0, 1, 3, 4, 2))
+	ConfirmInsert(C64List(0, 1, 2), 3, C64List(3, 4), C64List(0, 1, 2, 3, 4))
 }

@@ -154,40 +154,40 @@ func TestU8SliceDeleteIf(t *testing.T) {
 
 func TestU8SliceEach(t *testing.T) {
 	var count	uint8
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i interface{}) {
 		if i != uint8(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key, i interface{}) {
 		if i != uint8(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 0
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i uint8) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i uint8) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i uint8) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i uint8) {
 		if i != uint8(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i uint8) {
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key interface{}, i uint8) {
 		if i != uint8(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -249,7 +249,8 @@ func TestU8SliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(U8List(), 0, 10, U8List())
+	u := make(U8Slice, 0, 10)
+	ConfirmReallocate(U8List(), 0, 10, &u)
 	ConfirmReallocate(U8List(0, 1, 2, 3, 4), 3, 10, U8List(0, 1, 2))
 	ConfirmReallocate(U8List(0, 1, 2, 3, 4), 5, 10, U8List(0, 1, 2, 3, 4))
 	ConfirmReallocate(U8List(0, 1, 2, 3, 4), 10, 10, U8List(0, 1, 2, 3, 4, 0, 0, 0, 0, 0))
@@ -472,4 +473,184 @@ func TestU8SliceFindN(t *testing.T) {
 	ConfirmFindN(U8List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
 	ConfirmFindN(U8List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
 	ConfirmFindN(U8List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}
+
+func TestU8SliceKeepIf(t *testing.T) {
+	ConfirmKeepIf := func(s *U8Slice, f interface{}, r *U8Slice) {
+		if s.KeepIf(f); !r.Equal(s) {
+			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmKeepIf(U8List(0, 1, 0, 3, 0, 5), uint8(0), U8List(0, 0, 0))
+	ConfirmKeepIf(U8List(0, 1, 0, 3, 0, 5), uint8(1), U8List(1))
+	ConfirmKeepIf(U8List(0, 1, 0, 3, 0, 5), uint8(6), U8List())
+
+	ConfirmKeepIf(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(0) }, U8List(0, 0, 0))
+	ConfirmKeepIf(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(1) }, U8List(1))
+	ConfirmKeepIf(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(6) }, U8List())
+
+	ConfirmKeepIf(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(0) }, U8List(0, 0, 0))
+	ConfirmKeepIf(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(1) }, U8List(1))
+	ConfirmKeepIf(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(6) }, U8List())
+}
+
+func TestU8SliceReverseEach(t *testing.T) {
+	var count	uint8
+	count = 9
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+		if i != count {
+			t.Fatalf("0: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+		if index != int(i.(uint8)) {
+			t.Fatalf("1: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key, i interface{}) {
+		if uint8(key.(int)) != i {
+			t.Fatalf("2: element %v erroneously reported as %v", key, i)
+		}
+	})
+
+	count = 9
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i uint8) {
+		if i != count {
+			t.Fatalf("3: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i uint8) {
+		if int(i) != index {
+			t.Fatalf("4: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	U8List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key interface{}, i uint8) {
+		if key.(int) != int(i) {
+			t.Fatalf("5: element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
+func TestU8SliceReplaceIf(t *testing.T) {
+	ConfirmReplaceIf := func(s *U8Slice, f, v interface{}, r *U8Slice) {
+		if s.ReplaceIf(f, v); !r.Equal(s) {
+			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
+		}
+	}
+
+	ConfirmReplaceIf(U8List(0, 1, 0, 3, 0, 5), uint8(0), uint8(1), U8List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(U8List(0, 1, 0, 3, 0, 5), uint8(1), uint8(0), U8List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(U8List(0, 1, 0, 3, 0, 5), uint8(6), uint8(0), U8List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(0) }, uint8(1), U8List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(1) }, uint8(0), U8List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(6) }, uint8(0), U8List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(0) }, uint8(1), U8List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(1) }, uint8(0), U8List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(6) }, uint8(0), U8List(0, 1, 0, 3, 0, 5))
+}
+
+func TestU8SliceReplace(t *testing.T) {
+	ConfirmReplace := func(s *U8Slice, v interface{}) {
+		if s.Replace(v); !s.Equal(v) {
+			t.Fatalf("Replace() should be %v but is %v", s, v)
+		}
+	}
+
+	ConfirmReplace(U8List(0, 1, 2, 3, 4, 5), U8List(9, 8, 7, 6, 5))
+	ConfirmReplace(U8List(0, 1, 2, 3, 4, 5), U8Slice{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(U8List(0, 1, 2, 3, 4, 5), &[]uint8{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(U8List(0, 1, 2, 3, 4, 5), []uint8{ 9, 8, 7, 6, 5 })
+}
+
+func TestU8SliceSelect(t *testing.T) {
+	ConfirmSelect := func(s *U8Slice, f interface{}, r *U8Slice) {
+		if x := s.Select(f); !r.Equal(x) {
+			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmSelect(U8List(0, 1, 0, 3, 0, 5), uint8(0), U8List(0, 0, 0))
+	ConfirmSelect(U8List(0, 1, 0, 3, 0, 5), uint8(1), U8List(1))
+	ConfirmSelect(U8List(0, 1, 0, 3, 0, 5), uint8(6), U8List())
+
+	ConfirmSelect(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(0) }, U8List(0, 0, 0))
+	ConfirmSelect(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(1) }, U8List(1))
+	ConfirmSelect(U8List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint8(6) }, U8List())
+
+	ConfirmSelect(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(0) }, U8List(0, 0, 0))
+	ConfirmSelect(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(1) }, U8List(1))
+	ConfirmSelect(U8List(0, 1, 0, 3, 0, 5), func(x uint8) bool { return x == uint8(6) }, U8List())
+}
+
+func TestU8SliceUniq(t *testing.T) {
+	ConfirmUniq := func(s, r *U8Slice) {
+		if s.Uniq(); !r.Equal(s) {
+			t.Fatalf("Uniq() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmUniq(U8List(0, 0, 0, 0, 0, 0), U8List(0))
+	ConfirmUniq(U8List(0, 1, 0, 3, 0, 5), U8List(0, 1, 3, 5))
+}
+
+func TestU8SliceShuffle(t *testing.T) {
+	ConfirmShuffle := func(s, r *U8Slice) {
+		if s.Shuffle(); s.Equal(r) {
+			t.Fatalf("%v.Shuffle() should change order of elements", s)
+		}
+		if s.Sort(); !s.Equal(r) {
+			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmShuffle(U8List(0, 1, 2, 3, 4, 5), U8List(0, 1, 2, 3, 4, 5))
+}
+
+func TestU8SliceValuesAt(t *testing.T) {
+	ConfirmValuesAt := func(s *U8Slice, i []int, r *U8Slice) {
+		if x := s.ValuesAt(i...); !r.Equal(x) {
+			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+		}
+	}
+
+	ConfirmValuesAt(U8List(0, 1, 2, 3, 4, 5), []int{}, U8List())
+	ConfirmValuesAt(U8List(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, U8List(0, 1))
+	ConfirmValuesAt(U8List(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, U8List(0, 3))
+	ConfirmValuesAt(U8List(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, U8List(0, 3, 4, 3))
+}
+
+func TestU8SliceInsert(t *testing.T) {
+	ConfirmInsert := func(s *U8Slice, n int, v interface{}, r *U8Slice) {
+		if s.Insert(n, v); !r.Equal(s) {
+			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
+		}
+	}
+
+	ConfirmInsert(U8List(), 0, uint8(0), U8List(0))
+	ConfirmInsert(U8List(), 0, U8List(0), U8List(0))
+	ConfirmInsert(U8List(), 0, U8List(0, 1), U8List(0, 1))
+
+	ConfirmInsert(U8List(0), 0, uint8(1), U8List(1, 0))
+	ConfirmInsert(U8List(0), 0, U8List(1), U8List(1, 0))
+	ConfirmInsert(U8List(0), 1, uint8(1), U8List(0, 1))
+	ConfirmInsert(U8List(0), 1, U8List(1), U8List(0, 1))
+
+	ConfirmInsert(U8List(0, 1, 2), 0, uint8(3), U8List(3, 0, 1, 2))
+	ConfirmInsert(U8List(0, 1, 2), 1, uint8(3), U8List(0, 3, 1, 2))
+	ConfirmInsert(U8List(0, 1, 2), 2, uint8(3), U8List(0, 1, 3, 2))
+	ConfirmInsert(U8List(0, 1, 2), 3, uint8(3), U8List(0, 1, 2, 3))
+
+	ConfirmInsert(U8List(0, 1, 2), 0, U8List(3, 4), U8List(3, 4, 0, 1, 2))
+	ConfirmInsert(U8List(0, 1, 2), 1, U8List(3, 4), U8List(0, 3, 4, 1, 2))
+	ConfirmInsert(U8List(0, 1, 2), 2, U8List(3, 4), U8List(0, 1, 3, 4, 2))
+	ConfirmInsert(U8List(0, 1, 2), 3, U8List(3, 4), U8List(0, 1, 2, 3, 4))
 }

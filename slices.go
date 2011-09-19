@@ -23,3 +23,22 @@ type Equatable interface {
 type Typed interface {
 	Type() reflect.Type
 }
+
+type Insertable interface {
+	Len() int
+	Insert(int, interface{})
+}
+
+type Container interface {
+	Len() int
+	At(int) interface{}
+	Set(int, interface{})
+}
+
+func Prepend(i Insertable, value interface{}) {
+	i.Insert(0, value)
+}
+
+func Append(i Insertable, value interface{}) {
+	i.Insert(i.Len(), value)
+}

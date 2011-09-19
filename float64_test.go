@@ -154,40 +154,40 @@ func TestF64SliceDeleteIf(t *testing.T) {
 
 func TestF64SliceEach(t *testing.T) {
 	count := 0
-	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i interface{}) {
 		if i != float64(count) {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i interface{}) {
 		if i != float64(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key, i interface{}) {
 		if i != float64(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 0
-	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(f float64) {
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(f float64) {
 		if f != float64(count) {
 			t.Fatalf("element %v erroneously reported as %v", count, f)
 		}
 		count++
 	})
 
-	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, f float64) {
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, f float64) {
 		if f != float64(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, f)
 		}
 	})
 
-	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, f float64) {
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key interface{}, f float64) {
 		if f != float64(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, f)
 		}
@@ -249,7 +249,8 @@ func TestF64SliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(F64List(), 0, 10, F64List())
+	f := make(F64Slice, 0, 10)
+	ConfirmReallocate(F64List(), 0, 10, &f)
 	ConfirmReallocate(F64List(0, 1, 2, 3, 4), 3, 10, F64List(0, 1, 2))
 	ConfirmReallocate(F64List(0, 1, 2, 3, 4), 5, 10, F64List(0, 1, 2, 3, 4))
 	ConfirmReallocate(F64List(0, 1, 2, 3, 4), 10, 10, F64List(0, 1, 2, 3, 4, 0, 0, 0, 0, 0))
@@ -472,4 +473,184 @@ func TestF64SliceFindN(t *testing.T) {
 	ConfirmFindN(F64List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
 	ConfirmFindN(F64List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
 	ConfirmFindN(F64List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}
+
+func TestF64SliceKeepIf(t *testing.T) {
+	ConfirmKeepIf := func(s *F64Slice, f interface{}, r *F64Slice) {
+		if s.KeepIf(f); !r.Equal(s) {
+			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmKeepIf(F64List(0, 1, 0, 3, 0, 5), float64(0), F64List(0, 0, 0))
+	ConfirmKeepIf(F64List(0, 1, 0, 3, 0, 5), float64(1), F64List(1))
+	ConfirmKeepIf(F64List(0, 1, 0, 3, 0, 5), float64(6), F64List())
+
+	ConfirmKeepIf(F64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float64(0) }, F64List(0, 0, 0))
+	ConfirmKeepIf(F64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float64(1) }, F64List(1))
+	ConfirmKeepIf(F64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float64(6) }, F64List())
+
+	ConfirmKeepIf(F64List(0, 1, 0, 3, 0, 5), func(x float64) bool { return x == float64(0) }, F64List(0, 0, 0))
+	ConfirmKeepIf(F64List(0, 1, 0, 3, 0, 5), func(x float64) bool { return x == float64(1) }, F64List(1))
+	ConfirmKeepIf(F64List(0, 1, 0, 3, 0, 5), func(x float64) bool { return x == float64(6) }, F64List())
+}
+
+func TestF64SliceReverseEach(t *testing.T) {
+	var count	float64
+	count = 9
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+		if i != count {
+			t.Fatalf("0: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+		if index != int(i.(float64)) {
+			t.Fatalf("1: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key, i interface{}) {
+		if float64(key.(int)) != i {
+			t.Fatalf("2: element %v erroneously reported as %v", key, i)
+		}
+	})
+
+	count = 9
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i float64) {
+		if i != count {
+			t.Fatalf("3: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i float64) {
+		if int(i) != index {
+			t.Fatalf("4: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	F64List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key interface{}, i float64) {
+		if key.(int) != int(i) {
+			t.Fatalf("5: element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
+func TestF64SliceReplaceIf(t *testing.T) {
+	ConfirmReplaceIf := func(s *F64Slice, f, v interface{}, r *F64Slice) {
+		if s.ReplaceIf(f, v); !r.Equal(s) {
+			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
+		}
+	}
+
+	ConfirmReplaceIf(F64List(0, 1, 0, 3, 0, 5), float64(0), float64(1), F64List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(F64List(0, 1, 0, 3, 0, 5), float64(1), float64(0), F64List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(F64List(0, 1, 0, 3, 0, 5), float64(6), float64(0), F64List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(F64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float64(0) }, float64(1), F64List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(F64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float64(1) }, float64(0), F64List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(F64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float64(6) }, float64(0), F64List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(F64List(0, 1, 0, 3, 0, 5), func(x float64) bool { return x == float64(0) }, float64(1), F64List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(F64List(0, 1, 0, 3, 0, 5), func(x float64) bool { return x == float64(1) }, float64(0), F64List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(F64List(0, 1, 0, 3, 0, 5), func(x float64) bool { return x == float64(6) }, float64(0), F64List(0, 1, 0, 3, 0, 5))
+}
+
+func TestF64SliceReplace(t *testing.T) {
+	ConfirmReplace := func(s *F64Slice, v interface{}) {
+		if s.Replace(v); !s.Equal(v) {
+			t.Fatalf("Replace() should be %v but is %v", s, v)
+		}
+	}
+
+	ConfirmReplace(F64List(0, 1, 2, 3, 4, 5), F64List(9, 8, 7, 6, 5))
+	ConfirmReplace(F64List(0, 1, 2, 3, 4, 5), F64Slice{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(F64List(0, 1, 2, 3, 4, 5), &[]float64{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(F64List(0, 1, 2, 3, 4, 5), []float64{ 9, 8, 7, 6, 5 })
+}
+
+func TestF64SliceSelect(t *testing.T) {
+	ConfirmSelect := func(s *F64Slice, f interface{}, r *F64Slice) {
+		if x := s.Select(f); !r.Equal(x) {
+			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmSelect(F64List(0, 1, 0, 3, 0, 5), float64(0), F64List(0, 0, 0))
+	ConfirmSelect(F64List(0, 1, 0, 3, 0, 5), float64(1), F64List(1))
+	ConfirmSelect(F64List(0, 1, 0, 3, 0, 5), float64(6), F64List())
+
+	ConfirmSelect(F64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float64(0) }, F64List(0, 0, 0))
+	ConfirmSelect(F64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float64(1) }, F64List(1))
+	ConfirmSelect(F64List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == float64(6) }, F64List())
+
+	ConfirmSelect(F64List(0, 1, 0, 3, 0, 5), func(x float64) bool { return x == float64(0) }, F64List(0, 0, 0))
+	ConfirmSelect(F64List(0, 1, 0, 3, 0, 5), func(x float64) bool { return x == float64(1) }, F64List(1))
+	ConfirmSelect(F64List(0, 1, 0, 3, 0, 5), func(x float64) bool { return x == float64(6) }, F64List())
+}
+
+func TestF64SliceUniq(t *testing.T) {
+	ConfirmUniq := func(s, r *F64Slice) {
+		if s.Uniq(); !r.Equal(s) {
+			t.Fatalf("Uniq() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmUniq(F64List(0, 0, 0, 0, 0, 0), F64List(0))
+	ConfirmUniq(F64List(0, 1, 0, 3, 0, 5), F64List(0, 1, 3, 5))
+}
+
+func TestF64SliceShuffle(t *testing.T) {
+	ConfirmShuffle := func(s, r *F64Slice) {
+		if s.Shuffle(); s.Equal(r) {
+			t.Fatalf("%v.Shuffle() should change order of elements", s)
+		}
+		if s.Sort(); !s.Equal(r) {
+			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmShuffle(F64List(0, 1, 2, 3, 4, 5), F64List(0, 1, 2, 3, 4, 5))
+}
+
+func TestF64SliceValuesAt(t *testing.T) {
+	ConfirmValuesAt := func(s *F64Slice, i []int, r *F64Slice) {
+		if x := s.ValuesAt(i...); !r.Equal(x) {
+			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+		}
+	}
+
+	ConfirmValuesAt(F64List(0, 1, 2, 3, 4, 5), []int{}, F64List())
+	ConfirmValuesAt(F64List(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, F64List(0, 1))
+	ConfirmValuesAt(F64List(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, F64List(0, 3))
+	ConfirmValuesAt(F64List(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, F64List(0, 3, 4, 3))
+}
+
+func TestF64SliceInsert(t *testing.T) {
+	ConfirmInsert := func(s *F64Slice, n int, v interface{}, r *F64Slice) {
+		if s.Insert(n, v); !r.Equal(s) {
+			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
+		}
+	}
+
+	ConfirmInsert(F64List(), 0, float64(0), F64List(0))
+	ConfirmInsert(F64List(), 0, F64List(0), F64List(0))
+	ConfirmInsert(F64List(), 0, F64List(0, 1), F64List(0, 1))
+
+	ConfirmInsert(F64List(0), 0, float64(1), F64List(1, 0))
+	ConfirmInsert(F64List(0), 0, F64List(1), F64List(1, 0))
+	ConfirmInsert(F64List(0), 1, float64(1), F64List(0, 1))
+	ConfirmInsert(F64List(0), 1, F64List(1), F64List(0, 1))
+
+	ConfirmInsert(F64List(0, 1, 2), 0, float64(3), F64List(3, 0, 1, 2))
+	ConfirmInsert(F64List(0, 1, 2), 1, float64(3), F64List(0, 3, 1, 2))
+	ConfirmInsert(F64List(0, 1, 2), 2, float64(3), F64List(0, 1, 3, 2))
+	ConfirmInsert(F64List(0, 1, 2), 3, float64(3), F64List(0, 1, 2, 3))
+
+	ConfirmInsert(F64List(0, 1, 2), 0, F64List(3, 4), F64List(3, 4, 0, 1, 2))
+	ConfirmInsert(F64List(0, 1, 2), 1, F64List(3, 4), F64List(0, 3, 4, 1, 2))
+	ConfirmInsert(F64List(0, 1, 2), 2, F64List(3, 4), F64List(0, 1, 3, 4, 2))
+	ConfirmInsert(F64List(0, 1, 2), 3, F64List(3, 4), F64List(0, 1, 2, 3, 4))
 }

@@ -1,6 +1,9 @@
 package slices
 
-import "testing"
+import (
+	"strconv"
+	"testing"
+)
 
 func TestSSliceString(t *testing.T) {
 	ConfirmString := func(s *SSlice, r string) {
@@ -237,7 +240,8 @@ func TestSSliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(SList(), 0, 10, SList())
+	s := make(SSlice, 0, 10)
+	ConfirmReallocate(SList(), 0, 10, &s)
 	ConfirmReallocate(SList("A", "B", "C", "D", "E", "F"), 3, 10, SList("A", "B", "C"))
 	ConfirmReallocate(SList("A", "B", "C", "D", "E", "F"), 6, 10, SList("A", "B", "C", "D", "E", "F"))
 	ConfirmReallocate(SList("A", "B", "C", "D", "E", "F"), 10, 10, SList("A", "B", "C", "D", "E", "F", "", "", "", ""))
@@ -459,4 +463,190 @@ func TestSSliceFindN(t *testing.T) {
 	ConfirmFindN(SList("A", "B", "A", "B", "A"), "A", 2, IList(0, 2))
 	ConfirmFindN(SList("A", "B", "A", "B", "A"), "A", 3, IList(0, 2, 4))
 	ConfirmFindN(SList("A", "B", "A", "B", "A"), "A", 4, IList(0, 2, 4))
+}
+
+func TestSSliceKeepIf(t *testing.T) {
+	ConfirmKeepIf := func(s *SSlice, f interface{}, r *SSlice) {
+		if s.KeepIf(f); !r.Equal(s) {
+			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmKeepIf(SList("A", "B", "A", "B", "A"), "A", SList("A", "A", "A"))
+	ConfirmKeepIf(SList("A", "B", "A", "B", "A"), "B", SList("B", "B"))
+	ConfirmKeepIf(SList("A", "B", "A", "B", "A"), "C", SList())
+
+	ConfirmKeepIf(SList("A", "B", "A", "B", "A"), func(x interface{}) bool { return x == "A" }, SList("A", "A", "A"))
+	ConfirmKeepIf(SList("A", "B", "A", "B", "A"), func(x interface{}) bool { return x == "B" }, SList("B", "B"))
+	ConfirmKeepIf(SList("A", "B", "A", "B", "A"), func(x interface{}) bool { return x == "C" }, SList())
+
+	ConfirmKeepIf(SList("A", "B", "A", "B", "A"), func(x string) bool { return x == "A" }, SList("A", "A", "A"))
+	ConfirmKeepIf(SList("A", "B", "A", "B", "A"), func(x string) bool { return x == "B" }, SList("B", "B"))
+	ConfirmKeepIf(SList("A", "B", "A", "B", "A"), func(x string) bool { return x == "C" }, SList())
+}
+
+func TestSSliceReverseEach(t *testing.T) {
+	var count	int
+	count = 9
+	SList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").ReverseEach(func(i interface{}) {
+		v, _ := strconv.Atoi(i.(string))
+		if v != count {
+			t.Fatalf("0: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	SList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").ReverseEach(func(index int, i interface{}) {
+		v, _ := strconv.Atoi(i.(string))
+		if index != v {
+			t.Fatalf("1: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	SList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").ReverseEach(func(key, i interface{}) {
+		v, _ := strconv.Atoi(i.(string))
+		if key.(int) != v {
+			t.Fatalf("2: element %v erroneously reported as %v", key, i)
+		}
+	})
+
+	count = 9
+	SList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").ReverseEach(func(i string) {
+		v, _ := strconv.Atoi(i)
+		if v != count {
+			t.Fatalf("3: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	SList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").ReverseEach(func(index int, i string) {
+		v, _ := strconv.Atoi(i)
+		if v != index {
+			t.Fatalf("4: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	SList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9").ReverseEach(func(key interface{}, i string) {
+		v, _ := strconv.Atoi(i)
+		if key.(int) != v {
+			t.Fatalf("5: element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
+func TestSSliceReplaceIf(t *testing.T) {
+	ConfirmReplaceIf := func(s *SSlice, f, v interface{}, r *SSlice) {
+		if s.ReplaceIf(f, v); !r.Equal(s) {
+			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
+		}
+	}
+
+	ConfirmReplaceIf(SList("A", "B", "A", "B", "A"), "A", "B", SList("B", "B", "B", "B", "B"))
+	ConfirmReplaceIf(SList("A", "B", "A", "B", "A"), "B", "A", SList("A", "A", "A", "A", "A"))
+	ConfirmReplaceIf(SList("A", "B", "A", "B", "A"), "X", "A", SList("A", "B", "A", "B", "A"))
+
+	ConfirmReplaceIf(SList("A", "B", "A", "B", "A"), func(x interface{}) bool { return x == "A" }, "B", SList("B", "B", "B", "B", "B"))
+	ConfirmReplaceIf(SList("A", "B", "A", "B", "A"), func(x interface{}) bool { return x == "B" }, "A", SList("A", "A", "A", "A", "A"))
+	ConfirmReplaceIf(SList("A", "B", "A", "B", "A"), func(x interface{}) bool { return x == "Z" }, "A", SList("A", "B", "A", "B", "A"))
+
+	ConfirmReplaceIf(SList("A", "B", "A", "B", "A"), func(x string) bool { return x == "A" }, "B", SList("B", "B", "B", "B", "B"))
+	ConfirmReplaceIf(SList("A", "B", "A", "B", "A"), func(x string) bool { return x == "B" }, "A", SList("A", "A", "A", "A", "A"))
+	ConfirmReplaceIf(SList("A", "B", "A", "B", "A"), func(x string) bool { return x == "Z" }, "A", SList("A", "B", "A", "B", "A"))
+}
+
+func TestSSliceReplace(t *testing.T) {
+	ConfirmReplace := func(s *SSlice, v interface{}) {
+		if s.Replace(v); !s.Equal(v) {
+			t.Fatalf("Replace() should be %v but is %v", s, v)
+		}
+	}
+
+	ConfirmReplace(SList("A", "B", "A", "B", "A"), SList("B", "C", "D", "C", "B"))
+	ConfirmReplace(SList("A", "B", "A", "B", "A"), SSlice{ "B", "C", "D", "C", "B" })
+	ConfirmReplace(SList("A", "B", "A", "B", "A"), &[]string{ "B", "C", "D", "C", "B" })
+	ConfirmReplace(SList("A", "B", "A", "B", "A"), []string{ "B", "C", "D", "C", "B" })
+}
+
+func TestSSliceSelect(t *testing.T) {
+	ConfirmSelect := func(s *SSlice, f interface{}, r *SSlice) {
+		if x := s.Select(f); !r.Equal(x) {
+			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmSelect(SList("A", "B", "A", "B", "A"), "A", SList("A", "A", "A"))
+	ConfirmSelect(SList("A", "B", "A", "B", "A"), "B", SList("B", "B"))
+	ConfirmSelect(SList("A", "B", "A", "B", "A"), "Z", SList())
+
+	ConfirmSelect(SList("A", "B", "A", "B", "A"), func(x interface{}) bool { return x == "A" }, SList("A", "A", "A"))
+	ConfirmSelect(SList("A", "B", "A", "B", "A"), func(x interface{}) bool { return x == "B" }, SList("B", "B"))
+	ConfirmSelect(SList("A", "B", "A", "B", "A"), func(x interface{}) bool { return x == "Z" }, SList())
+
+	ConfirmSelect(SList("A", "B", "A", "B", "A"), func(x string) bool { return x == "A" }, SList("A", "A", "A"))
+	ConfirmSelect(SList("A", "B", "A", "B", "A"), func(x string) bool { return x == "B" }, SList("B", "B"))
+	ConfirmSelect(SList("A", "B", "A", "B", "A"), func(x string) bool { return x == "Z" }, SList())
+}
+
+func TestSSliceUniq(t *testing.T) {
+	ConfirmUniq := func(s, r *SSlice) {
+		if s.Uniq(); !r.Equal(s) {
+			t.Fatalf("Uniq() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmUniq(SList("A", "A", "A", "A", "A"), SList("A"))
+	ConfirmUniq(SList("A", "B", "A", "B", "C"), SList("A", "B", "C"))
+}
+
+func TestSSliceShuffle(t *testing.T) {
+	ConfirmShuffle := func(s, r *SSlice) {
+		if s.Shuffle(); s.Equal(r) {
+			t.Fatalf("%v.Shuffle() should change order of elements", s)
+		}
+		if s.Sort(); !s.Equal(r) {
+			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmShuffle(SList("A", "B", "A", "B", "A"), SList("A", "A", "A", "B", "B"))
+}
+
+func TestSSliceValuesAt(t *testing.T) {
+	ConfirmValuesAt := func(s *SSlice, i []int, r *SSlice) {
+		if x := s.ValuesAt(i...); !r.Equal(x) {
+			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+		}
+	}
+
+	ConfirmValuesAt(SList("A", "B", "A", "B", "A"), []int{}, SList())
+	ConfirmValuesAt(SList("A", "B", "A", "B", "A"), []int{ 0, 1 }, SList("A", "B"))
+	ConfirmValuesAt(SList("A", "B", "A", "B", "A"), []int{ 0, 3 }, SList("A", "B"))
+	ConfirmValuesAt(SList("A", "B", "A", "B", "A"), []int{ 0, 3, 4, 3 }, SList("A", "B", "A", "B"))
+}
+
+func TestSSliceInsert(t *testing.T) {
+	ConfirmInsert := func(s *SSlice, n int, v interface{}, r *SSlice) {
+		if s.Insert(n, v); !r.Equal(s) {
+			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
+		}
+	}
+
+	ConfirmInsert(SList(), 0, "A", SList("A"))
+	ConfirmInsert(SList(), 0, SList("A"), SList("A"))
+	ConfirmInsert(SList(), 0, SList("A", "B", "A", "B", "A"), SList("A", "B", "A", "B", "A"))
+
+	ConfirmInsert(SList("A"), 0, "B", SList("B", "A"))
+	ConfirmInsert(SList("A"), 1, "B", SList("A", "B"))
+	ConfirmInsert(SList("A"), 0, SList("B"), SList("B", "A"))
+	ConfirmInsert(SList("A"), 1, SList("B"), SList("A", "B"))
+
+	ConfirmInsert(SList("A", "B", "C"), 0, "X", SList("X", "A", "B", "C"))
+	ConfirmInsert(SList("A", "B", "C"), 1, "X", SList("A", "X", "B", "C"))
+	ConfirmInsert(SList("A", "B", "C"), 2, "X", SList("A", "B", "X", "C"))
+	ConfirmInsert(SList("A", "B", "C"), 3, "X", SList("A", "B", "C", "X"))
+
+	ConfirmInsert(SList("A", "B", "C"), 0, SList("X", "Y"), SList("X", "Y", "A", "B", "C"))
+	ConfirmInsert(SList("A", "B", "C"), 1, SList("X", "Y"), SList("A", "X", "Y", "B", "C"))
+	ConfirmInsert(SList("A", "B", "C"), 2, SList("X", "Y"), SList("A", "B", "X", "Y", "C"))
+	ConfirmInsert(SList("A", "B", "C"), 3, SList("X", "Y"), SList("A", "B", "C", "X", "Y"))
 }

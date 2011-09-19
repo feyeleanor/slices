@@ -154,40 +154,40 @@ func TestU32SliceDeleteIf(t *testing.T) {
 
 func TestU32SliceEach(t *testing.T) {
 	var count	uint32
-	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i interface{}) {
 		if i != uint32(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key, i interface{}) {
 		if i != uint32(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 0
-	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i uint32) {
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i uint32) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i uint32) {
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i uint32) {
 		if i != uint32(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i uint32) {
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key interface{}, i uint32) {
 		if i != uint32(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -249,7 +249,8 @@ func TestU32SliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(U32List(), 0, 10, U32List())
+	u := make(U32Slice, 0, 10)
+	ConfirmReallocate(U32List(), 0, 10, &u)
 	ConfirmReallocate(U32List(0, 1, 2, 3, 4), 3, 10, U32List(0, 1, 2))
 	ConfirmReallocate(U32List(0, 1, 2, 3, 4), 5, 10, U32List(0, 1, 2, 3, 4))
 	ConfirmReallocate(U32List(0, 1, 2, 3, 4), 10, 10, U32List(0, 1, 2, 3, 4, 0, 0, 0, 0, 0))
@@ -472,4 +473,184 @@ func TestU32SliceFindN(t *testing.T) {
 	ConfirmFindN(U32List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
 	ConfirmFindN(U32List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
 	ConfirmFindN(U32List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}
+
+func TestU32SliceKeepIf(t *testing.T) {
+	ConfirmKeepIf := func(s *U32Slice, f interface{}, r *U32Slice) {
+		if s.KeepIf(f); !r.Equal(s) {
+			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmKeepIf(U32List(0, 1, 0, 3, 0, 5), uint32(0), U32List(0, 0, 0))
+	ConfirmKeepIf(U32List(0, 1, 0, 3, 0, 5), uint32(1), U32List(1))
+	ConfirmKeepIf(U32List(0, 1, 0, 3, 0, 5), uint32(6), U32List())
+
+	ConfirmKeepIf(U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(0) }, U32List(0, 0, 0))
+	ConfirmKeepIf(U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(1) }, U32List(1))
+	ConfirmKeepIf(U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(6) }, U32List())
+
+	ConfirmKeepIf(U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(0) }, U32List(0, 0, 0))
+	ConfirmKeepIf(U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(1) }, U32List(1))
+	ConfirmKeepIf(U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(6) }, U32List())
+}
+
+func TestU32SliceReverseEach(t *testing.T) {
+	var count	uint32
+	count = 9
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+		if i != count {
+			t.Fatalf("0: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+		if index != int(i.(uint32)) {
+			t.Fatalf("1: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key, i interface{}) {
+		if uint32(key.(int)) != i {
+			t.Fatalf("2: element %v erroneously reported as %v", key, i)
+		}
+	})
+
+	count = 9
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i uint32) {
+		if i != count {
+			t.Fatalf("3: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i uint32) {
+		if int(i) != index {
+			t.Fatalf("4: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	U32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key interface{}, i uint32) {
+		if key.(int) != int(i) {
+			t.Fatalf("5: element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
+func TestU32SliceReplaceIf(t *testing.T) {
+	ConfirmReplaceIf := func(s *U32Slice, f, v interface{}, r *U32Slice) {
+		if s.ReplaceIf(f, v); !r.Equal(s) {
+			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
+		}
+	}
+
+	ConfirmReplaceIf(U32List(0, 1, 0, 3, 0, 5), uint32(0), uint32(1), U32List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(U32List(0, 1, 0, 3, 0, 5), uint32(1), uint32(0), U32List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(U32List(0, 1, 0, 3, 0, 5), uint32(6), uint32(0), U32List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(0) }, uint32(1), U32List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(1) }, uint32(0), U32List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(6) }, uint32(0), U32List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(0) }, uint32(1), U32List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(1) }, uint32(0), U32List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(6) }, uint32(0), U32List(0, 1, 0, 3, 0, 5))
+}
+
+func TestU32SliceReplace(t *testing.T) {
+	ConfirmReplace := func(s *U32Slice, v interface{}) {
+		if s.Replace(v); !s.Equal(v) {
+			t.Fatalf("Replace() should be %v but is %v", s, v)
+		}
+	}
+
+	ConfirmReplace(U32List(0, 1, 2, 3, 4, 5), U32List(9, 8, 7, 6, 5))
+	ConfirmReplace(U32List(0, 1, 2, 3, 4, 5), U32Slice{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(U32List(0, 1, 2, 3, 4, 5), &[]uint32{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(U32List(0, 1, 2, 3, 4, 5), []uint32{ 9, 8, 7, 6, 5 })
+}
+
+func TestU32SliceSelect(t *testing.T) {
+	ConfirmSelect := func(s *U32Slice, f interface{}, r *U32Slice) {
+		if x := s.Select(f); !r.Equal(x) {
+			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmSelect(U32List(0, 1, 0, 3, 0, 5), uint32(0), U32List(0, 0, 0))
+	ConfirmSelect(U32List(0, 1, 0, 3, 0, 5), uint32(1), U32List(1))
+	ConfirmSelect(U32List(0, 1, 0, 3, 0, 5), uint32(6), U32List())
+
+	ConfirmSelect(U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(0) }, U32List(0, 0, 0))
+	ConfirmSelect(U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(1) }, U32List(1))
+	ConfirmSelect(U32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint32(6) }, U32List())
+
+	ConfirmSelect(U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(0) }, U32List(0, 0, 0))
+	ConfirmSelect(U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(1) }, U32List(1))
+	ConfirmSelect(U32List(0, 1, 0, 3, 0, 5), func(x uint32) bool { return x == uint32(6) }, U32List())
+}
+
+func TestU32SliceUniq(t *testing.T) {
+	ConfirmUniq := func(s, r *U32Slice) {
+		if s.Uniq(); !r.Equal(s) {
+			t.Fatalf("Uniq() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmUniq(U32List(0, 0, 0, 0, 0, 0), U32List(0))
+	ConfirmUniq(U32List(0, 1, 0, 3, 0, 5), U32List(0, 1, 3, 5))
+}
+
+func TestU32SliceShuffle(t *testing.T) {
+	ConfirmShuffle := func(s, r *U32Slice) {
+		if s.Shuffle(); s.Equal(r) {
+			t.Fatalf("%v.Shuffle() should change order of elements", s)
+		}
+		if s.Sort(); !s.Equal(r) {
+			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmShuffle(U32List(0, 1, 2, 3, 4, 5), U32List(0, 1, 2, 3, 4, 5))
+}
+
+func TestU32SliceValuesAt(t *testing.T) {
+	ConfirmValuesAt := func(s *U32Slice, i []int, r *U32Slice) {
+		if x := s.ValuesAt(i...); !r.Equal(x) {
+			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+		}
+	}
+
+	ConfirmValuesAt(U32List(0, 1, 2, 3, 4, 5), []int{}, U32List())
+	ConfirmValuesAt(U32List(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, U32List(0, 1))
+	ConfirmValuesAt(U32List(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, U32List(0, 3))
+	ConfirmValuesAt(U32List(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, U32List(0, 3, 4, 3))
+}
+
+func TestU32SliceInsert(t *testing.T) {
+	ConfirmInsert := func(s *U32Slice, n int, v interface{}, r *U32Slice) {
+		if s.Insert(n, v); !r.Equal(s) {
+			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
+		}
+	}
+
+	ConfirmInsert(U32List(), 0, uint32(0), U32List(0))
+	ConfirmInsert(U32List(), 0, U32List(0), U32List(0))
+	ConfirmInsert(U32List(), 0, U32List(0, 1), U32List(0, 1))
+
+	ConfirmInsert(U32List(0), 0, uint32(1), U32List(1, 0))
+	ConfirmInsert(U32List(0), 0, U32List(1), U32List(1, 0))
+	ConfirmInsert(U32List(0), 1, uint32(1), U32List(0, 1))
+	ConfirmInsert(U32List(0), 1, U32List(1), U32List(0, 1))
+
+	ConfirmInsert(U32List(0, 1, 2), 0, uint32(3), U32List(3, 0, 1, 2))
+	ConfirmInsert(U32List(0, 1, 2), 1, uint32(3), U32List(0, 3, 1, 2))
+	ConfirmInsert(U32List(0, 1, 2), 2, uint32(3), U32List(0, 1, 3, 2))
+	ConfirmInsert(U32List(0, 1, 2), 3, uint32(3), U32List(0, 1, 2, 3))
+
+	ConfirmInsert(U32List(0, 1, 2), 0, U32List(3, 4), U32List(3, 4, 0, 1, 2))
+	ConfirmInsert(U32List(0, 1, 2), 1, U32List(3, 4), U32List(0, 3, 4, 1, 2))
+	ConfirmInsert(U32List(0, 1, 2), 2, U32List(3, 4), U32List(0, 1, 3, 4, 2))
+	ConfirmInsert(U32List(0, 1, 2), 3, U32List(3, 4), U32List(0, 1, 2, 3, 4))
 }

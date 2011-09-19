@@ -154,40 +154,40 @@ func TestU16SliceDeleteIf(t *testing.T) {
 
 func TestU16SliceEach(t *testing.T) {
 	var count	uint16
-	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i interface{}) {
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i interface{}) {
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i interface{}) {
 		if i != uint16(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key, i interface{}) {
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key, i interface{}) {
 		if i != uint16(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 0
-	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(i uint16) {
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i uint16) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(index int, i uint16) {
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i uint16) {
 		if i != uint16(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8 ,9).Each(func(key interface{}, i uint16) {
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key interface{}, i uint16) {
 		if i != uint16(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -249,7 +249,8 @@ func TestU16SliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(U16List(), 0, 10, U16List())
+	u := make(U16Slice, 0, 10)
+	ConfirmReallocate(U16List(), 0, 10, &u)
 	ConfirmReallocate(U16List(0, 1, 2, 3, 4), 3, 10, U16List(0, 1, 2))
 	ConfirmReallocate(U16List(0, 1, 2, 3, 4), 5, 10, U16List(0, 1, 2, 3, 4))
 	ConfirmReallocate(U16List(0, 1, 2, 3, 4), 10, 10, U16List(0, 1, 2, 3, 4, 0, 0, 0, 0, 0))
@@ -472,4 +473,184 @@ func TestU16SliceFindN(t *testing.T) {
 	ConfirmFindN(U16List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
 	ConfirmFindN(U16List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
 	ConfirmFindN(U16List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+}
+
+func TestU16SliceKeepIf(t *testing.T) {
+	ConfirmKeepIf := func(s *U16Slice, f interface{}, r *U16Slice) {
+		if s.KeepIf(f); !r.Equal(s) {
+			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmKeepIf(U16List(0, 1, 0, 3, 0, 5), uint16(0), U16List(0, 0, 0))
+	ConfirmKeepIf(U16List(0, 1, 0, 3, 0, 5), uint16(1), U16List(1))
+	ConfirmKeepIf(U16List(0, 1, 0, 3, 0, 5), uint16(6), U16List())
+
+	ConfirmKeepIf(U16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint16(0) }, U16List(0, 0, 0))
+	ConfirmKeepIf(U16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint16(1) }, U16List(1))
+	ConfirmKeepIf(U16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint16(6) }, U16List())
+
+	ConfirmKeepIf(U16List(0, 1, 0, 3, 0, 5), func(x uint16) bool { return x == uint16(0) }, U16List(0, 0, 0))
+	ConfirmKeepIf(U16List(0, 1, 0, 3, 0, 5), func(x uint16) bool { return x == uint16(1) }, U16List(1))
+	ConfirmKeepIf(U16List(0, 1, 0, 3, 0, 5), func(x uint16) bool { return x == uint16(6) }, U16List())
+}
+
+func TestU16SliceReverseEach(t *testing.T) {
+	var count	uint16
+	count = 9
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+		if i != count {
+			t.Fatalf("0: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+		if index != int(i.(uint16)) {
+			t.Fatalf("1: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key, i interface{}) {
+		if uint16(key.(int)) != i {
+			t.Fatalf("2: element %v erroneously reported as %v", key, i)
+		}
+	})
+
+	count = 9
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i uint16) {
+		if i != count {
+			t.Fatalf("3: element %v erroneously reported as %v", count, i)
+		}
+		count--
+	})
+
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i uint16) {
+		if int(i) != index {
+			t.Fatalf("4: element %v erroneously reported as %v", index, i)
+		}
+	})
+
+	U16List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key interface{}, i uint16) {
+		if key.(int) != int(i) {
+			t.Fatalf("5: element %v erroneously reported as %v", key, i)
+		}
+	})
+}
+
+func TestU16SliceReplaceIf(t *testing.T) {
+	ConfirmReplaceIf := func(s *U16Slice, f, v interface{}, r *U16Slice) {
+		if s.ReplaceIf(f, v); !r.Equal(s) {
+			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
+		}
+	}
+
+	ConfirmReplaceIf(U16List(0, 1, 0, 3, 0, 5), uint16(0), uint16(1), U16List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(U16List(0, 1, 0, 3, 0, 5), uint16(1), uint16(0), U16List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(U16List(0, 1, 0, 3, 0, 5), uint16(6), uint16(0), U16List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(U16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint16(0) }, uint16(1), U16List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(U16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint16(1) }, uint16(0), U16List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(U16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint16(6) }, uint16(0), U16List(0, 1, 0, 3, 0, 5))
+
+	ConfirmReplaceIf(U16List(0, 1, 0, 3, 0, 5), func(x uint16) bool { return x == uint16(0) }, uint16(1), U16List(1, 1, 1, 3, 1, 5))
+	ConfirmReplaceIf(U16List(0, 1, 0, 3, 0, 5), func(x uint16) bool { return x == uint16(1) }, uint16(0), U16List(0, 0, 0, 3, 0, 5))
+	ConfirmReplaceIf(U16List(0, 1, 0, 3, 0, 5), func(x uint16) bool { return x == uint16(6) }, uint16(0), U16List(0, 1, 0, 3, 0, 5))
+}
+
+func TestU16SliceReplace(t *testing.T) {
+	ConfirmReplace := func(s *U16Slice, v interface{}) {
+		if s.Replace(v); !s.Equal(v) {
+			t.Fatalf("Replace() should be %v but is %v", s, v)
+		}
+	}
+
+	ConfirmReplace(U16List(0, 1, 2, 3, 4, 5), U16List(9, 8, 7, 6, 5))
+	ConfirmReplace(U16List(0, 1, 2, 3, 4, 5), U16Slice{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(U16List(0, 1, 2, 3, 4, 5), &[]uint16{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(U16List(0, 1, 2, 3, 4, 5), []uint16{ 9, 8, 7, 6, 5 })
+}
+
+func TestU16SliceSelect(t *testing.T) {
+	ConfirmSelect := func(s *U16Slice, f interface{}, r *U16Slice) {
+		if x := s.Select(f); !r.Equal(x) {
+			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
+		}
+	}
+
+	ConfirmSelect(U16List(0, 1, 0, 3, 0, 5), uint16(0), U16List(0, 0, 0))
+	ConfirmSelect(U16List(0, 1, 0, 3, 0, 5), uint16(1), U16List(1))
+	ConfirmSelect(U16List(0, 1, 0, 3, 0, 5), uint16(6), U16List())
+
+	ConfirmSelect(U16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint16(0) }, U16List(0, 0, 0))
+	ConfirmSelect(U16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint16(1) }, U16List(1))
+	ConfirmSelect(U16List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == uint16(6) }, U16List())
+
+	ConfirmSelect(U16List(0, 1, 0, 3, 0, 5), func(x uint16) bool { return x == uint16(0) }, U16List(0, 0, 0))
+	ConfirmSelect(U16List(0, 1, 0, 3, 0, 5), func(x uint16) bool { return x == uint16(1) }, U16List(1))
+	ConfirmSelect(U16List(0, 1, 0, 3, 0, 5), func(x uint16) bool { return x == uint16(6) }, U16List())
+}
+
+func TestU16SliceUniq(t *testing.T) {
+	ConfirmUniq := func(s, r *U16Slice) {
+		if s.Uniq(); !r.Equal(s) {
+			t.Fatalf("Uniq() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmUniq(U16List(0, 0, 0, 0, 0, 0), U16List(0))
+	ConfirmUniq(U16List(0, 1, 0, 3, 0, 5), U16List(0, 1, 3, 5))
+}
+
+func TestU16SliceShuffle(t *testing.T) {
+	ConfirmShuffle := func(s, r *U16Slice) {
+		if s.Shuffle(); s.Equal(r) {
+			t.Fatalf("%v.Shuffle() should change order of elements", s)
+		}
+		if s.Sort(); !s.Equal(r) {
+			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmShuffle(U16List(0, 1, 2, 3, 4, 5), U16List(0, 1, 2, 3, 4, 5))
+}
+
+func TestU16SliceValuesAt(t *testing.T) {
+	ConfirmValuesAt := func(s *U16Slice, i []int, r *U16Slice) {
+		if x := s.ValuesAt(i...); !r.Equal(x) {
+			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+		}
+	}
+
+	ConfirmValuesAt(U16List(0, 1, 2, 3, 4, 5), []int{}, U16List())
+	ConfirmValuesAt(U16List(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, U16List(0, 1))
+	ConfirmValuesAt(U16List(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, U16List(0, 3))
+	ConfirmValuesAt(U16List(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, U16List(0, 3, 4, 3))
+}
+
+func TestU16SliceInsert(t *testing.T) {
+	ConfirmInsert := func(s *U16Slice, n int, v interface{}, r *U16Slice) {
+		if s.Insert(n, v); !r.Equal(s) {
+			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
+		}
+	}
+
+	ConfirmInsert(U16List(), 0, uint16(0), U16List(0))
+	ConfirmInsert(U16List(), 0, U16List(0), U16List(0))
+	ConfirmInsert(U16List(), 0, U16List(0, 1), U16List(0, 1))
+
+	ConfirmInsert(U16List(0), 0, uint16(1), U16List(1, 0))
+	ConfirmInsert(U16List(0), 0, U16List(1), U16List(1, 0))
+	ConfirmInsert(U16List(0), 1, uint16(1), U16List(0, 1))
+	ConfirmInsert(U16List(0), 1, U16List(1), U16List(0, 1))
+
+	ConfirmInsert(U16List(0, 1, 2), 0, uint16(3), U16List(3, 0, 1, 2))
+	ConfirmInsert(U16List(0, 1, 2), 1, uint16(3), U16List(0, 3, 1, 2))
+	ConfirmInsert(U16List(0, 1, 2), 2, uint16(3), U16List(0, 1, 3, 2))
+	ConfirmInsert(U16List(0, 1, 2), 3, uint16(3), U16List(0, 1, 2, 3))
+
+	ConfirmInsert(U16List(0, 1, 2), 0, U16List(3, 4), U16List(3, 4, 0, 1, 2))
+	ConfirmInsert(U16List(0, 1, 2), 1, U16List(3, 4), U16List(0, 3, 4, 1, 2))
+	ConfirmInsert(U16List(0, 1, 2), 2, U16List(3, 4), U16List(0, 1, 3, 4, 2))
+	ConfirmInsert(U16List(0, 1, 2), 3, U16List(3, 4), U16List(0, 1, 2, 3, 4))
 }

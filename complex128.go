@@ -1,9 +1,15 @@
 package slices
 
-import "fmt"
-import "sort"
+import (
+	"fmt"
+	"rand"
+	"sort"
+)
 
 func C128List(n... complex128) *C128Slice {
+	if len(n) == 0 {
+		n = make(C128Slice, 0, 0)
+	}
 	return (*C128Slice)(&n)
 }
 
@@ -235,39 +241,7 @@ func (s C128Slice) Reverse() {
 }
 
 func (s C128Slice) Depth() int {
-	return 0
-}
-
-func (s *C128Slice) Append(v interface{}) {
-	switch v := v.(type) {
-	case complex128:		*s = append(*s, v)
-	case C128Slice:			*s = append(*s, v...)
-	case *C128Slice:		*s = append(*s, (*v)...)
-	case []complex128:		s.Append(C128Slice(v))
-	case *[]complex128:		s.Append(C128Slice(*v))
-	default:				panic(v)
-	}
-}
-
-func (s *C128Slice) Prepend(v interface{}) {
-	switch v := v.(type) {
-	case complex128:		l := s.Len() + 1
-							n := make(C128Slice, l, l)
-							n[0] = v
-							copy(n[1:], *s)
-							*s = n
-
-	case C128Slice:			l := s.Len() + len(v)
-							n := make(C128Slice, l, l)
-							copy(n, v)
-							copy(n[len(v):], *s)
-							*s = n
-
-	case *C128Slice:		s.Prepend(*v)
-	case []complex128:		s.Prepend(C128Slice(v))
-	case *[]complex128:		s.Prepend(C128Slice(*v))
-	default:				panic(v)
-	}
+	return 1
 }
 
 func (s C128Slice) Repeat(count int) C128Slice {
@@ -451,4 +425,163 @@ func (s C128Slice) FindN(v interface{}, n int) (i ISlice) {
 		}
 	}
 	return
+}
+
+func (s *C128Slice) KeepIf(f interface{}) {
+	a := *s
+	p := 0
+	switch f := f.(type) {
+	case complex128:				for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if v == f {
+											p++
+										}
+									}
+
+	case func(complex128) bool:		for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if f(v) {
+											p++
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range a {
+										if i != p {
+											a[p] = v
+										}
+										if f(v) {
+											p++
+										}
+									}
+
+	default:						p = len(a)
+	}
+	*s = a[:p]
+}
+
+func (s C128Slice) ReverseEach(f interface{}) {
+	switch f := f.(type) {
+	case func(complex128):					for i := len(s) - 1; i > -1; i-- { f(s[i]) }
+	case func(int, complex128):				for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, complex128):		for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}):					for i := len(s) - 1; i > -1; i-- { f(s[i]) }
+	case func(int, interface{}):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, interface{}):	for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	}
+}
+
+func (s C128Slice) ReplaceIf(f interface{}, r interface{}) {
+	replacement := r.(complex128)
+	switch f := f.(type) {
+	case complex128:				for i, v := range s {
+										if v == f {
+											s[i] = replacement
+										}
+									}
+
+	case func(complex128) bool:		for i, v := range s {
+										if f(v) {
+											s[i] = replacement
+										}
+									}
+
+	case func(interface{}) bool:	for i, v := range s {
+										if f(v) {
+											s[i] = replacement
+										}
+									}
+	}
+}
+
+func (s *C128Slice) Replace(o interface{}) {
+	switch o := o.(type) {
+	case C128Slice:			*s = o
+	case *C128Slice:		*s = *o
+	case []complex128:		*s = C128Slice(o)
+	case *[]complex128:		*s = C128Slice(*o)
+	default:				panic(o)
+	}
+}
+
+func (s C128Slice) Select(f interface{}) interface{} {
+	r := make(C128Slice, 0, len(s) / 4)
+	switch f := f.(type) {
+	case complex128:				for _, v := range s {
+										if v == f {
+											r = append(r, v)
+										}
+									}
+
+	case func(complex128) bool:		for _, v := range s {
+										if f(v) {
+											r = append(r, v)
+										}
+									}
+
+	case func(interface{}) bool:	for _, v := range s {
+										if f(v) {
+											r = append(r, v)
+										}
+									}
+	}
+	return r
+}
+
+func (s *C128Slice) Uniq() {
+	a := *s
+	if len(a) > 0 {
+		p := 0
+		m := make(map[complex128] bool)
+		for _, v := range a {
+			if ok := m[v]; !ok {
+				m[v] = true
+				a[p] = v
+				p++
+			}
+		}
+		*s = a[:p]
+	}
+}
+
+func (s C128Slice) Shuffle() {
+	l := len(s) - 1
+	for i, _ := range s {
+		r := i + rand.Intn(l - i)
+		s.Swap(i, r)
+	}
+}
+
+func (s C128Slice) ValuesAt(n ...int) interface{} {
+	r := make(C128Slice, 0, len(n))
+	for _, v := range n {
+		r = append(r, s[v])
+	}
+	return r
+}
+
+func (s *C128Slice) Insert(i int, v interface{}) {
+	switch v := v.(type) {
+	case complex128:		l := s.Len() + 1
+							n := make(C128Slice, l, l)
+							copy(n, (*s)[:i])
+							n[i] = v
+							copy(n[i + 1:], (*s)[i:])
+							*s = n
+
+	case C128Slice:			l := s.Len() + len(v)
+							n := make(C128Slice, l, l)
+							copy(n, (*s)[:i])
+							copy(n[i:], v)
+							copy(n[i + len(v):], (*s)[i:])
+							*s = n
+
+	case *C128Slice:		s.Insert(i, *v)
+	case []complex128:		s.Insert(i, C128Slice(v))
+	case *[]complex128:		s.Insert(i, C128Slice(*v))
+	default:				panic(v)
+	}
 }
