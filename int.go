@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func IList(n... int) *ISlice {
-	if len(n) == 0 {
-		n = make(ISlice, 0, 0)
-	}
-	return (*ISlice)(&n)
-}
-
 type ISlice	[]int
 
 func (s ISlice) Len() int							{ return len(s) }
@@ -53,7 +46,7 @@ func (s ISlice) ZeroMore(i int) bool				{ return 0 > s[i] }
 
 func (s ISlice) Sort()								{ sort.Sort(s) }
 
-func (s *ISlice) RestrictTo(i, j int)					{ *s = (*s)[i:j] }
+func (s *ISlice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 
 func (s ISlice) Compare(i, j int) (r int) {
 	switch {
@@ -255,9 +248,7 @@ func (s *ISlice) Append(v interface{}) {
 	switch v := v.(type) {
 	case int:				*s = append(*s, v)
 	case ISlice:			*s = append(*s, v...)
-	case *ISlice:			*s = append(*s, (*v)...)
 	case []int:				s.Append(ISlice(v))
-	case *[]int:			s.Append(ISlice(*v))
 	default:				panic(v)
 	}
 }
@@ -276,9 +267,7 @@ func (s *ISlice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *ISlice:			s.Prepend(*v)
 	case []int:				s.Prepend(ISlice(v))
-	case *[]int:			s.Prepend(ISlice(*v))
 	default:				panic(v)
 	}
 }
@@ -298,28 +287,21 @@ func (s ISlice) Repeat(count int) ISlice {
 	return destination
 }
 
-func (s *ISlice) Flatten() {
-	//	Flatten is a non-op for the ISlice as they cannot contain nested elements
-}
-
 func (s ISlice) equal(o ISlice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s ISlice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *ISlice:			r = o != nil && s.equal(*o)
 	case ISlice:			r = s.equal(o)
-	case *[]int:			r = o != nil && s.equal(*o)
 	case []int:				r = s.equal(o)
 	}
 	return
@@ -341,7 +323,7 @@ func (s ISlice) Cdr() (t ISlice) {
 
 func (s *ISlice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *IList(v.(int))
+	case s == nil:			*s = ISlice{v.(int)}
 	case s.Len() == 0:		*s = append(*s, v.(int))
 	default:				(*s)[0] = v.(int)
 	}
@@ -349,7 +331,7 @@ func (s *ISlice) Rplaca(v interface{}) {
 
 func (s *ISlice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *IList(v.(int))
+		*s = ISlice{v.(int)}
 	} else {
 		ReplaceSlice := func(v ISlice) {
 			if l := len(v); l < cap(*s) {
@@ -365,13 +347,12 @@ func (s *ISlice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *ISlice:		ReplaceSlice(*v)
+		case int:			(*s)[1] = v
+							*s = (*s)[:2]
 		case ISlice:		ReplaceSlice(v)
-		case *[]int:		ReplaceSlice(ISlice(*v))
 		case []int:			ReplaceSlice(ISlice(v))
 		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(int)
-							*s = (*s)[:2]
+		default:			panic(v)
 		}
 	}
 }
@@ -539,9 +520,7 @@ func (s ISlice) ReplaceIf(f interface{}, r interface{}) {
 func (s *ISlice) Replace(o interface{}) {
 	switch o := o.(type) {
 	case ISlice:			*s = o
-	case *ISlice:			*s = *o
 	case []int:				*s = ISlice(o)
-	case *[]int:			*s = ISlice(*o)
 	default:				panic(o)
 	}
 }
@@ -618,9 +597,7 @@ func (s *ISlice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *ISlice:			s.Insert(i, *v)
 	case []int:				s.Insert(i, ISlice(v))
-	case *[]int:			s.Insert(i, ISlice(*v))
 	default:				panic(v)
 	}
 }

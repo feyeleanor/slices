@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func U32List(n... uint32) *U32Slice {
-	if len(n) == 0 {
-		n = make(U32Slice, 0, 0)
-	}
-	return (*U32Slice)(&n)
-}
-
 type U32Slice	[]uint32
 
 func (s U32Slice) Len() int							{ return len(s) }
@@ -254,9 +247,7 @@ func (s *U32Slice) Append(v interface{}) {
 	switch v := v.(type) {
 	case uint32:			*s = append(*s, v)
 	case U32Slice:			*s = append(*s, v...)
-	case *U32Slice:			*s = append(*s, (*v)...)
 	case []uint32:			s.Append(U32Slice(v))
-	case *[]uint32:			s.Append(U32Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -275,9 +266,7 @@ func (s *U32Slice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *U32Slice:			s.Prepend(*v)
 	case []uint32:			s.Prepend(U32Slice(v))
-	case *[]uint32:			s.Prepend(U32Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -297,28 +286,21 @@ func (s U32Slice) Repeat(count int) U32Slice {
 	return destination
 }
 
-func (s *U32Slice) Flatten() {
-	//	Flatten is a non-op for the U32Slice as they cannot contain nested elements
-}
-
 func (s U32Slice) equal(o U32Slice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s U32Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *U32Slice:			r = o != nil && s.equal(*o)
 	case U32Slice:			r = s.equal(o)
-	case *[]uint32:			r = o != nil && s.equal(*o)
 	case []uint32:			r = s.equal(o)
 	}
 	return
@@ -340,7 +322,7 @@ func (s U32Slice) Cdr() (t U32Slice) {
 
 func (s *U32Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *U32List(v.(uint32))
+	case s == nil:			*s = U32Slice{v.(uint32)}
 	case s.Len() == 0:		*s = append(*s, v.(uint32))
 	default:				(*s)[0] = v.(uint32)
 	}
@@ -348,7 +330,7 @@ func (s *U32Slice) Rplaca(v interface{}) {
 
 func (s *U32Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *U32List(v.(uint32))
+		*s = U32Slice{v.(uint32)}
 	} else {
 		ReplaceSlice := func(v U32Slice) {
 			if l := len(v); l < cap(*s) {
@@ -364,13 +346,12 @@ func (s *U32Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *U32Slice:		ReplaceSlice(*v)
+		case uint32:		(*s)[1] = v
+							*s = (*s)[:2]
 		case U32Slice:		ReplaceSlice(v)
-		case *[]uint32:		ReplaceSlice(U32Slice(*v))
 		case []uint32:		ReplaceSlice(U32Slice(v))
 		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(uint32)
-							*s = (*s)[:2]
+		default:			panic(v)
 		}
 	}
 }
@@ -504,8 +485,8 @@ func (s *U32Slice) KeepIf(f interface{}) {
 func (s U32Slice) ReverseEach(f interface{}) {
 	switch f := f.(type) {
 	case func(uint32):						for i := len(s) - 1; i > -1; i-- { f(s[i]) }
-	case func(int, uint32):				for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
-	case func(interface{}, uint32):		for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(int, uint32):					for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, uint32):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
 	case func(interface{}):					for i := len(s) - 1; i > -1; i-- { f(s[i]) }
 	case func(int, interface{}):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
 	case func(interface{}, interface{}):	for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
@@ -521,7 +502,7 @@ func (s U32Slice) ReplaceIf(f interface{}, r interface{}) {
 										}
 									}
 
-	case func(uint32) bool:		for i, v := range s {
+	case func(uint32) bool:			for i, v := range s {
 										if f(v) {
 											s[i] = replacement
 										}
@@ -537,10 +518,9 @@ func (s U32Slice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *U32Slice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case uint32:			*s = U32Slice{o}
 	case U32Slice:			*s = o
-	case *U32Slice:			*s = *o
 	case []uint32:			*s = U32Slice(o)
-	case *[]uint32:		*s = U32Slice(*o)
 	default:				panic(o)
 	}
 }
@@ -617,9 +597,7 @@ func (s *U32Slice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *U32Slice:			s.Insert(i, *v)
 	case []uint32:			s.Insert(i, U32Slice(v))
-	case *[]uint32:		s.Insert(i, U32Slice(*v))
 	default:				panic(v)
 	}
 }

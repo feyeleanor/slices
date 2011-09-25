@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func F64List(n... float64) *F64Slice {
-	if len(n) == 0 {
-	n = make(F64Slice, 0, 0)
-	}
-	return (*F64Slice)(&n)
-}
-
 type F64Slice	[]float64
 
 func (s F64Slice) Len() int							{ return len(s) }
@@ -248,9 +241,7 @@ func (s *F64Slice) Append(v interface{}) {
 	switch v := v.(type) {
 	case float64:			*s = append(*s, v)
 	case F64Slice:			*s = append(*s, v...)
-	case *F64Slice:			*s = append(*s, (*v)...)
 	case []float64:			s.Append(F64Slice(v))
-	case *[]float64:		s.Append(F64Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -269,9 +260,7 @@ func (s *F64Slice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *F64Slice:			s.Prepend(*v)
 	case []float64:			s.Prepend(F64Slice(v))
-	case *[]float64:		s.Prepend(F64Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -291,28 +280,21 @@ func (s F64Slice) Repeat(count int) F64Slice {
 	return destination
 }
 
-func (s *F64Slice) Flatten() {
-	//	Flatten is a non-op for the F64Slice as they cannot contain nested elements
-}
-
 func (s F64Slice) equal(o F64Slice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s F64Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *F64Slice:			r = o != nil && s.equal(*o)
 	case F64Slice:			r = s.equal(o)
-	case *[]float64:		r = o != nil && s.equal(*o)
 	case []float64:			r = s.equal(o)
 	}
 	return
@@ -334,7 +316,7 @@ func (s F64Slice) Cdr() (t F64Slice) {
 
 func (s *F64Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *F64List(v.(float64))
+	case s == nil:			*s = F64Slice{v.(float64)}
 	case s.Len() == 0:		*s = append(*s, v.(float64))
 	default:				(*s)[0] = v.(float64)
 	}
@@ -342,7 +324,7 @@ func (s *F64Slice) Rplaca(v interface{}) {
 
 func (s *F64Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *F64List(v.(float64))
+		*s = F64Slice{v.(float64)}
 	} else {
 		ReplaceSlice := func(v F64Slice) {
 			if l := len(v); l < cap(*s) {
@@ -358,13 +340,12 @@ func (s *F64Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *F64Slice:		ReplaceSlice(*v)
+		case float64:		(*s)[1] = v
+							*s = (*s)[:2]
 		case F64Slice:		ReplaceSlice(v)
-		case *[]float64:	ReplaceSlice(F64Slice(*v))
 		case []float64:		ReplaceSlice(F64Slice(v))
 		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(float64)
-							*s = (*s)[:2]
+		default:			panic(v)
 		}
 	}
 }
@@ -531,10 +512,9 @@ func (s F64Slice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *F64Slice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case float64:			*s = F64Slice{o}
 	case F64Slice:			*s = o
-	case *F64Slice:			*s = *o
 	case []float64:			*s = F64Slice(o)
-	case *[]float64:		*s = F64Slice(*o)
 	default:				panic(o)
 	}
 }
@@ -611,9 +591,7 @@ func (s *F64Slice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *F64Slice:			s.Insert(i, *v)
 	case []float64:			s.Insert(i, F64Slice(v))
-	case *[]float64:		s.Insert(i, F64Slice(*v))
 	default:				panic(v)
 	}
 }

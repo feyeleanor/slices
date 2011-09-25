@@ -7,7 +7,7 @@ import "testing"
 func TestVSliceMakeSlice(t *testing.T) {}
 
 func TestVSliceVSlice(t *testing.T) {
-	g := VWrap([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
+	g := VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 	if g == nil {
 		t.Fatal("Make slice returned a nil value")
 	}
@@ -24,7 +24,7 @@ func TestVSliceVSlice(t *testing.T) {
 }
 
 func TestVSliceString(t *testing.T) {
-	ConfirmString := func(s *VSlice, r string) {
+	ConfirmString := func(s VSlice, r string) {
 		if x := s.String(); x != r {
 			t.Fatalf("%v erroneously serialised as '%v'", r, x)
 		}
@@ -36,7 +36,7 @@ func TestVSliceString(t *testing.T) {
 }
 
 func TestVSliceLen(t *testing.T) {
-	ConfirmLength := func(s *VSlice, i int) {
+	ConfirmLength := func(s VSlice, i int) {
 		if x := s.Len(); x != i {
 			t.Fatalf("%v.Len() should be %v but is %v", s, i, x)
 		}
@@ -47,7 +47,7 @@ func TestVSliceLen(t *testing.T) {
 }
 
 func TestVSliceClear(t *testing.T) {
-	ConfirmClear := func(s *VSlice, i int, r *VSlice) {
+	ConfirmClear := func(s VSlice, i int, r VSlice) {
 		if s.Clear(i); !r.Equal(s) {
 			t.Fatalf("Clear(%v) should be %v but is %v", i, r, s)
 		}
@@ -58,16 +58,10 @@ func TestVSliceClear(t *testing.T) {
 	ConfirmClear(VList(0, 1, 2, 3, 4), 2, VList(0, 1, nil, 3, 4))
 	ConfirmClear(VList(0, 1, 2, 3, 4), 3, VList(0, 1, 2, nil, 4))
 	ConfirmClear(VList(0, 1, 2, 3, 4), 4, VList(0, 1, 2, 3, nil))
-
-	ConfirmClear(VWrap([]int{0, 1, 2, 3, 4}), 0, VList(0, 1, 2, 3, 4))
-	ConfirmClear(VWrap([]int{0, 1, 2, 3, 4}), 1, VList(0, 0, 2, 3, 4))
-	ConfirmClear(VWrap([]int{0, 1, 2, 3, 4}), 2, VList(0, 1, 0, 3, 4))
-	ConfirmClear(VWrap([]int{0, 1, 2, 3, 4}), 3, VList(0, 1, 2, 0, 4))
-	ConfirmClear(VWrap([]int{0, 1, 2, 3, 4}), 4, VList(0, 1, 2, 3, 0))
 }
 
 func TestVSliceSwap(t *testing.T) {
-	ConfirmSwap := func(s *VSlice, i, j int, r *VSlice) {
+	ConfirmSwap := func(s VSlice, i, j int, r VSlice) {
 		if s.Swap(i, j); !r.Equal(s) {
 			t.Fatalf("Swap(%v, %v) should be %v but is %v", i, j, r, s)
 		}
@@ -77,7 +71,7 @@ func TestVSliceSwap(t *testing.T) {
 }
 
 func TestVSliceCut(t *testing.T) {
-	ConfirmCut := func(s *VSlice, start, end int, r *VSlice) {
+	ConfirmCut := func(s VSlice, start, end int, r VSlice) {
 		if s.Cut(start, end); !r.Equal(s) {
 			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
 		}
@@ -100,7 +94,7 @@ func TestVSliceCut(t *testing.T) {
 }
 
 func TestVSliceTrim(t *testing.T) {
-	ConfirmTrim := func(s *VSlice, start, end int, r *VSlice) {
+	ConfirmTrim := func(s VSlice, start, end int, r VSlice) {
 		if s.Trim(start, end); !r.Equal(s) {
 			t.Fatalf("Trim(%v, %v) should be %v but is %v", start, end, r, s)
 		}
@@ -123,7 +117,7 @@ func TestVSliceTrim(t *testing.T) {
 }
 
 func TestVSliceDelete(t *testing.T) {
-	ConfirmDelete := func(s *VSlice, index int, r *VSlice) {
+	ConfirmDelete := func(s VSlice, index int, r VSlice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
@@ -140,7 +134,7 @@ func TestVSliceDelete(t *testing.T) {
 }
 
 func TestVSliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s *VSlice, f interface{}, r *VSlice) {
+	ConfirmDeleteIf := func(s VSlice, f interface{}, r VSlice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
@@ -206,7 +200,7 @@ func TestVSliceEach(t *testing.T) {
 }
 
 func TestVSliceBlockCopy(t *testing.T) {
-	ConfirmBlockCopy := func(s *VSlice, destination, source, count int, r *VSlice) {
+	ConfirmBlockCopy := func(s VSlice, destination, source, count int, r VSlice) {
 		s.BlockCopy(destination, source, count)
 		if !r.Equal(s) {
 			t.Fatalf("BlockCopy(%v, %v, %v) should be %v but is %v", destination, source, count, r, s)
@@ -220,7 +214,7 @@ func TestVSliceBlockCopy(t *testing.T) {
 }
 
 func TestVSliceBlockClear(t *testing.T) {
-	ConfirmBlockClear := func(s *VSlice, start, count int, r *VSlice) {
+	ConfirmBlockClear := func(s VSlice, start, count int, r VSlice) {
 		s.BlockClear(start, count)
 		if !r.Equal(s) {
 			t.Fatalf("BlockClear(%v, %v) should be %v but is %v", start, count, r, s)
@@ -230,15 +224,11 @@ func TestVSliceBlockClear(t *testing.T) {
 	ConfirmBlockClear(VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 4, VList(nil, nil, nil, nil, 4, 5, 6, 7, 8, 9))
 	ConfirmBlockClear(VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 4, VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
 	ConfirmBlockClear(VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 4, VList(0, 1, 2, 3, 4, nil, nil, nil, nil, 9))
-
-	ConfirmBlockClear(VWrap([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}), 0, 4, VList(0, 0, 0, 0, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockClear(VWrap([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}), 10, 4, VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockClear(VWrap([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}), 5, 4, VList(0, 1, 2, 3, 4, 0, 0, 0, 0, 9))
 }
 
 func TestVSliceOverwrite(t *testing.T) {
-	g := VWrap([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
-	c := VWrap(make([]int, g.Len(), g.Cap()))
+	g := VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+	c := make(VSlice, g.Len(), g.Cap())
 	c.Overwrite(0, g)
 	for i := 0; i < g.Len(); i++ {
 		if c.At(i) != g.At(i) {
@@ -248,7 +238,7 @@ func TestVSliceOverwrite(t *testing.T) {
 }
 
 func TestVSliceReallocate(t *testing.T) {
-	ConfirmReallocate := func(s *VSlice, l, c int, r *VSlice) {
+	ConfirmReallocate := func(s VSlice, l, c int, r VSlice) {
 		o := s.String()
 		el := l
 		if el > c {
@@ -262,7 +252,7 @@ func TestVSliceReallocate(t *testing.T) {
 		}
 	}
 
-	ConfirmReallocate(VList(), 0, 10, VWrap(make([]interface{}, 0, 10)))
+	ConfirmReallocate(VList(), 0, 10, make(VSlice, 0, 10))
 	ConfirmReallocate(VList(0, 1, 2, 3, 4), 3, 10, VList(0, 1, 2))
 	ConfirmReallocate(VList(0, 1, 2, 3, 4), 5, 10, VList(0, 1, 2, 3, 4))
 	ConfirmReallocate(VList(0, 1, 2, 3, 4), 10, 10, VList(0, 1, 2, 3, 4, nil, nil, nil, nil, nil))
@@ -272,7 +262,7 @@ func TestVSliceReallocate(t *testing.T) {
 }
 
 func TestVSliceExtend(t *testing.T) {
-	ConfirmExtend := func(s *VSlice, n int, r *VSlice) {
+	ConfirmExtend := func(s VSlice, n int, r VSlice) {
 		c := s.Cap()
 		s.Extend(n)
 		switch {
@@ -287,7 +277,7 @@ func TestVSliceExtend(t *testing.T) {
 }
 
 func TestVSliceExpand(t *testing.T) {
-	ConfirmExpand := func(s *VSlice, i, n int, r *VSlice) {
+	ConfirmExpand := func(s VSlice, i, n int, r VSlice) {
 		c := s.Cap()
 		s.Expand(i, n)
 		switch {
@@ -308,17 +298,10 @@ func TestVSliceExpand(t *testing.T) {
 	ConfirmExpand(VList(0, 1, 2), 2, 2, VList(0, 1, nil, nil, 2))
 	ConfirmExpand(VList(0, 1, 2), 3, 2, VList(0, 1, 2, nil, nil))
 	ConfirmExpand(VList(0, 1, 2), 4, 2, VList(0, 1, 2, nil, nil))
-
-	ConfirmExpand(VWrap([]int{0, 1, 2}), -1, 2, VList(0, 0, 0, 1, 2))
-	ConfirmExpand(VWrap([]int{0, 1, 2}), 0, 2, VList(0, 0, 0, 1, 2))
-	ConfirmExpand(VWrap([]int{0, 1, 2}), 1, 2, VList(0, 0, 0, 1, 2))
-	ConfirmExpand(VWrap([]int{0, 1, 2}), 2, 2, VList(0, 1, 0, 0, 2))
-	ConfirmExpand(VWrap([]int{0, 1, 2}), 3, 2, VList(0, 1, 2, 0, 0))
-	ConfirmExpand(VWrap([]int{0, 1, 2}), 4, 2, VList(0, 1, 2, 0, 0))
 }
 
 func TestVSliceDepth(t *testing.T) {
-	ConfirmDepth := func(s *VSlice, i int) {
+	ConfirmDepth := func(s VSlice, i int) {
 		if x := s.Depth(); x != i {
 			t.Fatalf("%v.Depth() should be %v but is %v", s, i, x)
 		}
@@ -340,14 +323,14 @@ func TestVSliceDepth(t *testing.T) {
 	ConfirmDepth(VList(rxp, sxp), 6)
 
 	ConfirmDepth(VList(0, 1), 0)
-	ConfirmDepth(VList(List(0, 1), 2), 1)
-	ConfirmDepth(VList(0, List(1, 2)), 1)
-	ConfirmDepth(VList(0, 1, List(2, List(3, 4, 5))), 2)
+	ConfirmDepth(VList(Slice{0, 1}, 2), 1)
+	ConfirmDepth(VList(0, Slice{1, 2}), 1)
+	ConfirmDepth(VList(0, 1, Slice{2, Slice{3, 4, 5}}), 2)
 
 	sxp = VList(0, 1,
-				List(2, List(3, 4, 5)),
-				List(6, List(7, List(8, List(9, 0)))),
-				List(2, List(3, 4, 5)))
+				Slice{2, Slice{3, 4, 5}},
+				Slice{6, Slice{7, Slice{8, Slice{9, 0}}}},
+				Slice{2, Slice{3, 4, 5}})
 	ConfirmDepth(sxp, 4)
 
 	rxp = VList(0, sxp, sxp)
@@ -356,7 +339,7 @@ func TestVSliceDepth(t *testing.T) {
 }
 
 func TestVSliceReverse(t *testing.T) {
-	ConfirmReverse := func(s, r *VSlice) {
+	ConfirmReverse := func(s, r VSlice) {
 		if s.Reverse(); !r.Equal(s) {
 			t.Fatalf("Reverse() should be %v but is %v", r, s)
 		}
@@ -367,41 +350,51 @@ func TestVSliceReverse(t *testing.T) {
 }
 
 func TestVSliceAppend(t *testing.T) {
-	ConfirmAppend := func(s *VSlice, v interface{}, r *VSlice) {
+	ConfirmAppend := func(s VSlice, v interface{}, r VSlice) {
 		if s.Append(v); !r.Equal(s) {
 			t.Fatalf("Append(%v) should be %v but is %v", v, r, s)
 		}
 	}
 
 	ConfirmAppend(VList(0, 1, 2), 3, VList(0, 1, 2, 3))
-	ConfirmAppend(VWrap([]int{0, 1, 2}), 3, VList(0, 1, 2, 3))
-	ConfirmAppend(VList(0, 1, 2), 3, VWrap([]int{0, 1, 2, 3}))
-
 	ConfirmAppend(VList(0, 1, 2), VList(3, 4, 5), VList(0, 1, 2, 3, 4, 5))
-	ConfirmAppend(VWrap([]int{0, 1, 2}), []int{3, 4, 5}, VList(0, 1, 2, 3, 4, 5))
-	ConfirmAppend(VWrap([]int{0, 1, 2}), VWrap([]int{3, 4, 5}), VList(0, 1, 2, 3, 4, 5))
-	ConfirmAppend(VWrap([]int{0, 1, 2}), *VWrap([]int{3, 4, 5}), VList(0, 1, 2, 3, 4, 5))
 }
 
 func TestVSlicePrepend(t *testing.T) {
-	ConfirmPrepend := func(s *VSlice, v interface{}, r *VSlice) {
+	ConfirmPrepend := func(s VSlice, v interface{}, r VSlice) {
 		if s.Prepend(v); !r.Equal(s) {
 			t.Fatalf("Prepend(%v) should be %v but is %v", v, r, s)
 		}
 	}
 
 	ConfirmPrepend(VList(0, 1, 2), 3, VList(3, 0, 1, 2))
-	ConfirmPrepend(VWrap([]int{0, 1, 2}), 3, VList(3, 0, 1, 2))
-	ConfirmPrepend(VList(0, 1, 2), 3, VWrap([]int{3, 0, 1, 2}))
-
 	ConfirmPrepend(VList(0, 1, 2), VList(3, 4, 5), VList(3, 4, 5, 0, 1, 2))
-	ConfirmPrepend(VWrap([]int{0, 1, 2}), []int{3, 4, 5}, VList(3, 4, 5, 0, 1, 2))
-	ConfirmPrepend(VWrap([]int{0, 1, 2}), VWrap([]int{3, 4, 5}), VList(3, 4, 5, 0, 1, 2))
-	ConfirmPrepend(VWrap([]int{0, 1, 2}), *VWrap([]int{3, 4, 5}), VList(3, 4, 5, 0, 1, 2))
+}
+
+func TestVSliceAppendSlice(t *testing.T) {
+	ConfirmAppendSlice := func(s VSlice, v interface{}, r VSlice) {
+		if s.AppendSlice(v); !r.Equal(s) {
+			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmAppendSlice(VList(), VList(0, 1), VList(VList(0, 1)))
+	ConfirmAppendSlice(VList(0, 1, 2), VList(3, 4), VList(0, 1, 2, VList(3, 4)))
+}
+
+func TestVSlicePrependSlice(t *testing.T) {
+	ConfirmPrependSlice := func(s VSlice, v interface{}, r VSlice) {
+		if s.PrependSlice(v); !r.Equal(s) {
+			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
+		}
+	}
+
+	ConfirmPrependSlice(VList(), VList(0, 1), VList(VList(0, 1)))
+	ConfirmPrependSlice(VList(0, 1, 2), VList(3, 4), VList(VList(3, 4), 0, 1, 2))
 }
 
 func TestVSliceRepeat(t *testing.T) {
-	ConfirmRepeat := func(s *VSlice, count int, r *VSlice) {
+	ConfirmRepeat := func(s VSlice, count int, r VSlice) {
 		if x := s.Repeat(count); !x.Equal(r) {
 			t.Fatalf("%v.Repeat(%v) should be %v but is %v", s, count, r, x)
 		}
@@ -416,7 +409,7 @@ func TestVSliceRepeat(t *testing.T) {
 }
 
 func TestVSliceFlatten(t *testing.T) {
-	ConfirmFlatten := func(s, r *VSlice) {
+	ConfirmFlatten := func(s, r VSlice) {
 		o := s.String()
 		if s.Flatten(); !r.Equal(s) {
 			t.Fatalf("Flatten(%v) should be %v but is %v", o, r, s)
@@ -448,25 +441,26 @@ func TestVSliceFlatten(t *testing.T) {
 }
 
 func TestVSliceEqual(t *testing.T) {
-	ConfirmEqual := func(s *VSlice, o interface{}) {
+	ConfirmEqual := func(s VSlice, o interface{}) {
 		if !s.Equal(o) {
 			t.Fatalf("%v.Equal(%v) should be equal", s, o)
 		}
 	}
-	RefuteEqual := func(s *VSlice, o interface{}) {
+	RefuteEqual := func(s VSlice, o interface{}) {
 		if s.Equal(o) {
 			t.Fatalf("%v.Equal(%v) should not be equal", s, o)
 		}
 	}
 
-	ConfirmEqual(VList(0), VWrap([]int{ 0 }))
-	RefuteEqual(VList(0), VWrap([]uint{ 0 }))
-	RefuteEqual(VList(0), VWrap([]int{ 1 }))
+	ConfirmEqual(VList(0), []reflect.Value{ reflect.ValueOf(0) })
+	RefuteEqual(VList(0), VList(uint(0)))
+	RefuteEqual(VList(0), []reflect.Value{ reflect.ValueOf(uint(0)) })
+	RefuteEqual(VList(0), VList(1))
 }
 
 
 func TestVSliceCar(t *testing.T) {
-	ConfirmCar := func(s *VSlice, r interface{}) {
+	ConfirmCar := func(s VSlice, r interface{}) {
 		var ok bool
 		n := s.Car()
 		switch n := n.(type) {
@@ -482,7 +476,7 @@ func TestVSliceCar(t *testing.T) {
 }
 
 func TestVSliceCdr(t *testing.T) {
-	ConfirmCdr := func(s, r *VSlice) {
+	ConfirmCdr := func(s, r VSlice) {
 		if n := s.Cdr(); !r.Equal(n) {
 			t.Fatalf("%v.Cdr() should be %v but is %v", s, r, n)
 		}
@@ -493,7 +487,7 @@ func TestVSliceCdr(t *testing.T) {
 }
 
 func TestVSliceRplaca(t *testing.T) {
-	ConfirmRplaca := func(s *VSlice, v interface{}, r *VSlice) {
+	ConfirmRplaca := func(s VSlice, v interface{}, r VSlice) {
 		if s.Rplaca(v); !s.Equal(r) {
 			t.Fatalf("Rplaca() should be %v but is %v", r, s)
 		}
@@ -503,7 +497,7 @@ func TestVSliceRplaca(t *testing.T) {
 }
 
 func TestVSliceRplacd(t *testing.T) {
-	ConfirmRplacd := func(s *VSlice, v interface{}, r *VSlice) {
+	ConfirmRplacd := func(s VSlice, v interface{}, r VSlice) {
 		if s.Rplacd(v); !s.Equal(r) {
 			t.Fatalf("Rplacd() should be %v but is %v", r, s)
 		}
@@ -515,8 +509,8 @@ func TestVSliceRplacd(t *testing.T) {
 }
 
 func TestVSliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r *VSlice) {
-		if x := s.SetIntersection(*o); !r.Equal(x) {
+	ConfirmSetIntersection := func(s, o, r VSlice) {
+		if x := s.SetIntersection(o); !r.Equal(x) {
 			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
@@ -528,8 +522,8 @@ func TestVSliceSetIntersection(t *testing.T) {
 }
 
 func TestVSliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r *VSlice) {
-		if x := s.SetUnion(*o); !r.Equal(x) {
+	ConfirmSetUnion := func(s, o, r VSlice) {
+		if x := s.SetUnion(o); !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
@@ -541,8 +535,8 @@ func TestVSliceSetUnion(t *testing.T) {
 }
 
 func TestVSliceSetDifference(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r *VSlice) {
-		if x := s.SetDifference(*o); !r.Equal(x) {
+	ConfirmSetUnion := func(s, o, r VSlice) {
+		if x := s.SetDifference(o); !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
@@ -554,7 +548,7 @@ func TestVSliceSetDifference(t *testing.T) {
 }
 
 func TestVSliceFind(t *testing.T) {
-	ConfirmFind := func(s *VSlice, v interface{}, i int) {
+	ConfirmFind := func(s VSlice, v interface{}, i int) {
 		if x, ok := s.Find(v); !ok || x != i {
 			t.Fatalf("%v.Find(%v) should be %v but is %v", s, v, i, x)
 		}
@@ -568,22 +562,22 @@ func TestVSliceFind(t *testing.T) {
 }
 
 func TestVSliceFindN(t *testing.T) {
-	ConfirmFindN := func(s *VSlice, v interface{}, n int, i *ISlice) {
+	ConfirmFindN := func(s VSlice, v interface{}, n int, i ISlice) {
 		if x := s.FindN(v, n); !x.Equal(i) {
-			t.Fatalf("%v.Find(%v, %v) should be %v but is %v", s, n, v, i, x)
+			t.Fatalf("%v.Find(%v, %v) should be %v but is %v", s, v, n, i, x)
 		}
 	}
 
-	ConfirmFindN(VList(1, 0, 1, 0, 1), 2, 3, IList())
-	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 0, IList(0, 2, 4))
-	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 1, IList(0))
-	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
-	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
-	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+	ConfirmFindN(VList(1, 0, 1, 0, 1), 2, 3, ISlice{})
+	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 0, ISlice{0, 2, 4})
+	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 1, ISlice{0})
+	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 2, ISlice{0, 2})
+	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 3, ISlice{0, 2, 4})
+	ConfirmFindN(VList(1, 0, 1, 0, 1), 1, 4, ISlice{0, 2, 4})
 }
 
 func TestVSliceKeepIf(t *testing.T) {
-	ConfirmKeepIf := func(s *VSlice, f interface{}, r *VSlice) {
+	ConfirmKeepIf := func(s VSlice, f interface{}, r VSlice) {
 		if s.KeepIf(f); !r.Equal(s) {
 			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
 		}
@@ -622,7 +616,7 @@ func TestVSliceReverseEach(t *testing.T) {
 }
 
 func TestVSliceReplaceIf(t *testing.T) {
-	ConfirmReplaceIf := func(s *VSlice, f, v interface{}, r *VSlice) {
+	ConfirmReplaceIf := func(s VSlice, f, v interface{}, r VSlice) {
 		if s.ReplaceIf(f, v); !r.Equal(s) {
 			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
 		}
@@ -638,19 +632,21 @@ func TestVSliceReplaceIf(t *testing.T) {
 }
 
 func TestVSliceReplace(t *testing.T) {
-	ConfirmReplace := func(s *VSlice, v interface{}) {
-		if s.Replace(v); !s.Equal(v) {
-			t.Fatalf("Replace() should be %v but is %v", s, v)
+	ConfirmReplace := func(s VSlice, v interface{}, r VSlice) {
+		if s.Replace(v); !s.Equal(r) {
+			t.Fatalf("Replace() should be %v but is %v", r, v)
 		}
 	}
 
-	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), VList(9, 8, 7, 6, 5))
-	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), VWrap([]int{ 9, 8, 7, 6, 5 }))
-	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), []float64{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), 9, VList(9))
+	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), reflect.ValueOf(9), VList(9))
+	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), VList(9, 8, 7, 6, 5), VList(9, 8, 7, 6, 5))
+	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), []int{ 9, 8, 7, 6, 5 }, VList(9, 8, 7, 6, 5))
+	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), []float64{ 9, 8, 7, 6, 5 }, VList(9.0, 8.0, 7.0, 6.0, 5.0))
 }
 
 func TestVSliceSelect(t *testing.T) {
-	ConfirmSelect := func(s *VSlice, f interface{}, r *VSlice) {
+	ConfirmSelect := func(s VSlice, f interface{}, r VSlice) {
 		if x := s.Select(f); !r.Equal(x) {
 			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
 		}
@@ -666,7 +662,7 @@ func TestVSliceSelect(t *testing.T) {
 }
 
 func TestVSliceUniq(t *testing.T) {
-	ConfirmUniq := func(s, r *VSlice) {
+	ConfirmUniq := func(s, r VSlice) {
 		if s.Uniq(); !r.Equal(s) {
 			t.Fatalf("Uniq() should be %v but is %v", r, s)
 		}
@@ -677,7 +673,7 @@ func TestVSliceUniq(t *testing.T) {
 }
 
 func TestVSliceShuffle(t *testing.T) {
-	ConfirmShuffle := func(s, r *VSlice) {
+	ConfirmShuffle := func(s, r VSlice) {
 		if s.Shuffle(); s.Equal(r) {
 			t.Fatalf("%v.Shuffle() should change order of elements", s)
 		}
@@ -690,7 +686,7 @@ func TestVSliceShuffle(t *testing.T) {
 }
 
 func TestVSliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s *VSlice, i []int, r *VSlice) {
+	ConfirmValuesAt := func(s VSlice, i []int, r VSlice) {
 		if x := s.ValuesAt(i...); !r.Equal(x) {
 			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
 		}
@@ -703,7 +699,7 @@ func TestVSliceValuesAt(t *testing.T) {
 }
 
 func TestVSliceInsert(t *testing.T) {
-	ConfirmInsert := func(s *VSlice, n int, v interface{}, r *VSlice) {
+	ConfirmInsert := func(s VSlice, n int, v interface{}, r VSlice) {
 		if s.Insert(n, v); !r.Equal(s) {
 			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
 		}

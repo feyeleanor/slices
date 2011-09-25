@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func C128List(n... complex128) *C128Slice {
-	if len(n) == 0 {
-		n = make(C128Slice, 0, 0)
-	}
-	return (*C128Slice)(&n)
-}
-
 type C128Slice	[]complex128
 
 func (s C128Slice) Len() int						{ return len(s) }
@@ -259,28 +252,21 @@ func (s C128Slice) Repeat(count int) C128Slice {
 	return destination
 }
 
-func (s *C128Slice) Flatten() {
-	//	Flatten is a non-op for the C128Slice as they cannot contain nested elements
-}
-
 func (s C128Slice) equal(o C128Slice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s C128Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *C128Slice:			r = o != nil && s.equal(*o)
 	case C128Slice:				r = s.equal(o)
-	case *[]complex128:			r = o != nil && s.equal(*o)
 	case []complex128:			r = s.equal(o)
 	}
 	return
@@ -302,7 +288,7 @@ func (s C128Slice) Cdr() (t C128Slice) {
 
 func (s *C128Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *C128List(v.(complex128))
+	case s == nil:			*s = C128Slice{v.(complex128)}
 	case s.Len() == 0:		*s = append(*s, v.(complex128))
 	default:				(*s)[0] = v.(complex128)
 	}
@@ -310,7 +296,7 @@ func (s *C128Slice) Rplaca(v interface{}) {
 
 func (s *C128Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *C128List(v.(complex128))
+		*s = C128Slice{v.(complex128)}
 	} else {
 		ReplaceSlice := func(v C128Slice) {
 			if l := len(v); l < cap(*s) {
@@ -326,13 +312,12 @@ func (s *C128Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *C128Slice:		ReplaceSlice(*v)
+		case complex128:		(*s)[1] = v
+								*s = (*s)[:2]
 		case C128Slice:			ReplaceSlice(v)
-		case *[]complex128:		ReplaceSlice(C128Slice(*v))
 		case []complex128:		ReplaceSlice(C128Slice(v))
 		case nil:				*s = (*s)[:1]
-		default:				(*s)[1] = v.(complex128)
-								*s = (*s)[:2]
+		default:				panic(v)
 		}
 	}
 }
@@ -499,10 +484,9 @@ func (s C128Slice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *C128Slice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case complex128:		*s = C128Slice{o}
 	case C128Slice:			*s = o
-	case *C128Slice:		*s = *o
 	case []complex128:		*s = C128Slice(o)
-	case *[]complex128:		*s = C128Slice(*o)
 	default:				panic(o)
 	}
 }
@@ -579,9 +563,7 @@ func (s *C128Slice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *C128Slice:		s.Insert(i, *v)
 	case []complex128:		s.Insert(i, C128Slice(v))
-	case *[]complex128:		s.Insert(i, C128Slice(*v))
 	default:				panic(v)
 	}
 }

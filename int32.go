@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func I32List(n... int32) *I32Slice {
-	if len(n) == 0 {
-		n = make(I32Slice, 0, 0)
-	}
-	return (*I32Slice)(&n)
-}
-
 type I32Slice	[]int32
 
 func (s I32Slice) Len() int							{ return len(s) }
@@ -255,9 +248,7 @@ func (s *I32Slice) Append(v interface{}) {
 	switch v := v.(type) {
 	case int32:				*s = append(*s, v)
 	case I32Slice:			*s = append(*s, v...)
-	case *I32Slice:			*s = append(*s, (*v)...)
 	case []int32:			s.Append(I32Slice(v))
-	case *[]int32:			s.Append(I32Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -276,9 +267,7 @@ func (s *I32Slice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *I32Slice:			s.Prepend(*v)
 	case []int32:			s.Prepend(I32Slice(v))
-	case *[]int32:			s.Prepend(I32Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -298,28 +287,21 @@ func (s I32Slice) Repeat(count int) I32Slice {
 	return destination
 }
 
-func (s *I32Slice) Flatten() {
-	//	Flatten is a non-op for the I32Slice as they cannot contain nested elements
-}
-
 func (s I32Slice) equal(o I32Slice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s I32Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *I32Slice:			r = o != nil && s.equal(*o)
 	case I32Slice:			r = s.equal(o)
-	case *[]int32:			r = o != nil && s.equal(*o)
 	case []int32:			r = s.equal(o)
 	}
 	return
@@ -341,7 +323,7 @@ func (s I32Slice) Cdr() (t I32Slice) {
 
 func (s *I32Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *I32List(v.(int32))
+	case s == nil:			*s = I32Slice{v.(int32)}
 	case s.Len() == 0:		*s = append(*s, v.(int32))
 	default:				(*s)[0] = v.(int32)
 	}
@@ -349,7 +331,7 @@ func (s *I32Slice) Rplaca(v interface{}) {
 
 func (s *I32Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *I32List(v.(int32))
+		*s = I32Slice{v.(int32)}
 	} else {
 		ReplaceSlice := func(v I32Slice) {
 			if l := len(v); l < cap(*s) {
@@ -365,13 +347,12 @@ func (s *I32Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *I32Slice:		ReplaceSlice(*v)
+		case int32:			(*s)[1] = v
+							*s = (*s)[:2]
 		case I32Slice:		ReplaceSlice(v)
-		case *[]int32:		ReplaceSlice(I32Slice(*v))
 		case []int32:		ReplaceSlice(I32Slice(v))
 		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(int32)
-							*s = (*s)[:2]
+		default:			panic(v)
 		}
 	}
 }
@@ -538,10 +519,9 @@ func (s I32Slice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *I32Slice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case int32:				*s = I32Slice{o}
 	case I32Slice:			*s = o
-	case *I32Slice:			*s = *o
 	case []int32:			*s = I32Slice(o)
-	case *[]int32:			*s = I32Slice(*o)
 	default:				panic(o)
 	}
 }
@@ -618,9 +598,7 @@ func (s *I32Slice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *I32Slice:			s.Insert(i, *v)
 	case []int32:			s.Insert(i, I32Slice(v))
-	case *[]int32:			s.Insert(i, I32Slice(*v))
 	default:				panic(v)
 	}
 }

@@ -35,6 +35,24 @@ type Container interface {
 	Set(int, interface{})
 }
 
+var(
+	NESTED = reflect.TypeOf((*Nested)(nil)).Elem()
+	FLATTENABLE = reflect.TypeOf((*Flattenable)(nil)).Elem()
+	EQUATABLE = reflect.TypeOf((*Equatable)(nil)).Elem()
+	TYPED = reflect.TypeOf((*Typed)(nil)).Elem()
+	INSERTABLE = reflect.TypeOf((*Insertable)(nil)).Elem()
+	CONTAINER = reflect.TypeOf((*Container)(nil)).Elem()
+)
+
+func CanFlatten(s interface{}) (ok bool) {
+	switch s := s.(type) {
+	case reflect.Value:			ok = s.Kind() == reflect.Slice || s.Type().Implements(FLATTENABLE)
+	default:					v := reflect.ValueOf(s)
+								ok = v.Kind() == reflect.Slice || v.Type().Implements(FLATTENABLE)
+	}
+	return
+}
+
 func Prepend(i Insertable, value interface{}) {
 	i.Insert(0, value)
 }

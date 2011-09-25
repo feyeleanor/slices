@@ -4,14 +4,8 @@ import (
 	"fmt"
 	"rand"
 	"sort"
+	"strings"
 )
-
-func SList(n... string) *SSlice {
-	if len(n) == 0 {
-		n = make(SSlice, 0, 0)
-	}
-	return (*SSlice)(&n)
-}
 
 type SSlice	[]string
 
@@ -226,9 +220,7 @@ func (s *SSlice) Append(v interface{}) {
 	switch v := v.(type) {
 	case string:			*s = append(*s, v)
 	case SSlice:			*s = append(*s, v...)
-	case *SSlice:			*s = append(*s, (*v)...)
 	case []string:			s.Append(SSlice(v))
-	case *[]string:			s.Append(SSlice(*v))
 	default:				panic(v)
 	}
 }
@@ -247,9 +239,7 @@ func (s *SSlice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *SSlice:			s.Prepend(*v)
 	case []string:			s.Prepend(SSlice(v))
-	case *[]string:			s.Prepend(SSlice(*v))
 	default:				panic(v)
 	}
 }
@@ -270,28 +260,27 @@ func (s SSlice) Repeat(count int) SSlice {
 }
 
 func (s *SSlice) Flatten() {
-	//	Flatten is a non-op for the SSlice as they cannot contain nested elements
+	if len(*s) > 0 {
+		*s = SSlice{strings.Join(([]string)(*s), "")}
+	}
 }
 
 func (s SSlice) equal(o SSlice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s SSlice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *SSlice:			r = o != nil && s.equal(*o)
 	case SSlice:			r = s.equal(o)
-	case *[]string:			r = o != nil && s.equal(*o)
-	case []string:			r = s.equal(o)
+	case []string:			r = s.equal(SSlice(o))
 	}
 	return
 }
@@ -312,7 +301,7 @@ func (s SSlice) Cdr() (t SSlice) {
 
 func (s *SSlice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *SList(v.(string))
+	case s == nil:			*s = SSlice{v.(string)}
 	case s.Len() == 0:		*s = append(*s, v.(string))
 	default:				(*s)[0] = v.(string)
 	}
@@ -320,7 +309,7 @@ func (s *SSlice) Rplaca(v interface{}) {
 
 func (s *SSlice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *SList(v.(string))
+		*s = SSlice{v.(string)}
 	} else {
 		ReplaceSlice := func(v SSlice) {
 			if l := len(v); l < cap(*s) {
@@ -336,13 +325,12 @@ func (s *SSlice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *SSlice:		ReplaceSlice(*v)
+		case string:		(*s)[1] = v
+							*s = (*s)[:2]
 		case SSlice:		ReplaceSlice(v)
-		case *[]string:		ReplaceSlice(SSlice(*v))
 		case []string:		ReplaceSlice(SSlice(v))
 		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(string)
-							*s = (*s)[:2]
+		default:			panic(v)
 		}
 	}
 }
@@ -509,10 +497,9 @@ func (s SSlice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *SSlice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case string:			*s = SSlice{o}
 	case SSlice:			*s = o
-	case *SSlice:			*s = *o
 	case []string:			*s = SSlice(o)
-	case *[]string:			*s = SSlice(*o)
 	default:				panic(o)
 	}
 }
@@ -589,9 +576,7 @@ func (s *SSlice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *SSlice:			s.Insert(i, *v)
 	case []string:			s.Insert(i, SSlice(v))
-	case *[]string:			s.Insert(i, SSlice(*v))
 	default:				panic(v)
 	}
 }

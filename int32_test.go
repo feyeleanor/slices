@@ -3,191 +3,191 @@ package slices
 import "testing"
 
 func TestI32SliceString(t *testing.T) {
-	ConfirmString := func(s *I32Slice, r string) {
+	ConfirmString := func(s I32Slice, r string) {
 		if x := s.String(); x != r {
 			t.Fatalf("%v erroneously serialised as '%v'", r, x)
 		}
 	}
 
-	ConfirmString(I32List(), "()")
-	ConfirmString(I32List(0), "(0)")
-	ConfirmString(I32List(0, 1), "(0 1)")
+	ConfirmString(I32Slice{}, "()")
+	ConfirmString(I32Slice{0}, "(0)")
+	ConfirmString(I32Slice{0, 1}, "(0 1)")
 }
 
 func TestI32SliceLen(t *testing.T) {
-	ConfirmLength := func(s *I32Slice, i int) {
+	ConfirmLength := func(s I32Slice, i int) {
 		if x := s.Len(); x != i {
 			t.Fatalf("%v.Len() should be %v but is %v", s, i, x)
 		}
 	}
 	
-	ConfirmLength(I32List(0), 1)
-	ConfirmLength(I32List(0, 1), 2)
+	ConfirmLength(I32Slice{0}, 1)
+	ConfirmLength(I32Slice{0, 1}, 2)
 }
 
 func TestI32SliceSwap(t *testing.T) {
-	ConfirmSwap := func(s *I32Slice, i, j int, r *I32Slice) {
+	ConfirmSwap := func(s I32Slice, i, j int, r I32Slice) {
 		if s.Swap(i, j); !r.Equal(s) {
 			t.Fatalf("Swap(%v, %v) should be %v but is %v", i, j, r, s)
 		}
 	}
-	ConfirmSwap(I32List(0, 1, 2), 0, 1, I32List(1, 0, 2))
-	ConfirmSwap(I32List(0, 1, 2), 0, 2, I32List(2, 1, 0))
+	ConfirmSwap(I32Slice{0, 1, 2}, 0, 1, I32Slice{1, 0, 2})
+	ConfirmSwap(I32Slice{0, 1, 2}, 0, 2, I32Slice{2, 1, 0})
 }
 
 func TestI32SliceSort(t *testing.T) {
-	ConfirmSort := func(s, r *I32Slice) {
+	ConfirmSort := func(s, r I32Slice) {
 		if s.Sort(); !r.Equal(s) {
 			t.Fatalf("Sort() should be %v but is %v", r, s)
 		}
 	}
 
-	ConfirmSort(I32List(3, 2, 1, 4, 5, 0), I32List(0, 1, 2, 3, 4, 5))
+	ConfirmSort(I32Slice{3, 2, 1, 4, 5, 0}, I32Slice{0, 1, 2, 3, 4, 5})
 }
 
 func TestI32SliceCompare(t *testing.T) {
-	ConfirmCompare := func(s *I32Slice, i, j, r int) {
+	ConfirmCompare := func(s I32Slice, i, j, r int) {
 		if x := s.Compare(i, j); x != r {
 			t.Fatalf("Compare(%v, %v) should be %v but is %v", i, j, r, x)
 		}
 	}
 
-	ConfirmCompare(I32List(0, 1), 0, 0, IS_SAME_AS)
-	ConfirmCompare(I32List(0, 1), 0, 1, IS_LESS_THAN)
-	ConfirmCompare(I32List(0, 1), 1, 0, IS_GREATER_THAN)
+	ConfirmCompare(I32Slice{0, 1}, 0, 0, IS_SAME_AS)
+	ConfirmCompare(I32Slice{0, 1}, 0, 1, IS_LESS_THAN)
+	ConfirmCompare(I32Slice{0, 1}, 1, 0, IS_GREATER_THAN)
 }
 
 func TestI32SliceZeroCompare(t *testing.T) {
-	ConfirmCompare := func(s *I32Slice, i, r int) {
+	ConfirmCompare := func(s I32Slice, i, r int) {
 		if x := s.ZeroCompare(i); x != r {
 			t.Fatalf("ZeroCompare(%v) should be %v but is %v", i, r, x)
 		}
 	}
 
-	ConfirmCompare(I32List(0, -1, 1), 0, IS_SAME_AS)
-	ConfirmCompare(I32List(0, -1, 1), 1, IS_GREATER_THAN)
-	ConfirmCompare(I32List(0, -1, 1), 2, IS_LESS_THAN)
+	ConfirmCompare(I32Slice{0, -1, 1}, 0, IS_SAME_AS)
+	ConfirmCompare(I32Slice{0, -1, 1}, 1, IS_GREATER_THAN)
+	ConfirmCompare(I32Slice{0, -1, 1}, 2, IS_LESS_THAN)
 }
 
 func TestI32SliceCut(t *testing.T) {
-	ConfirmCut := func(s *I32Slice, start, end int, r *I32Slice) {
+	ConfirmCut := func(s I32Slice, start, end int, r I32Slice) {
 		if s.Cut(start, end); !r.Equal(s) {
 			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
 		}
 	}
 
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 0, 1, I32List(1, 2, 3, 4, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 1, 2, I32List(0, 2, 3, 4, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 2, 3, I32List(0, 1, 3, 4, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 3, 4, I32List(0, 1, 2, 4, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 4, 5, I32List(0, 1, 2, 3, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 5, 6, I32List(0, 1, 2, 3, 4))
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 0, 1, I32Slice{1, 2, 3, 4, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 1, 2, I32Slice{0, 2, 3, 4, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 2, 3, I32Slice{0, 1, 3, 4, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 3, 4, I32Slice{0, 1, 2, 4, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 4, 5, I32Slice{0, 1, 2, 3, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 5, 6, I32Slice{0, 1, 2, 3, 4})
 
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), -1, 1, I32List(1, 2, 3, 4, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 0, 2, I32List(2, 3, 4, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 1, 3, I32List(0, 3, 4, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 2, 4, I32List(0, 1, 4, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 3, 5, I32List(0, 1, 2, 5))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 4, 6, I32List(0, 1, 2, 3))
-	ConfirmCut(I32List(0, 1, 2, 3, 4, 5), 5, 7, I32List(0, 1, 2, 3, 4))
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, -1, 1, I32Slice{1, 2, 3, 4, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 0, 2, I32Slice{2, 3, 4, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 1, 3, I32Slice{0, 3, 4, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 2, 4, I32Slice{0, 1, 4, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 3, 5, I32Slice{0, 1, 2, 5})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 4, 6, I32Slice{0, 1, 2, 3})
+	ConfirmCut(I32Slice{0, 1, 2, 3, 4, 5}, 5, 7, I32Slice{0, 1, 2, 3, 4})
 }
 
 func TestI32SliceTrim(t *testing.T) {
-	ConfirmTrim := func(s *I32Slice, start, end int, r *I32Slice) {
+	ConfirmTrim := func(s I32Slice, start, end int, r I32Slice) {
 		if s.Trim(start, end); !r.Equal(s) {
 			t.Fatalf("Trim(%v, %v) should be %v but is %v", start, end, r, s)
 		}
 	}
 
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 0, 1, I32List(0))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 1, 2, I32List(1))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 2, 3, I32List(2))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 3, 4, I32List(3))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 4, 5, I32List(4))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 5, 6, I32List(5))
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 0, 1, I32Slice{0})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 1, 2, I32Slice{1})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 2, 3, I32Slice{2})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 3, 4, I32Slice{3})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 4, 5, I32Slice{4})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 5, 6, I32Slice{5})
 
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), -1, 1, I32List(0))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 0, 2, I32List(0, 1))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 1, 3, I32List(1, 2))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 2, 4, I32List(2, 3))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 3, 5, I32List(3, 4))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 4, 6, I32List(4, 5))
-	ConfirmTrim(I32List(0, 1, 2, 3, 4, 5), 5, 7, I32List(5))
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, -1, 1, I32Slice{0})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 0, 2, I32Slice{0, 1})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 1, 3, I32Slice{1, 2})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 2, 4, I32Slice{2, 3})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 3, 5, I32Slice{3, 4})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 4, 6, I32Slice{4, 5})
+	ConfirmTrim(I32Slice{0, 1, 2, 3, 4, 5}, 5, 7, I32Slice{5})
 }
 
 func TestI32SliceDelete(t *testing.T) {
-	ConfirmDelete := func(s *I32Slice, index int, r *I32Slice) {
+	ConfirmDelete := func(s I32Slice, index int, r I32Slice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmDelete(I32List(0, 1, 2, 3, 4, 5), -1, I32List(0, 1, 2, 3, 4, 5))
-	ConfirmDelete(I32List(0, 1, 2, 3, 4, 5), 0, I32List(1, 2, 3, 4, 5))
-	ConfirmDelete(I32List(0, 1, 2, 3, 4, 5), 1, I32List(0, 2, 3, 4, 5))
-	ConfirmDelete(I32List(0, 1, 2, 3, 4, 5), 2, I32List(0, 1, 3, 4, 5))
-	ConfirmDelete(I32List(0, 1, 2, 3, 4, 5), 3, I32List(0, 1, 2, 4, 5))
-	ConfirmDelete(I32List(0, 1, 2, 3, 4, 5), 4, I32List(0, 1, 2, 3, 5))
-	ConfirmDelete(I32List(0, 1, 2, 3, 4, 5), 5, I32List(0, 1, 2, 3, 4))
-	ConfirmDelete(I32List(0, 1, 2, 3, 4, 5), 6, I32List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(I32Slice{0, 1, 2, 3, 4, 5}, -1, I32Slice{0, 1, 2, 3, 4, 5})
+	ConfirmDelete(I32Slice{0, 1, 2, 3, 4, 5}, 0, I32Slice{1, 2, 3, 4, 5})
+	ConfirmDelete(I32Slice{0, 1, 2, 3, 4, 5}, 1, I32Slice{0, 2, 3, 4, 5})
+	ConfirmDelete(I32Slice{0, 1, 2, 3, 4, 5}, 2, I32Slice{0, 1, 3, 4, 5})
+	ConfirmDelete(I32Slice{0, 1, 2, 3, 4, 5}, 3, I32Slice{0, 1, 2, 4, 5})
+	ConfirmDelete(I32Slice{0, 1, 2, 3, 4, 5}, 4, I32Slice{0, 1, 2, 3, 5})
+	ConfirmDelete(I32Slice{0, 1, 2, 3, 4, 5}, 5, I32Slice{0, 1, 2, 3, 4})
+	ConfirmDelete(I32Slice{0, 1, 2, 3, 4, 5}, 6, I32Slice{0, 1, 2, 3, 4, 5})
 }
 
 func TestI32SliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s *I32Slice, f interface{}, r *I32Slice) {
+	ConfirmDeleteIf := func(s I32Slice, f interface{}, r I32Slice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(I32List(0, 1, 0, 3, 0, 5), int32(0), I32List(1, 3, 5))
-	ConfirmDeleteIf(I32List(0, 1, 0, 3, 0, 5), int32(1), I32List(0, 0, 3, 0, 5))
-	ConfirmDeleteIf(I32List(0, 1, 0, 3, 0, 5), int32(6), I32List(0, 1, 0, 3, 0, 5))
+	ConfirmDeleteIf(I32Slice{0, 1, 0, 3, 0, 5}, int32(0), I32Slice{1, 3, 5})
+	ConfirmDeleteIf(I32Slice{0, 1, 0, 3, 0, 5}, int32(1), I32Slice{0, 0, 3, 0, 5})
+	ConfirmDeleteIf(I32Slice{0, 1, 0, 3, 0, 5}, int32(6), I32Slice{0, 1, 0, 3, 0, 5})
 
-	ConfirmDeleteIf(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(0) }, I32List(1, 3, 5))
-	ConfirmDeleteIf(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(1) }, I32List(0, 0, 3, 0, 5))
-	ConfirmDeleteIf(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(6) }, I32List(0, 1, 0, 3, 0, 5))
+	ConfirmDeleteIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(0) }, I32Slice{1, 3, 5})
+	ConfirmDeleteIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(1) }, I32Slice{0, 0, 3, 0, 5})
+	ConfirmDeleteIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(6) }, I32Slice{0, 1, 0, 3, 0, 5})
 
-	ConfirmDeleteIf(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(0) }, I32List(1, 3, 5))
-	ConfirmDeleteIf(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(1) }, I32List(0, 0, 3, 0, 5))
-	ConfirmDeleteIf(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(6) }, I32List(0, 1, 0, 3, 0, 5))
+	ConfirmDeleteIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(0) }, I32Slice{1, 3, 5})
+	ConfirmDeleteIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(1) }, I32Slice{0, 0, 3, 0, 5})
+	ConfirmDeleteIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(6) }, I32Slice{0, 1, 0, 3, 0, 5})
 }
 
 func TestI32SliceEach(t *testing.T) {
 	var count	int32
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i interface{}) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i interface{}) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(index int, i interface{}) {
 		if i != int32(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key, i interface{}) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(key, i interface{}) {
 		if i != int32(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 0
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i int32) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(i int32) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i int32) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(index int, i int32) {
 		if i != int32(index) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key interface{}, i int32) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(key interface{}, i int32) {
 		if i != int32(key.(int)) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -195,47 +195,47 @@ func TestI32SliceEach(t *testing.T) {
 }
 
 func TestI32SliceBlockCopy(t *testing.T) {
-	ConfirmBlockCopy := func(s *I32Slice, destination, source, count int, r *I32Slice) {
+	ConfirmBlockCopy := func(s I32Slice, destination, source, count int, r I32Slice) {
 		s.BlockCopy(destination, source, count)
 		if !r.Equal(s) {
 			t.Fatalf("BlockCopy(%v, %v, %v) should be %v but is %v", destination, source, count, r, s)
 		}
 	}
 
-	ConfirmBlockCopy(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 0, 4, I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockCopy(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 9, 9, 4, I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockCopy(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 2, 4, I32List(0, 1, 2, 3, 4, 2, 3, 4, 5, 9))
-	ConfirmBlockCopy(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 2, 5, 4, I32List(0, 1, 5, 6, 7, 8, 6, 7, 8, 9))
+	ConfirmBlockCopy(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0, 0, 4, I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockCopy(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 9, 9, 4, I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockCopy(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, 2, 4, I32Slice{0, 1, 2, 3, 4, 2, 3, 4, 5, 9})
+	ConfirmBlockCopy(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 2, 5, 4, I32Slice{0, 1, 5, 6, 7, 8, 6, 7, 8, 9})
 }
 
 func TestI32SliceBlockClear(t *testing.T) {
-	ConfirmBlockClear := func(s *I32Slice, start, count int, r *I32Slice) {
+	ConfirmBlockClear := func(s I32Slice, start, count int, r I32Slice) {
 		s.BlockClear(start, count)
 		if !r.Equal(s) {
 			t.Fatalf("BlockClear(%v, %v) should be %v but is %v", start, count, r, s)
 		}
 	}
 
-	ConfirmBlockClear(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 4, I32List(0, 0, 0, 0, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockClear(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 4, I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockClear(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 4, I32List(0, 1, 2, 3, 4, 0, 0, 0, 0, 9))
+	ConfirmBlockClear(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0, 4, I32Slice{0, 0, 0, 0, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockClear(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, 4, I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockClear(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, 4, I32Slice{0, 1, 2, 3, 4, 0, 0, 0, 0, 9})
 }
 
 func TestI32SliceOverwrite(t *testing.T) {
-	ConfirmOverwrite := func(s *I32Slice, offset int, v, r *I32Slice) {
-		s.Overwrite(offset, *v)
+	ConfirmOverwrite := func(s I32Slice, offset int, v, r I32Slice) {
+		s.Overwrite(offset, v)
 		if !r.Equal(s) {
 			t.Fatalf("Overwrite(%v, %v) should be %v but is %v", offset, v, r, s)
 		}
 	}
 
-	ConfirmOverwrite(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, I32List(10, 9, 8, 7), I32List(10, 9, 8, 7, 4, 5, 6, 7, 8, 9))
-	ConfirmOverwrite(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, I32List(10, 9, 8, 7), I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmOverwrite(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, I32List(11, 12, 13, 14), I32List(0, 1, 2, 3, 4, 11, 12, 13, 14, 9))
+	ConfirmOverwrite(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0, I32Slice{10, 9, 8, 7}, I32Slice{10, 9, 8, 7, 4, 5, 6, 7, 8, 9})
+	ConfirmOverwrite(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, I32Slice{10, 9, 8, 7}, I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmOverwrite(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, I32Slice{11, 12, 13, 14}, I32Slice{0, 1, 2, 3, 4, 11, 12, 13, 14, 9})
 }
 
 func TestI32SliceReallocate(t *testing.T) {
-	ConfirmReallocate := func(s *I32Slice, l, c int, r *I32Slice) {
+	ConfirmReallocate := func(s I32Slice, l, c int, r I32Slice) {
 		o := s.String()
 		el := l
 		if el > c {
@@ -249,18 +249,17 @@ func TestI32SliceReallocate(t *testing.T) {
 		}
 	}
 
-	i := make(I32Slice, 0, 10)
-	ConfirmReallocate(I32List(), 0, 10, &i)
-	ConfirmReallocate(I32List(0, 1, 2, 3, 4), 3, 10, I32List(0, 1, 2))
-	ConfirmReallocate(I32List(0, 1, 2, 3, 4), 5, 10, I32List(0, 1, 2, 3, 4))
-	ConfirmReallocate(I32List(0, 1, 2, 3, 4), 10, 10, I32List(0, 1, 2, 3, 4, 0, 0, 0, 0, 0))
-	ConfirmReallocate(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 1, 5, I32List(0))
-	ConfirmReallocate(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 5, I32List(0, 1, 2, 3, 4))
-	ConfirmReallocate(I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 5, I32List(0, 1, 2, 3, 4))
+	ConfirmReallocate(I32Slice{}, 0, 10, make(I32Slice, 0, 10))
+	ConfirmReallocate(I32Slice{0, 1, 2, 3, 4}, 3, 10, I32Slice{0, 1, 2})
+	ConfirmReallocate(I32Slice{0, 1, 2, 3, 4}, 5, 10, I32Slice{0, 1, 2, 3, 4})
+	ConfirmReallocate(I32Slice{0, 1, 2, 3, 4}, 10, 10, I32Slice{0, 1, 2, 3, 4, 0, 0, 0, 0, 0})
+	ConfirmReallocate(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 1, 5, I32Slice{0})
+	ConfirmReallocate(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, 5, I32Slice{0, 1, 2, 3, 4})
+	ConfirmReallocate(I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, 5, I32Slice{0, 1, 2, 3, 4})
 }
 
 func TestI32SliceExtend(t *testing.T) {
-	ConfirmExtend := func(s *I32Slice, n int, r *I32Slice) {
+	ConfirmExtend := func(s I32Slice, n int, r I32Slice) {
 		c := s.Cap()
 		s.Extend(n)
 		switch {
@@ -270,12 +269,12 @@ func TestI32SliceExtend(t *testing.T) {
 		}
 	}
 
-	ConfirmExtend(I32List(), 1, I32List(0))
-	ConfirmExtend(I32List(), 2, I32List(0, 0))
+	ConfirmExtend(I32Slice{}, 1, I32Slice{0})
+	ConfirmExtend(I32Slice{}, 2, I32Slice{0, 0})
 }
 
 func TestI32SliceExpand(t *testing.T) {
-	ConfirmExpand := func(s *I32Slice, i, n int, r *I32Slice) {
+	ConfirmExpand := func(s I32Slice, i, n int, r I32Slice) {
 		c := s.Cap()
 		s.Expand(i, n)
 		switch {
@@ -285,31 +284,31 @@ func TestI32SliceExpand(t *testing.T) {
 		}
 	}
 
-	ConfirmExpand(I32List(), -1, 1, I32List(0))
-	ConfirmExpand(I32List(), 0, 1, I32List(0))
-	ConfirmExpand(I32List(), 1, 1, I32List(0))
-	ConfirmExpand(I32List(), 0, 2, I32List(0, 0))
+	ConfirmExpand(I32Slice{}, -1, 1, I32Slice{0})
+	ConfirmExpand(I32Slice{}, 0, 1, I32Slice{0})
+	ConfirmExpand(I32Slice{}, 1, 1, I32Slice{0})
+	ConfirmExpand(I32Slice{}, 0, 2, I32Slice{0, 0})
 
-	ConfirmExpand(I32List(0, 1, 2), -1, 2, I32List(0, 0, 0, 1, 2))
-	ConfirmExpand(I32List(0, 1, 2), 0, 2, I32List(0, 0, 0, 1, 2))
-	ConfirmExpand(I32List(0, 1, 2), 1, 2, I32List(0, 0, 0, 1, 2))
-	ConfirmExpand(I32List(0, 1, 2), 2, 2, I32List(0, 1, 0, 0, 2))
-	ConfirmExpand(I32List(0, 1, 2), 3, 2, I32List(0, 1, 2, 0, 0))
-	ConfirmExpand(I32List(0, 1, 2), 4, 2, I32List(0, 1, 2, 0, 0))
+	ConfirmExpand(I32Slice{0, 1, 2}, -1, 2, I32Slice{0, 0, 0, 1, 2})
+	ConfirmExpand(I32Slice{0, 1, 2}, 0, 2, I32Slice{0, 0, 0, 1, 2})
+	ConfirmExpand(I32Slice{0, 1, 2}, 1, 2, I32Slice{0, 0, 0, 1, 2})
+	ConfirmExpand(I32Slice{0, 1, 2}, 2, 2, I32Slice{0, 1, 0, 0, 2})
+	ConfirmExpand(I32Slice{0, 1, 2}, 3, 2, I32Slice{0, 1, 2, 0, 0})
+	ConfirmExpand(I32Slice{0, 1, 2}, 4, 2, I32Slice{0, 1, 2, 0, 0})
 }
 
 func TestI32SliceDepth(t *testing.T) {
-	ConfirmDepth := func(s *I32Slice, i int) {
+	ConfirmDepth := func(s I32Slice, i int) {
 		if x := s.Depth(); x != i {
 			t.Fatalf("%v.Depth() should be %v but is %v", s, i, x)
 		}
 	}
-	ConfirmDepth(I32List(0, 1), 0)
+	ConfirmDepth(I32Slice{0, 1}, 0)
 }
 
 func TestI32SliceReverse(t *testing.T) {
-	sxp := I32List(1, 2, 3, 4, 5)
-	rxp := I32List(5, 4, 3, 2, 1)
+	sxp := I32Slice{1, 2, 3, 4, 5}
+	rxp := I32Slice{5, 4, 3, 2, 1}
 	sxp.Reverse()
 	if !rxp.Equal(sxp) {
 		t.Fatalf("Reversal failed: %v", sxp)
@@ -317,221 +316,221 @@ func TestI32SliceReverse(t *testing.T) {
 }
 
 func TestI32SliceAppend(t *testing.T) {
-	ConfirmAppend := func(s *I32Slice, v interface{}, r *I32Slice) {
+	ConfirmAppend := func(s I32Slice, v interface{}, r I32Slice) {
 		s.Append(v)
 		if !r.Equal(s) {
 			t.Fatalf("Append(%v) should be %v but is %v", v, r, s)
 		}
 	}
 
-	ConfirmAppend(I32List(), int32(0), I32List(0))
+	ConfirmAppend(I32Slice{}, int32(0), I32Slice{0})
 
-	ConfirmAppend(I32List(), I32List(0), I32List(0))
-	ConfirmAppend(I32List(), I32List(0, 1), I32List(0, 1))
-	ConfirmAppend(I32List(0, 1, 2), I32List(3, 4), I32List(0, 1, 2, 3, 4))
+	ConfirmAppend(I32Slice{}, I32Slice{0}, I32Slice{0})
+	ConfirmAppend(I32Slice{}, I32Slice{0, 1}, I32Slice{0, 1})
+	ConfirmAppend(I32Slice{0, 1, 2}, I32Slice{3, 4}, I32Slice{0, 1, 2, 3, 4})
 }
 
 func TestI32SlicePrepend(t *testing.T) {
-	ConfirmPrepend := func(s *I32Slice, v interface{}, r *I32Slice) {
+	ConfirmPrepend := func(s I32Slice, v interface{}, r I32Slice) {
 		if s.Prepend(v); !r.Equal(s) {
 			t.Fatalf("Prepend(%v) should be %v but is %v", v, r, s)
 		}
 	}
 
-	ConfirmPrepend(I32List(), int32(0), I32List(0))
-	ConfirmPrepend(I32List(0), int32(1), I32List(1, 0))
+	ConfirmPrepend(I32Slice{}, int32(0), I32Slice{0})
+	ConfirmPrepend(I32Slice{0}, int32(1), I32Slice{1, 0})
 
-	ConfirmPrepend(I32List(), I32List(0), I32List(0))
-	ConfirmPrepend(I32List(), I32List(0, 1), I32List(0, 1))
-	ConfirmPrepend(I32List(0, 1, 2), I32List(3, 4), I32List(3, 4, 0, 1, 2))
+	ConfirmPrepend(I32Slice{}, I32Slice{0}, I32Slice{0})
+	ConfirmPrepend(I32Slice{}, I32Slice{0, 1}, I32Slice{0, 1})
+	ConfirmPrepend(I32Slice{0, 1, 2}, I32Slice{3, 4}, I32Slice{3, 4, 0, 1, 2})
 }
 
 func TestI32SliceRepeat(t *testing.T) {
-	ConfirmRepeat := func(s *I32Slice, count int, r *I32Slice) {
+	ConfirmRepeat := func(s I32Slice, count int, r I32Slice) {
 		if x := s.Repeat(count); !x.Equal(r) {
 			t.Fatalf("%v.Repeat(%v) should be %v but is %v", s, count, r, x)
 		}
 	}
 
-	ConfirmRepeat(I32List(), 5, I32List())
-	ConfirmRepeat(I32List(0), 1, I32List(0))
-	ConfirmRepeat(I32List(0), 2, I32List(0, 0))
-	ConfirmRepeat(I32List(0), 3, I32List(0, 0, 0))
-	ConfirmRepeat(I32List(0), 4, I32List(0, 0, 0, 0))
-	ConfirmRepeat(I32List(0), 5, I32List(0, 0, 0, 0, 0))
+	ConfirmRepeat(I32Slice{}, 5, I32Slice{})
+	ConfirmRepeat(I32Slice{0}, 1, I32Slice{0})
+	ConfirmRepeat(I32Slice{0}, 2, I32Slice{0, 0})
+	ConfirmRepeat(I32Slice{0}, 3, I32Slice{0, 0, 0})
+	ConfirmRepeat(I32Slice{0}, 4, I32Slice{0, 0, 0, 0})
+	ConfirmRepeat(I32Slice{0}, 5, I32Slice{0, 0, 0, 0, 0})
 }
 
 func TestI32SliceCar(t *testing.T) {
-	ConfirmCar := func(s *I32Slice, r int32) {
+	ConfirmCar := func(s I32Slice, r int32) {
 		n := s.Car().(int32)
 		if ok := n == r; !ok {
 			t.Fatalf("head should be '%v' but is '%v'", r, n)
 		}
 	}
-	ConfirmCar(I32List(1, 2, 3), 1)
+	ConfirmCar(I32Slice{1, 2, 3}, 1)
 }
 
 func TestI32SliceCdr(t *testing.T) {
-	ConfirmCdr := func(s, r *I32Slice) {
+	ConfirmCdr := func(s, r I32Slice) {
 		if n := s.Cdr(); !n.Equal(r) {
 			t.Fatalf("tail should be '%v' but is '%v'", r, n)
 		}
 	}
-	ConfirmCdr(I32List(1, 2, 3), I32List(2, 3))
+	ConfirmCdr(I32Slice{1, 2, 3}, I32Slice{2, 3})
 }
 
 func TestI32SliceRplaca(t *testing.T) {
-	ConfirmRplaca := func(s *I32Slice, v interface{}, r *I32Slice) {
+	ConfirmRplaca := func(s I32Slice, v interface{}, r I32Slice) {
 		if s.Rplaca(v); !s.Equal(r) {
 			t.Fatalf("slice should be '%v' but is '%v'", r, s)
 		}
 	}
-	ConfirmRplaca(I32List(1, 2, 3, 4, 5), int32(0), I32List(0, 2, 3, 4, 5))
+	ConfirmRplaca(I32Slice{1, 2, 3, 4, 5}, int32(0), I32Slice{0, 2, 3, 4, 5})
 }
 
 func TestI32SliceRplacd(t *testing.T) {
-	ConfirmRplacd := func(s *I32Slice, v interface{}, r *I32Slice) {
+	ConfirmRplacd := func(s I32Slice, v interface{}, r I32Slice) {
 		if s.Rplacd(v); !s.Equal(r) {
 			t.Fatalf("slice should be '%v' but is '%v'", r, s)
 		}
 	}
-	ConfirmRplacd(I32List(1, 2, 3, 4, 5), nil, I32List(1))
-	ConfirmRplacd(I32List(1, 2, 3, 4, 5), int32(10), I32List(1, 10))
-	ConfirmRplacd(I32List(1, 2, 3, 4, 5), I32List(5, 4, 3, 2), I32List(1, 5, 4, 3, 2))
-	ConfirmRplacd(I32List(1, 2, 3, 4, 5, 6), I32List(2, 4, 8, 32), I32List(1, 2, 4, 8, 32))
+	ConfirmRplacd(I32Slice{1, 2, 3, 4, 5}, nil, I32Slice{1})
+	ConfirmRplacd(I32Slice{1, 2, 3, 4, 5}, int32(10), I32Slice{1, 10})
+	ConfirmRplacd(I32Slice{1, 2, 3, 4, 5}, I32Slice{5, 4, 3, 2}, I32Slice{1, 5, 4, 3, 2})
+	ConfirmRplacd(I32Slice{1, 2, 3, 4, 5, 6}, I32Slice{2, 4, 8, 32}, I32Slice{1, 2, 4, 8, 32})
 }
 
 func TestI32SliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r *I32Slice) {
-		x := s.SetIntersection(*o)
+	ConfirmSetIntersection := func(s, o, r I32Slice) {
+		x := s.SetIntersection(o)
 		x.Sort()
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
 
-	ConfirmSetIntersection(I32List(1, 2, 3), I32List(), I32List())
-	ConfirmSetIntersection(I32List(1, 2, 3), I32List(1), I32List(1))
-	ConfirmSetIntersection(I32List(1, 2, 3), I32List(1, 1), I32List(1))
-	ConfirmSetIntersection(I32List(1, 2, 3), I32List(1, 2, 1), I32List(1, 2))
+	ConfirmSetIntersection(I32Slice{1, 2, 3}, I32Slice{}, I32Slice{})
+	ConfirmSetIntersection(I32Slice{1, 2, 3}, I32Slice{1}, I32Slice{1})
+	ConfirmSetIntersection(I32Slice{1, 2, 3}, I32Slice{1, 1}, I32Slice{1})
+	ConfirmSetIntersection(I32Slice{1, 2, 3}, I32Slice{1, 2, 1}, I32Slice{1, 2})
 }
 
 func TestI32SliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r *I32Slice) {
-		x := s.SetUnion(*o)
+	ConfirmSetUnion := func(s, o, r I32Slice) {
+		x := s.SetUnion(o)
 		x.Sort()
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
 
-	ConfirmSetUnion(I32List(1, 2, 3), I32List(), I32List(1, 2, 3))
-	ConfirmSetUnion(I32List(1, 2, 3), I32List(1), I32List(1, 2, 3))
-	ConfirmSetUnion(I32List(1, 2, 3), I32List(1, 1), I32List(1, 2, 3))
-	ConfirmSetUnion(I32List(1, 2, 3), I32List(1, 2, 1), I32List(1, 2, 3))
+	ConfirmSetUnion(I32Slice{1, 2, 3}, I32Slice{}, I32Slice{1, 2, 3})
+	ConfirmSetUnion(I32Slice{1, 2, 3}, I32Slice{1}, I32Slice{1, 2, 3})
+	ConfirmSetUnion(I32Slice{1, 2, 3}, I32Slice{1, 1}, I32Slice{1, 2, 3})
+	ConfirmSetUnion(I32Slice{1, 2, 3}, I32Slice{1, 2, 1}, I32Slice{1, 2, 3})
 }
 
 func TestI32SliceSetDifference(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r *I32Slice) {
-		x := s.SetDifference(*o)
+	ConfirmSetUnion := func(s, o, r I32Slice) {
+		x := s.SetDifference(o)
 		x.Sort()
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
 
-	ConfirmSetUnion(I32List(1, 2, 3), I32List(), I32List(1, 2, 3))
-	ConfirmSetUnion(I32List(1, 2, 3), I32List(1), I32List(2, 3))
-	ConfirmSetUnion(I32List(1, 2, 3), I32List(1, 1), I32List(2, 3))
-	ConfirmSetUnion(I32List(1, 2, 3), I32List(1, 2, 1), I32List(3))
+	ConfirmSetUnion(I32Slice{1, 2, 3}, I32Slice{}, I32Slice{1, 2, 3})
+	ConfirmSetUnion(I32Slice{1, 2, 3}, I32Slice{1}, I32Slice{2, 3})
+	ConfirmSetUnion(I32Slice{1, 2, 3}, I32Slice{1, 1}, I32Slice{2, 3})
+	ConfirmSetUnion(I32Slice{1, 2, 3}, I32Slice{1, 2, 1}, I32Slice{3})
 }
 
 func TestI32SliceFind(t *testing.T) {
-	ConfirmFind := func(s *I32Slice, v int32, i int) {
+	ConfirmFind := func(s I32Slice, v int32, i int) {
 		if x, ok := s.Find(v); !ok || x != i {
 			t.Fatalf("%v.Find(%v) should be %v but is %v", s, v, i, x)
 		}
 	}
 
-	ConfirmFind(I32List(0, 1, 2, 3, 4), 0, 0)
-	ConfirmFind(I32List(0, 1, 2, 3, 4), 1, 1)
-	ConfirmFind(I32List(0, 1, 2, 4, 3), 2, 2)
-	ConfirmFind(I32List(0, 1, 2, 4, 3), 3, 4)
-	ConfirmFind(I32List(0, 1, 2, 4, 3), 4, 3)
+	ConfirmFind(I32Slice{0, 1, 2, 3, 4}, 0, 0)
+	ConfirmFind(I32Slice{0, 1, 2, 3, 4}, 1, 1)
+	ConfirmFind(I32Slice{0, 1, 2, 4, 3}, 2, 2)
+	ConfirmFind(I32Slice{0, 1, 2, 4, 3}, 3, 4)
+	ConfirmFind(I32Slice{0, 1, 2, 4, 3}, 4, 3)
 }
 
 func TestI32SliceFindN(t *testing.T) {
-	ConfirmFindN := func(s *I32Slice, v int32, n int, i *ISlice) {
+	ConfirmFindN := func(s I32Slice, v int32, n int, i ISlice) {
 		if x := s.FindN(v, n); !ISlice(x).Equal(i) {
 			t.Fatalf("%v.Find(%v, %v) should be %v but is %v", s, v, n, i, x)
 		}
 	}
 
-	ConfirmFindN(I32List(1, 0, 1, 0, 1), 2, 3, IList())
-	ConfirmFindN(I32List(1, 0, 1, 0, 1), 1, 0, IList(0, 2, 4))
-	ConfirmFindN(I32List(1, 0, 1, 0, 1), 1, 1, IList(0))
-	ConfirmFindN(I32List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
-	ConfirmFindN(I32List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
-	ConfirmFindN(I32List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+	ConfirmFindN(I32Slice{1, 0, 1, 0, 1}, 2, 3, ISlice{})
+	ConfirmFindN(I32Slice{1, 0, 1, 0, 1}, 1, 0, ISlice{0, 2, 4})
+	ConfirmFindN(I32Slice{1, 0, 1, 0, 1}, 1, 1, ISlice{0})
+	ConfirmFindN(I32Slice{1, 0, 1, 0, 1}, 1, 2, ISlice{0, 2})
+	ConfirmFindN(I32Slice{1, 0, 1, 0, 1}, 1, 3, ISlice{0, 2, 4})
+	ConfirmFindN(I32Slice{1, 0, 1, 0, 1}, 1, 4, ISlice{0, 2, 4})
 }
 
 func TestI32SliceKeepIf(t *testing.T) {
-	ConfirmKeepIf := func(s *I32Slice, f interface{}, r *I32Slice) {
+	ConfirmKeepIf := func(s I32Slice, f interface{}, r I32Slice) {
 		if s.KeepIf(f); !r.Equal(s) {
 			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmKeepIf(I32List(0, 1, 0, 3, 0, 5), int32(0), I32List(0, 0, 0))
-	ConfirmKeepIf(I32List(0, 1, 0, 3, 0, 5), int32(1), I32List(1))
-	ConfirmKeepIf(I32List(0, 1, 0, 3, 0, 5), int32(6), I32List())
+	ConfirmKeepIf(I32Slice{0, 1, 0, 3, 0, 5}, int32(0), I32Slice{0, 0, 0})
+	ConfirmKeepIf(I32Slice{0, 1, 0, 3, 0, 5}, int32(1), I32Slice{1})
+	ConfirmKeepIf(I32Slice{0, 1, 0, 3, 0, 5}, int32(6), I32Slice{})
 
-	ConfirmKeepIf(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(0) }, I32List(0, 0, 0))
-	ConfirmKeepIf(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(1) }, I32List(1))
-	ConfirmKeepIf(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(6) }, I32List())
+	ConfirmKeepIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(0) }, I32Slice{0, 0, 0})
+	ConfirmKeepIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(1) }, I32Slice{1})
+	ConfirmKeepIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(6) }, I32Slice{})
 
-	ConfirmKeepIf(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(0) }, I32List(0, 0, 0))
-	ConfirmKeepIf(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(1) }, I32List(1))
-	ConfirmKeepIf(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(6) }, I32List())
+	ConfirmKeepIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(0) }, I32Slice{0, 0, 0})
+	ConfirmKeepIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(1) }, I32Slice{1})
+	ConfirmKeepIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(6) }, I32Slice{})
 }
 
 func TestI32SliceReverseEach(t *testing.T) {
 	var count	int32
 	count = 9
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(i interface{}) {
 		if i != count {
 			t.Fatalf("0: element %v erroneously reported as %v", count, i)
 		}
 		count--
 	})
 
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(index int, i interface{}) {
 		if index != int(i.(int32)) {
 			t.Fatalf("1: element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key, i interface{}) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(key, i interface{}) {
 		if key.(int) != int(i.(int32)) {
 			t.Fatalf("2: element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 9
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i int) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(i int) {
 		if i != int(count) {
 			t.Fatalf("3: element %v erroneously reported as %v", count, i)
 		}
 		count--
 	})
 
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i int) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(index int, i int) {
 		if i != index {
 			t.Fatalf("4: element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	I32List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key interface{}, i int32) {
+	I32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(key interface{}, i int32) {
 		if key.(int) != int(i) {
 			t.Fatalf("5: element %v erroneously reported as %v", key, i)
 		}
@@ -539,71 +538,70 @@ func TestI32SliceReverseEach(t *testing.T) {
 }
 
 func TestI32SliceReplaceIf(t *testing.T) {
-	ConfirmReplaceIf := func(s *I32Slice, f, v interface{}, r *I32Slice) {
+	ConfirmReplaceIf := func(s I32Slice, f, v interface{}, r I32Slice) {
 		if s.ReplaceIf(f, v); !r.Equal(s) {
 			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
 		}
 	}
 
-	ConfirmReplaceIf(I32List(0, 1, 0, 3, 0, 5), int32(0), int32(1), I32List(1, 1, 1, 3, 1, 5))
-	ConfirmReplaceIf(I32List(0, 1, 0, 3, 0, 5), int32(1), int32(0), I32List(0, 0, 0, 3, 0, 5))
-	ConfirmReplaceIf(I32List(0, 1, 0, 3, 0, 5), int32(6), int32(0), I32List(0, 1, 0, 3, 0, 5))
+	ConfirmReplaceIf(I32Slice{0, 1, 0, 3, 0, 5}, int32(0), int32(1), I32Slice{1, 1, 1, 3, 1, 5})
+	ConfirmReplaceIf(I32Slice{0, 1, 0, 3, 0, 5}, int32(1), int32(0), I32Slice{0, 0, 0, 3, 0, 5})
+	ConfirmReplaceIf(I32Slice{0, 1, 0, 3, 0, 5}, int32(6), int32(0), I32Slice{0, 1, 0, 3, 0, 5})
 
-	ConfirmReplaceIf(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(0) }, int32(1), I32List(1, 1, 1, 3, 1, 5))
-	ConfirmReplaceIf(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(1) }, int32(0), I32List(0, 0, 0, 3, 0, 5))
-	ConfirmReplaceIf(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(6) }, int32(0), I32List(0, 1, 0, 3, 0, 5))
+	ConfirmReplaceIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(0) }, int32(1), I32Slice{1, 1, 1, 3, 1, 5})
+	ConfirmReplaceIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(1) }, int32(0), I32Slice{0, 0, 0, 3, 0, 5})
+	ConfirmReplaceIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(6) }, int32(0), I32Slice{0, 1, 0, 3, 0, 5})
 
-	ConfirmReplaceIf(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(0) }, int32(1), I32List(1, 1, 1, 3, 1, 5))
-	ConfirmReplaceIf(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(1) }, int32(0), I32List(0, 0, 0, 3, 0, 5))
-	ConfirmReplaceIf(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(6) }, int32(0), I32List(0, 1, 0, 3, 0, 5))
+	ConfirmReplaceIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(0) }, int32(1), I32Slice{1, 1, 1, 3, 1, 5})
+	ConfirmReplaceIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(1) }, int32(0), I32Slice{0, 0, 0, 3, 0, 5})
+	ConfirmReplaceIf(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(6) }, int32(0), I32Slice{0, 1, 0, 3, 0, 5})
 }
 
 func TestI32SliceReplace(t *testing.T) {
-	ConfirmReplace := func(s *I32Slice, v interface{}) {
+	ConfirmReplace := func(s I32Slice, v interface{}) {
 		if s.Replace(v); !s.Equal(v) {
 			t.Fatalf("Replace() should be %v but is %v", s, v)
 		}
 	}
 
-	ConfirmReplace(I32List(0, 1, 2, 3, 4, 5), I32List(9, 8, 7, 6, 5))
-	ConfirmReplace(I32List(0, 1, 2, 3, 4, 5), I32Slice{ 9, 8, 7, 6, 5 })
-	ConfirmReplace(I32List(0, 1, 2, 3, 4, 5), &[]int32{ 9, 8, 7, 6, 5 })
-	ConfirmReplace(I32List(0, 1, 2, 3, 4, 5), []int32{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(I32Slice{0, 1, 2, 3, 4, 5}, I32Slice{9, 8, 7, 6, 5})
+	ConfirmReplace(I32Slice{0, 1, 2, 3, 4, 5}, I32Slice{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(I32Slice{0, 1, 2, 3, 4, 5}, []int32{ 9, 8, 7, 6, 5 })
 }
 
 func TestI32SliceSelect(t *testing.T) {
-	ConfirmSelect := func(s *I32Slice, f interface{}, r *I32Slice) {
+	ConfirmSelect := func(s I32Slice, f interface{}, r I32Slice) {
 		if x := s.Select(f); !r.Equal(x) {
 			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmSelect(I32List(0, 1, 0, 3, 0, 5), int32(0), I32List(0, 0, 0))
-	ConfirmSelect(I32List(0, 1, 0, 3, 0, 5), int32(1), I32List(1))
-	ConfirmSelect(I32List(0, 1, 0, 3, 0, 5), int32(6), I32List())
+	ConfirmSelect(I32Slice{0, 1, 0, 3, 0, 5}, int32(0), I32Slice{0, 0, 0})
+	ConfirmSelect(I32Slice{0, 1, 0, 3, 0, 5}, int32(1), I32Slice{1})
+	ConfirmSelect(I32Slice{0, 1, 0, 3, 0, 5}, int32(6), I32Slice{})
 
-	ConfirmSelect(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(0) }, I32List(0, 0, 0))
-	ConfirmSelect(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(1) }, I32List(1))
-	ConfirmSelect(I32List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == int32(6) }, I32List())
+	ConfirmSelect(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(0) }, I32Slice{0, 0, 0})
+	ConfirmSelect(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(1) }, I32Slice{1})
+	ConfirmSelect(I32Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == int32(6) }, I32Slice{})
 
-	ConfirmSelect(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(0) }, I32List(0, 0, 0))
-	ConfirmSelect(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(1) }, I32List(1))
-	ConfirmSelect(I32List(0, 1, 0, 3, 0, 5), func(x int32) bool { return x == int32(6) }, I32List())
+	ConfirmSelect(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(0) }, I32Slice{0, 0, 0})
+	ConfirmSelect(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(1) }, I32Slice{1})
+	ConfirmSelect(I32Slice{0, 1, 0, 3, 0, 5}, func(x int32) bool { return x == int32(6) }, I32Slice{})
 }
 
 func TestI32SliceUniq(t *testing.T) {
-	ConfirmUniq := func(s, r *I32Slice) {
+	ConfirmUniq := func(s, r I32Slice) {
 		if s.Uniq(); !r.Equal(s) {
 			t.Fatalf("Uniq() should be %v but is %v", r, s)
 		}
 	}
 
-	ConfirmUniq(I32List(0, 0, 0, 0, 0, 0), I32List(0))
-	ConfirmUniq(I32List(0, 1, 0, 3, 0, 5), I32List(0, 1, 3, 5))
+	ConfirmUniq(I32Slice{0, 0, 0, 0, 0, 0}, I32Slice{0})
+	ConfirmUniq(I32Slice{0, 1, 0, 3, 0, 5}, I32Slice{0, 1, 3, 5})
 }
 
 func TestI32SliceShuffle(t *testing.T) {
-	ConfirmShuffle := func(s, r *I32Slice) {
+	ConfirmShuffle := func(s, r I32Slice) {
 		if s.Shuffle(); s.Equal(r) {
 			t.Fatalf("%v.Shuffle() should change order of elements", s)
 		}
@@ -612,45 +610,45 @@ func TestI32SliceShuffle(t *testing.T) {
 		}
 	}
 
-	ConfirmShuffle(I32List(0, 1, 2, 3, 4, 5), I32List(0, 1, 2, 3, 4, 5))
+	ConfirmShuffle(I32Slice{0, 1, 2, 3, 4, 5}, I32Slice{0, 1, 2, 3, 4, 5})
 }
 
 func TestI32SliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s *I32Slice, i []int, r *I32Slice) {
+	ConfirmValuesAt := func(s I32Slice, i []int, r I32Slice) {
 		if x := s.ValuesAt(i...); !r.Equal(x) {
 			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
 		}
 	}
 
-	ConfirmValuesAt(I32List(0, 1, 2, 3, 4, 5), []int{}, I32List())
-	ConfirmValuesAt(I32List(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, I32List(0, 1))
-	ConfirmValuesAt(I32List(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, I32List(0, 3))
-	ConfirmValuesAt(I32List(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, I32List(0, 3, 4, 3))
+	ConfirmValuesAt(I32Slice{0, 1, 2, 3, 4, 5}, []int{}, I32Slice{})
+	ConfirmValuesAt(I32Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, I32Slice{0, 1})
+	ConfirmValuesAt(I32Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, I32Slice{0, 3})
+	ConfirmValuesAt(I32Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, I32Slice{0, 3, 4, 3})
 }
 
 func TestI32SliceInsert(t *testing.T) {
-	ConfirmInsert := func(s *I32Slice, n int, v interface{}, r *I32Slice) {
+	ConfirmInsert := func(s I32Slice, n int, v interface{}, r I32Slice) {
 		if s.Insert(n, v); !r.Equal(s) {
 			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
 		}
 	}
 
-	ConfirmInsert(I32List(), 0, int32(0), I32List(0))
-	ConfirmInsert(I32List(), 0, I32List(0), I32List(0))
-	ConfirmInsert(I32List(), 0, I32List(0, 1), I32List(0, 1))
+	ConfirmInsert(I32Slice{}, 0, int32(0), I32Slice{0})
+	ConfirmInsert(I32Slice{}, 0, I32Slice{0}, I32Slice{0})
+	ConfirmInsert(I32Slice{}, 0, I32Slice{0, 1}, I32Slice{0, 1})
 
-	ConfirmInsert(I32List(0), 0, int32(1), I32List(1, 0))
-	ConfirmInsert(I32List(0), 0, I32List(1), I32List(1, 0))
-	ConfirmInsert(I32List(0), 1, int32(1), I32List(0, 1))
-	ConfirmInsert(I32List(0), 1, I32List(1), I32List(0, 1))
+	ConfirmInsert(I32Slice{0}, 0, int32(1), I32Slice{1, 0})
+	ConfirmInsert(I32Slice{0}, 0, I32Slice{1}, I32Slice{1, 0})
+	ConfirmInsert(I32Slice{0}, 1, int32(1), I32Slice{0, 1})
+	ConfirmInsert(I32Slice{0}, 1, I32Slice{1}, I32Slice{0, 1})
 
-	ConfirmInsert(I32List(0, 1, 2), 0, int32(3), I32List(3, 0, 1, 2))
-	ConfirmInsert(I32List(0, 1, 2), 1, int32(3), I32List(0, 3, 1, 2))
-	ConfirmInsert(I32List(0, 1, 2), 2, int32(3), I32List(0, 1, 3, 2))
-	ConfirmInsert(I32List(0, 1, 2), 3, int32(3), I32List(0, 1, 2, 3))
+	ConfirmInsert(I32Slice{0, 1, 2}, 0, int32(3), I32Slice{3, 0, 1, 2})
+	ConfirmInsert(I32Slice{0, 1, 2}, 1, int32(3), I32Slice{0, 3, 1, 2})
+	ConfirmInsert(I32Slice{0, 1, 2}, 2, int32(3), I32Slice{0, 1, 3, 2})
+	ConfirmInsert(I32Slice{0, 1, 2}, 3, int32(3), I32Slice{0, 1, 2, 3})
 
-	ConfirmInsert(I32List(0, 1, 2), 0, I32List(3, 4), I32List(3, 4, 0, 1, 2))
-	ConfirmInsert(I32List(0, 1, 2), 1, I32List(3, 4), I32List(0, 3, 4, 1, 2))
-	ConfirmInsert(I32List(0, 1, 2), 2, I32List(3, 4), I32List(0, 1, 3, 4, 2))
-	ConfirmInsert(I32List(0, 1, 2), 3, I32List(3, 4), I32List(0, 1, 2, 3, 4))
+	ConfirmInsert(I32Slice{0, 1, 2}, 0, I32Slice{3, 4}, I32Slice{3, 4, 0, 1, 2})
+	ConfirmInsert(I32Slice{0, 1, 2}, 1, I32Slice{3, 4}, I32Slice{0, 3, 4, 1, 2})
+	ConfirmInsert(I32Slice{0, 1, 2}, 2, I32Slice{3, 4}, I32Slice{0, 1, 3, 4, 2})
+	ConfirmInsert(I32Slice{0, 1, 2}, 3, I32Slice{3, 4}, I32Slice{0, 1, 2, 3, 4})
 }

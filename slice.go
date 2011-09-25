@@ -3,15 +3,8 @@ package slices
 import (
 	"fmt"
 	"rand"
+	"reflect"
 )
-
-func List(n... interface{}) *Slice {
-	if len(n) == 0 {
-		n = make(Slice, 0, 0)
-	}
-	s := Slice(n)
-	return &s
-}
 
 type Slice	[]interface{}
 
@@ -69,7 +62,7 @@ func (s *Slice) Delete(i int) {
 	if i > -1 && i < n {
 		copy(a[i:n - 1], a[i + 1:n])
 		var zero interface{}
-		a[n-1] = zero
+		a[n - 1] = zero
 		*s = a[:n - 1]
 	}
 }
@@ -207,9 +200,7 @@ func (s Slice) Reverse() {
 func (s *Slice) Append(v interface{}) {
 	switch v := v.(type) {
 	case Slice:				*s = append(*s, v...)
-	case *Slice:			*s = append(*s, (*v)...)
 	case []interface{}:		*s = append(*s, v...)
-	case *[]interface{}:	*s = append(*s, (*v)...)
 	default:				*s = append(*s, v)
 	}
 }
@@ -222,9 +213,7 @@ func (s *Slice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *Slice:			s.Prepend(*v)
 	case []interface{}:		s.Prepend(Slice(v))
-	case *[]interface{}:	s.Prepend(Slice(*v))
 	default:				l := s.Len() + 1
 							n := make(Slice, l, l)
 							n[0] = v
@@ -262,14 +251,11 @@ func (s Slice) Repeat(count int) Slice {
 
 func (s *Slice) Flatten() {
 	if s != nil {
-		n := make(Slice, 0, 0)
+		n := make(Slice, 0, len(*s))
 		for _, v := range *s {
 			switch v := v.(type) {
-			case *Slice:			v.Flatten()
-									n = append(n, (*v)...)
 			case Slice:				(&v).Flatten()
 									n = append(n, v...)
-			case *[]interface{}:	n = append(n, (*v)...)
 			case []interface{}:		n = append(n, v...)
 			case Flattenable:		v.Flatten()
 									n = append(n, v)
@@ -281,27 +267,24 @@ func (s *Slice) Flatten() {
 }
 
 func (s Slice) equal(o Slice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									switch v := v.(type) {
-									case Equatable:		r = v.Equal(o[i])
-									default:			r = v == o[i]
-									}
-									if !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			switch v := v.(type) {
+			case Equatable:		r = v.Equal(o[i])
+			default:			r = v == o[i]
+			}
+			if !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *Slice:			r = o != nil && s.equal(*o)
 	case Slice:				r = s.equal(o)
-	case *[]interface{}:	r = o != nil && s.equal(*o)
 	case []interface{}:		r = s.equal(o)
 	}
 	return
@@ -323,7 +306,7 @@ func (s Slice) Cdr() (t Slice) {
 
 func (s *Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *List(v)
+	case s == nil:			*s = Slice{v}
 	case s.Len() == 0:		*s = append(*s, v)
 	default:				(*s)[0] = v
 	}
@@ -331,7 +314,7 @@ func (s *Slice) Rplaca(v interface{}) {
 
 func (s *Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *List(v)
+		*s = Slice{v}
 	} else {
 		ReplaceSlice := func(v Slice) {
 			if l := len(v); l < cap(*s) {
@@ -497,10 +480,24 @@ func (s Slice) ReplaceIf(f interface{}, r interface{}) {
 func (s *Slice) Replace(o interface{}) {
 	switch o := o.(type) {
 	case Slice:				*s = o
-	case *Slice:			*s = *o
 	case []interface{}:		*s = Slice(o)
-	case *[]interface{}:	*s = Slice(*o)
-	default:				panic(o)
+
+	case []reflect.Value:	n := make(Slice, len(o), len(o))
+							for i, v := range o {
+								n[i] = v.Interface()
+							}
+							*s = n
+
+	default:				if v := reflect.ValueOf(o); v.Kind() == reflect.Slice {
+								vl := v.Len()
+								n := make(Slice, vl, vl)
+								for i := 0; i < vl; i++ {
+									n[i] = v.Index(i).Interface()
+								}
+								*s = n
+							} else {
+								*s= Slice{ v.Interface() }
+							}
 	}
 }
 
@@ -563,9 +560,7 @@ func (s *Slice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *Slice:			s.Insert(i, *v)
 	case []interface{}:		s.Insert(i, Slice(v))
-	case *[]interface{}:	s.Insert(i, Slice(*v))
 
 	default:				l := s.Len() + 1
 							n := make(Slice, l, l)

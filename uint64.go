@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func U64List(n... uint64) *U64Slice {
-	if len(n) == 0 {
-		n = make(U64Slice, 0, 0)
-	}
-	return (*U64Slice)(&n)
-}
-
 type U64Slice	[]uint64
 
 func (s U64Slice) Len() int							{ return len(s) }
@@ -254,9 +247,7 @@ func (s *U64Slice) Append(v interface{}) {
 	switch v := v.(type) {
 	case uint64:			*s = append(*s, v)
 	case U64Slice:			*s = append(*s, v...)
-	case *U64Slice:			*s = append(*s, (*v)...)
 	case []uint64:			s.Append(U64Slice(v))
-	case *[]uint64:			s.Append(U64Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -275,9 +266,7 @@ func (s *U64Slice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *U64Slice:			s.Prepend(*v)
 	case []uint64:			s.Prepend(U64Slice(v))
-	case *[]uint64:			s.Prepend(U64Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -297,28 +286,21 @@ func (s U64Slice) Repeat(count int) U64Slice {
 	return destination
 }
 
-func (s *U64Slice) Flatten() {
-	//	Flatten is a non-op for the U64Slice as they cannot contain nested elements
-}
-
 func (s U64Slice) equal(o U64Slice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s U64Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *U64Slice:			r = o != nil && s.equal(*o)
 	case U64Slice:			r = s.equal(o)
-	case *[]uint64:			r = o != nil && s.equal(*o)
 	case []uint64:			r = s.equal(o)
 	}
 	return
@@ -340,7 +322,7 @@ func (s U64Slice) Cdr() (t U64Slice) {
 
 func (s *U64Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *U64List(v.(uint64))
+	case s == nil:			*s = U64Slice{v.(uint64)}
 	case s.Len() == 0:		*s = append(*s, v.(uint64))
 	default:				(*s)[0] = v.(uint64)
 	}
@@ -348,7 +330,7 @@ func (s *U64Slice) Rplaca(v interface{}) {
 
 func (s *U64Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *U64List(v.(uint64))
+		*s = U64Slice{v.(uint64)}
 	} else {
 		ReplaceSlice := func(v U64Slice) {
 			if l := len(v); l < cap(*s) {
@@ -364,13 +346,12 @@ func (s *U64Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *U64Slice:		ReplaceSlice(*v)
+		case uint64:		(*s)[1] = v
+							*s = (*s)[:2]
 		case U64Slice:		ReplaceSlice(v)
-		case *[]uint64:		ReplaceSlice(U64Slice(*v))
 		case []uint64:		ReplaceSlice(U64Slice(v))
 		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(uint64)
-							*s = (*s)[:2]
+		default:			panic(v)
 		}
 	}
 }
@@ -537,10 +518,9 @@ func (s U64Slice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *U64Slice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case uint64:			*s = U64Slice{o}
 	case U64Slice:			*s = o
-	case *U64Slice:			*s = *o
 	case []uint64:			*s = U64Slice(o)
-	case *[]uint64:			*s = U64Slice(*o)
 	default:				panic(o)
 	}
 }
@@ -617,9 +597,7 @@ func (s *U64Slice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *U64Slice:			s.Insert(i, *v)
 	case []uint64:			s.Insert(i, U64Slice(v))
-	case *[]uint64:			s.Insert(i, U64Slice(*v))
 	default:				panic(v)
 	}
 }

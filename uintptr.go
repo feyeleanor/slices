@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func AList(n... uintptr) *ASlice {
-	if len(n) == 0 {
-		n = make(ASlice, 0, 0)
-	}
-	return (*ASlice)(&n)
-}
-
 type ASlice	[]uintptr
 
 func (s ASlice) Len() int							{ return len(s) }
@@ -252,9 +245,7 @@ func (s *ASlice) Append(v interface{}) {
 	switch v := v.(type) {
 	case uintptr:			*s = append(*s, v)
 	case ASlice:			*s = append(*s, v...)
-	case *ASlice:			*s = append(*s, (*v)...)
 	case []uintptr:			s.Append(ASlice(v))
-	case *[]uintptr:		s.Append(ASlice(*v))
 	default:				panic(v)
 	}
 }
@@ -273,9 +264,7 @@ func (s *ASlice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *ASlice:			s.Prepend(*v)
 	case []uintptr:			s.Prepend(ASlice(v))
-	case *[]uintptr:		s.Prepend(ASlice(*v))
 	default:				panic(v)
 	}
 }
@@ -295,28 +284,21 @@ func (s ASlice) Repeat(count int) ASlice {
 	return destination
 }
 
-func (s *ASlice) Flatten() {
-	//	Flatten is a non-op for the ASlice as they cannot contain nested elements
-}
-
 func (s ASlice) equal(o ASlice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s ASlice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *ASlice:			r = o != nil && s.equal(*o)
 	case ASlice:			r = s.equal(o)
-	case *[]uintptr:			r = o != nil && s.equal(*o)
 	case []uintptr:			r = s.equal(o)
 	}
 	return
@@ -338,7 +320,7 @@ func (s ASlice) Cdr() (t ASlice) {
 
 func (s *ASlice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *AList(v.(uintptr))
+	case s == nil:			*s = ASlice{v.(uintptr)}
 	case s.Len() == 0:		*s = append(*s, v.(uintptr))
 	default:				(*s)[0] = v.(uintptr)
 	}
@@ -346,7 +328,7 @@ func (s *ASlice) Rplaca(v interface{}) {
 
 func (s *ASlice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *AList(v.(uintptr))
+		*s = ASlice{v.(uintptr)}
 	} else {
 		ReplaceSlice := func(v ASlice) {
 			if l := len(v); l < cap(*s) {
@@ -362,13 +344,12 @@ func (s *ASlice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *ASlice:		ReplaceSlice(*v)
+		case uintptr:		(*s)[1] = v
+							*s = (*s)[:2]
 		case ASlice:		ReplaceSlice(v)
-		case *[]uintptr:	ReplaceSlice(ASlice(*v))
 		case []uintptr:		ReplaceSlice(ASlice(v))
 		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(uintptr)
-							*s = (*s)[:2]
+		default:			panic(v)
 		}
 	}
 }
@@ -535,10 +516,9 @@ func (s ASlice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *ASlice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case uintptr:			*s = ASlice{o}
 	case ASlice:			*s = o
-	case *ASlice:			*s = *o
 	case []uintptr:			*s = ASlice(o)
-	case *[]uintptr:		*s = ASlice(*o)
 	default:				panic(o)
 	}
 }
@@ -615,9 +595,7 @@ func (s *ASlice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *ASlice:			s.Insert(i, *v)
 	case []uintptr:			s.Insert(i, ASlice(v))
-	case *[]uintptr:		s.Insert(i, ASlice(*v))
 	default:				panic(v)
 	}
 }

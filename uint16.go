@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func U16List(n... uint16) *U16Slice {
-	if len(n) == 0 {
-		n = make(U16Slice, 0, 0)
-	}
-	return (*U16Slice)(&n)
-}
-
 type U16Slice	[]uint16
 
 func (s U16Slice) Len() int							{ return len(s) }
@@ -126,7 +119,7 @@ func (s *U16Slice) DeleteIf(f interface{}) {
 										}
 									}
 
-	case func(uint16) bool:		for i, v := range a {
+	case func(uint16) bool:			for i, v := range a {
 										if i != p {
 											a[p] = v
 										}
@@ -254,9 +247,7 @@ func (s *U16Slice) Append(v interface{}) {
 	switch v := v.(type) {
 	case uint16:			*s = append(*s, v)
 	case U16Slice:			*s = append(*s, v...)
-	case *U16Slice:			*s = append(*s, (*v)...)
 	case []uint16:			s.Append(U16Slice(v))
-	case *[]uint16:			s.Append(U16Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -275,9 +266,7 @@ func (s *U16Slice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *U16Slice:			s.Prepend(*v)
 	case []uint16:			s.Prepend(U16Slice(v))
-	case *[]uint16:			s.Prepend(U16Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -297,28 +286,21 @@ func (s U16Slice) Repeat(count int) U16Slice {
 	return destination
 }
 
-func (s *U16Slice) Flatten() {
-	//	Flatten is a non-op for the U16Slice as they cannot contain nested elements
-}
-
 func (s U16Slice) equal(o U16Slice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s U16Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *U16Slice:			r = o != nil && s.equal(*o)
 	case U16Slice:			r = s.equal(o)
-	case *[]uint16:			r = o != nil && s.equal(*o)
 	case []uint16:			r = s.equal(o)
 	}
 	return
@@ -340,7 +322,7 @@ func (s U16Slice) Cdr() (t U16Slice) {
 
 func (s *U16Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *U16List(v.(uint16))
+	case s == nil:			*s = U16Slice{v.(uint16)}
 	case s.Len() == 0:		*s = append(*s, v.(uint16))
 	default:				(*s)[0] = v.(uint16)
 	}
@@ -348,7 +330,7 @@ func (s *U16Slice) Rplaca(v interface{}) {
 
 func (s *U16Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *U16List(v.(uint16))
+		*s = U16Slice{v.(uint16)}
 	} else {
 		ReplaceSlice := func(v U16Slice) {
 			if l := len(v); l < cap(*s) {
@@ -364,13 +346,12 @@ func (s *U16Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *U16Slice:		ReplaceSlice(*v)
+		case uint16:		(*s)[1] = v
+							*s = (*s)[:2]
 		case U16Slice:		ReplaceSlice(v)
-		case *[]uint16:		ReplaceSlice(U16Slice(*v))
 		case []uint16:		ReplaceSlice(U16Slice(v))
 		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(uint16)
-							*s = (*s)[:2]
+		default:			panic(v)
 		}
 	}
 }
@@ -478,7 +459,7 @@ func (s *U16Slice) KeepIf(f interface{}) {
 										}
 									}
 
-	case func(uint16) bool:		for i, v := range a {
+	case func(uint16) bool:			for i, v := range a {
 										if i != p {
 											a[p] = v
 										}
@@ -504,8 +485,8 @@ func (s *U16Slice) KeepIf(f interface{}) {
 func (s U16Slice) ReverseEach(f interface{}) {
 	switch f := f.(type) {
 	case func(uint16):						for i := len(s) - 1; i > -1; i-- { f(s[i]) }
-	case func(int, uint16):				for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
-	case func(interface{}, uint16):		for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(int, uint16):					for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	case func(interface{}, uint16):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
 	case func(interface{}):					for i := len(s) - 1; i > -1; i-- { f(s[i]) }
 	case func(int, interface{}):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
 	case func(interface{}, interface{}):	for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
@@ -521,7 +502,7 @@ func (s U16Slice) ReplaceIf(f interface{}, r interface{}) {
 										}
 									}
 
-	case func(uint16) bool:		for i, v := range s {
+	case func(uint16) bool:			for i, v := range s {
 										if f(v) {
 											s[i] = replacement
 										}
@@ -537,10 +518,9 @@ func (s U16Slice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *U16Slice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case uint16:			*s = U16Slice{o}
 	case U16Slice:			*s = o
-	case *U16Slice:			*s = *o
 	case []uint16:			*s = U16Slice(o)
-	case *[]uint16:		*s = U16Slice(*o)
 	default:				panic(o)
 	}
 }
@@ -554,7 +534,7 @@ func (s U16Slice) Select(f interface{}) interface{} {
 										}
 									}
 
-	case func(uint16) bool:		for _, v := range s {
+	case func(uint16) bool:			for _, v := range s {
 										if f(v) {
 											r = append(r, v)
 										}
@@ -617,9 +597,7 @@ func (s *U16Slice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *U16Slice:			s.Insert(i, *v)
 	case []uint16:			s.Insert(i, U16Slice(v))
-	case *[]uint16:		s.Insert(i, U16Slice(*v))
 	default:				panic(v)
 	}
 }

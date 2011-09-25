@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func C64List(n... complex64) *C64Slice {
-	if len(n) == 0 {
-		n = make(C64Slice, 0, 0)
-	}
-	return (*C64Slice)(&n)
-}
-
 type C64Slice	[]complex64
 
 func (s C64Slice) Len() int							{ return len(s) }
@@ -248,9 +241,7 @@ func (s *C64Slice) Append(v interface{}) {
 	switch v := v.(type) {
 	case complex64:			*s = append(*s, v)
 	case C64Slice:			*s = append(*s, v...)
-	case *C64Slice:			*s = append(*s, (*v)...)
 	case []complex64:		s.Append(C64Slice(v))
-	case *[]complex64:		s.Append(C64Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -269,9 +260,7 @@ func (s *C64Slice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *C64Slice:			s.Prepend(*v)
 	case []complex64:		s.Prepend(C64Slice(v))
-	case *[]complex64:		s.Prepend(C64Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -291,29 +280,22 @@ func (s C64Slice) Repeat(count int) C64Slice {
 	return destination
 }
 
-func (s *C64Slice) Flatten() {
-	//	Flatten is a non-op for the C64Slice as they cannot contain nested elements
-}
-
 func (s C64Slice) equal(o C64Slice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s C64Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *C64Slice:			r = o != nil && s.equal(*o)
 	case C64Slice:			r = s.equal(o)
-	case *[]complex64:			r = o != nil && s.equal(*o)
-	case []complex64:			r = s.equal(o)
+	case []complex64:		r = s.equal(o)
 	}
 	return
 }
@@ -334,7 +316,7 @@ func (s C64Slice) Cdr() (t C64Slice) {
 
 func (s *C64Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *C64List(v.(complex64))
+	case s == nil:			*s = C64Slice{v.(complex64)}
 	case s.Len() == 0:		*s = append(*s, v.(complex64))
 	default:				(*s)[0] = v.(complex64)
 	}
@@ -342,7 +324,7 @@ func (s *C64Slice) Rplaca(v interface{}) {
 
 func (s *C64Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *C64List(v.(complex64))
+		*s = C64Slice{v.(complex64)}
 	} else {
 		ReplaceSlice := func(v C64Slice) {
 			if l := len(v); l < cap(*s) {
@@ -358,13 +340,12 @@ func (s *C64Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *C64Slice:			ReplaceSlice(*v)
+		case complex64:			(*s)[1] = v
+								*s = (*s)[:2]
 		case C64Slice:			ReplaceSlice(v)
-		case *[]complex64:		ReplaceSlice(C64Slice(*v))
 		case []complex64:		ReplaceSlice(C64Slice(v))
 		case nil:				*s = (*s)[:1]
-		default:				(*s)[1] = v.(complex64)
-								*s = (*s)[:2]
+		default:				panic(v)
 		}
 	}
 }
@@ -531,10 +512,9 @@ func (s C64Slice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *C64Slice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case complex64:			*s = C64Slice{o}
 	case C64Slice:			*s = o
-	case *C64Slice:			*s = *o
 	case []complex64:		*s = C64Slice(o)
-	case *[]complex64:		*s = C64Slice(*o)
 	default:				panic(o)
 	}
 }
@@ -611,9 +591,7 @@ func (s *C64Slice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *C64Slice:			s.Insert(i, *v)
 	case []complex64:		s.Insert(i, C64Slice(v))
-	case *[]complex64:		s.Insert(i, C64Slice(*v))
 	default:				panic(v)
 	}
 }

@@ -4,163 +4,163 @@ import "github.com/feyeleanor/lists"
 import "testing"
 
 func TestSliceString(t *testing.T) {
-	ConfirmString := func(s *Slice, r string) {
+	ConfirmString := func(s Slice, r string) {
 		if x := s.String(); x != r {
 			t.Fatalf("%v erroneously serialised as '%v'", r, x)
 		}
 	}
 
-	ConfirmString(List(), "()")
-	ConfirmString(List(0), "(0)")
-	ConfirmString(List(0, 1), "(0 1)")
-	ConfirmString(List(List(0, 1), 1), "((0 1) 1)")
-	ConfirmString(List(List(0, 1), List(0, 1)), "((0 1) (0 1))")
+	ConfirmString(Slice{}, "()")
+	ConfirmString(Slice{0}, "(0)")
+	ConfirmString(Slice{0, 1}, "(0 1)")
+	ConfirmString(Slice{Slice{0, 1}, 1}, "((0 1) 1)")
+	ConfirmString(Slice{Slice{0, 1}, Slice{0, 1}}, "((0 1) (0 1))")
 }
 
 func TestSliceLen(t *testing.T) {
-	ConfirmLength := func(s *Slice, i int) {
+	ConfirmLength := func(s Slice, i int) {
 		if x := s.Len(); x != i {
 			t.Fatalf("%v.Len() should be %v but is %v", s, i, x)
 		}
 	}
 	
-	ConfirmLength(List(0), 1)
-	ConfirmLength(List(0, 1), 2)
-	ConfirmLength(List(List(0, 1), 2), 2)
-	ConfirmLength(List(0, 1), 2)
-	ConfirmLength(List(List(0, 1), 2), 2)
+	ConfirmLength(Slice{0}, 1)
+	ConfirmLength(Slice{0, 1}, 2)
+	ConfirmLength(Slice{Slice{0, 1}, 2}, 2)
+	ConfirmLength(Slice{0, 1}, 2)
+	ConfirmLength(Slice{Slice{0, 1}, 2}, 2)
 
-	sxp := List(0, 1, List(2, List(3, 4, 5)), List(6, 7, 8, 9))
+	sxp := Slice{0, 1, Slice{2, Slice{3, 4, 5}}, Slice{6, 7, 8, 9}}
 	ConfirmLength(sxp, 4)
-	ConfirmLength(List(0, 1, List(2, List(3, 4, 5)), sxp, List(6, 7, 8, 9)), 5)
+	ConfirmLength(Slice{0, 1, Slice{2, Slice{3, 4, 5}}, sxp, Slice{6, 7, 8, 9}}, 5)
 }
 
 func TestSliceSwap(t *testing.T) {
-	ConfirmSwap := func(s *Slice, i, j int, r *Slice) {
+	ConfirmSwap := func(s Slice, i, j int, r Slice) {
 		if s.Swap(i, j); !r.Equal(s) {
 			t.Fatalf("Swap(%v, %v) should be %v but is %v", i, j, r, s)
 		}
 	}
-	ConfirmSwap(List(0, 1, 2), 0, 1, List(1, 0, 2))
-	ConfirmSwap(List(0, 1, 2), 0, 2, List(2, 1, 0))
+	ConfirmSwap(Slice{0, 1, 2}, 0, 1, Slice{1, 0, 2})
+	ConfirmSwap(Slice{0, 1, 2}, 0, 2, Slice{2, 1, 0})
 }
 
 func TestSliceRestrictTo(t *testing.T) {
-	ConfirmRestrictTo := func(s *Slice, start, end int, r *Slice) {
+	ConfirmRestrictTo := func(s Slice, start, end int, r Slice) {
 		if s.RestrictTo(start, end); !r.Equal(s) {
 			t.Fatalf("Trim(%v, %v) should be %v but is %v", start, end, r, s)
 		}
 	}
 
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 0, 1, List(0))
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 1, 2, List(1))
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 2, 3, List(2))
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 3, 4, List(3))
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 4, 5, List(4))
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 5, 6, List(5))
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 0, 1, Slice{0})
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 1, 2, Slice{1})
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 2, 3, Slice{2})
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 3, 4, Slice{3})
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 4, 5, Slice{4})
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 5, 6, Slice{5})
 
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 0, 2, List(0, 1))
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 1, 3, List(1, 2))
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 2, 4, List(2, 3))
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 3, 5, List(3, 4))
-	ConfirmRestrictTo(List(0, 1, 2, 3, 4, 5), 4, 6, List(4, 5))
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 0, 2, Slice{0, 1})
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 1, 3, Slice{1, 2})
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 2, 4, Slice{2, 3})
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 3, 5, Slice{3, 4})
+	ConfirmRestrictTo(Slice{0, 1, 2, 3, 4, 5}, 4, 6, Slice{4, 5})
 }
 
 func TestSliceCut(t *testing.T) {
-	ConfirmCut := func(s *Slice, start, end int, r *Slice) {
+	ConfirmCut := func(s Slice, start, end int, r Slice) {
 		if s.Cut(start, end); !r.Equal(s) {
 			t.Fatalf("Cut(%v, %v) should be %v but is %v", start, end, r, s)
 		}
 	}
 
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 0, 1, List(1, 2, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 1, 2, List(0, 2, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 2, 3, List(0, 1, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 3, 4, List(0, 1, 2, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 4, 5, List(0, 1, 2, 3, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 5, 6, List(0, 1, 2, 3, 4))
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 0, 1, Slice{1, 2, 3, 4, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 1, 2, Slice{0, 2, 3, 4, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 2, 3, Slice{0, 1, 3, 4, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 3, 4, Slice{0, 1, 2, 4, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 4, 5, Slice{0, 1, 2, 3, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 5, 6, Slice{0, 1, 2, 3, 4})
 
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), -1, 1, List(1, 2, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 0, 2, List(2, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 1, 3, List(0, 3, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 2, 4, List(0, 1, 4, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 3, 5, List(0, 1, 2, 5))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 4, 6, List(0, 1, 2, 3))
-	ConfirmCut(List(0, 1, 2, 3, 4, 5), 5, 7, List(0, 1, 2, 3, 4))
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, -1, 1, Slice{1, 2, 3, 4, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 0, 2, Slice{2, 3, 4, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 1, 3, Slice{0, 3, 4, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 2, 4, Slice{0, 1, 4, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 3, 5, Slice{0, 1, 2, 5})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 4, 6, Slice{0, 1, 2, 3})
+	ConfirmCut(Slice{0, 1, 2, 3, 4, 5}, 5, 7, Slice{0, 1, 2, 3, 4})
 }
 
 func TestSliceTrim(t *testing.T) {
-	ConfirmTrim := func(s *Slice, start, end int, r *Slice) {
+	ConfirmTrim := func(s Slice, start, end int, r Slice) {
 		if s.Trim(start, end); !r.Equal(s) {
 			t.Fatalf("Trim(%v, %v) should be %v but is %v", start, end, r, s)
 		}
 	}
 
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 0, 1, List(0))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 1, 2, List(1))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 2, 3, List(2))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 3, 4, List(3))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 4, 5, List(4))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 5, 6, List(5))
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 0, 1, Slice{0})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 1, 2, Slice{1})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 2, 3, Slice{2})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 3, 4, Slice{3})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 4, 5, Slice{4})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 5, 6, Slice{5})
 
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), -1, 1, List(0))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 0, 2, List(0, 1))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 1, 3, List(1, 2))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 2, 4, List(2, 3))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 3, 5, List(3, 4))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 4, 6, List(4, 5))
-	ConfirmTrim(List(0, 1, 2, 3, 4, 5), 5, 7, List(5))
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, -1, 1, Slice{0})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 0, 2, Slice{0, 1})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 1, 3, Slice{1, 2})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 2, 4, Slice{2, 3})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 3, 5, Slice{3, 4})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 4, 6, Slice{4, 5})
+	ConfirmTrim(Slice{0, 1, 2, 3, 4, 5}, 5, 7, Slice{5})
 }
 
 func TestSliceDelete(t *testing.T) {
-	ConfirmDelete := func(s *Slice, index int, r *Slice) {
+	ConfirmDelete := func(s Slice, index int, r Slice) {
 		if s.Delete(index); !r.Equal(s) {
 			t.Fatalf("Delete(%v) should be %v but is %v", index, r, s)
 		}
 	}
 
-	ConfirmDelete(List(0, 1, 2, 3, 4, 5), -1, List(0, 1, 2, 3, 4, 5))
-	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 0, List(1, 2, 3, 4, 5))
-	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 1, List(0, 2, 3, 4, 5))
-	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 2, List(0, 1, 3, 4, 5))
-	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 3, List(0, 1, 2, 4, 5))
-	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 4, List(0, 1, 2, 3, 5))
-	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 5, List(0, 1, 2, 3, 4))
-	ConfirmDelete(List(0, 1, 2, 3, 4, 5), 6, List(0, 1, 2, 3, 4, 5))
+	ConfirmDelete(Slice{0, 1, 2, 3, 4, 5}, -1, Slice{0, 1, 2, 3, 4, 5})
+	ConfirmDelete(Slice{0, 1, 2, 3, 4, 5}, 0, Slice{1, 2, 3, 4, 5})
+	ConfirmDelete(Slice{0, 1, 2, 3, 4, 5}, 1, Slice{0, 2, 3, 4, 5})
+	ConfirmDelete(Slice{0, 1, 2, 3, 4, 5}, 2, Slice{0, 1, 3, 4, 5})
+	ConfirmDelete(Slice{0, 1, 2, 3, 4, 5}, 3, Slice{0, 1, 2, 4, 5})
+	ConfirmDelete(Slice{0, 1, 2, 3, 4, 5}, 4, Slice{0, 1, 2, 3, 5})
+	ConfirmDelete(Slice{0, 1, 2, 3, 4, 5}, 5, Slice{0, 1, 2, 3, 4})
+	ConfirmDelete(Slice{0, 1, 2, 3, 4, 5}, 6, Slice{0, 1, 2, 3, 4, 5})
 }
 
 func TestSliceDeleteIf(t *testing.T) {
-	ConfirmDeleteIf := func(s *Slice, f interface{}, r *Slice) {
+	ConfirmDeleteIf := func(s Slice, f interface{}, r Slice) {
 		if s.DeleteIf(f); !r.Equal(s) {
 			t.Fatalf("DeleteIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), 0, List(1, 3, 5))
-	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), 1, List(0, 0, 3, 0, 5))
-	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), 6, List(0, 1, 0, 3, 0, 5))
+	ConfirmDeleteIf(Slice{0, 1, 0, 3, 0, 5}, 0, Slice{1, 3, 5})
+	ConfirmDeleteIf(Slice{0, 1, 0, 3, 0, 5}, 1, Slice{0, 0, 3, 0, 5})
+	ConfirmDeleteIf(Slice{0, 1, 0, 3, 0, 5}, 6, Slice{0, 1, 0, 3, 0, 5})
 
-	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 0 }, List(1, 3, 5))
-	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 1 }, List(0, 0, 3, 0, 5))
-	ConfirmDeleteIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 6 }, List(0, 1, 0, 3, 0, 5))
+	ConfirmDeleteIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 0 }, Slice{1, 3, 5})
+	ConfirmDeleteIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 1 }, Slice{0, 0, 3, 0, 5})
+	ConfirmDeleteIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 6 }, Slice{0, 1, 0, 3, 0, 5})
 }
 
 func TestSliceEach(t *testing.T) {
 	count := 0
-	List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(i interface{}) {
+	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(index int, i interface{}) {
+	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(index int, i interface{}) {
 		if i != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).Each(func(key, i interface{}) {
+	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(key, i interface{}) {
 		if i != key {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
@@ -168,47 +168,47 @@ func TestSliceEach(t *testing.T) {
 }
 
 func TestSliceBlockCopy(t *testing.T) {
-	ConfirmBlockCopy := func(s *Slice, destination, source, count int, r *Slice) {
+	ConfirmBlockCopy := func(s Slice, destination, source, count int, r Slice) {
 		s.BlockCopy(destination, source, count)
 		if !r.Equal(s) {
 			t.Fatalf("BlockCopy(%v, %v, %v) should be %v but is %v", destination, source, count, r, s)
 		}
 	}
 
-	ConfirmBlockCopy(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 0, 4, List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockCopy(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 9, 9, 4, List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockCopy(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 2, 4, List(0, 1, 2, 3, 4, 2, 3, 4, 5, 9))
-	ConfirmBlockCopy(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 2, 5, 4, List(0, 1, 5, 6, 7, 8, 6, 7, 8, 9))
+	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0, 0, 4, Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 9, 9, 4, Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, 2, 4, Slice{0, 1, 2, 3, 4, 2, 3, 4, 5, 9})
+	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 2, 5, 4, Slice{0, 1, 5, 6, 7, 8, 6, 7, 8, 9})
 }
 
 func TestSliceBlockClear(t *testing.T) {
-	ConfirmBlockClear := func(s *Slice, start, count int, r *Slice) {
+	ConfirmBlockClear := func(s Slice, start, count int, r Slice) {
 		s.BlockClear(start, count)
 		if !r.Equal(s) {
 			t.Fatalf("BlockClear(%v, %v) should be %v but is %v", start, count, r, s)
 		}
 	}
 
-	ConfirmBlockClear(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 4, List(nil, nil, nil, nil, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockClear(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 4, List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmBlockClear(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 4, List(0, 1, 2, 3, 4, nil, nil, nil, nil, 9))
+	ConfirmBlockClear(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0, 4, Slice{nil, nil, nil, nil, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockClear(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, 4, Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockClear(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, 4, Slice{0, 1, 2, 3, 4, nil, nil, nil, nil, 9})
 }
 
 func TestSliceOverwrite(t *testing.T) {
-	ConfirmOverwrite := func(s *Slice, offset int, v, r *Slice) {
-		s.Overwrite(offset, *v)
+	ConfirmOverwrite := func(s Slice, offset int, v, r Slice) {
+		s.Overwrite(offset, v)
 		if !r.Equal(s) {
 			t.Fatalf("Overwrite(%v, %v) should be %v but is %v", offset, v, r, s)
 		}
 	}
 
-	ConfirmOverwrite(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, List(10, 9, 8, 7), List(10, 9, 8, 7, 4, 5, 6, 7, 8, 9))
-	ConfirmOverwrite(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, List(10, 9, 8, 7), List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-	ConfirmOverwrite(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, List(11, 12, 13, 14), List(0, 1, 2, 3, 4, 11, 12, 13, 14, 9))
+	ConfirmOverwrite(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0, Slice{10, 9, 8, 7}, Slice{10, 9, 8, 7, 4, 5, 6, 7, 8, 9})
+	ConfirmOverwrite(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, Slice{10, 9, 8, 7}, Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmOverwrite(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, Slice{11, 12, 13, 14}, Slice{0, 1, 2, 3, 4, 11, 12, 13, 14, 9})
 }
 
 func TestSliceReallocate(t *testing.T) {
-	ConfirmReallocate := func(s *Slice, l, c int, r *Slice) {
+	ConfirmReallocate := func(s Slice, l, c int, r Slice) {
 		o := s.String()
 		el := l
 		if el > c {
@@ -222,18 +222,17 @@ func TestSliceReallocate(t *testing.T) {
 		}
 	}
 
-	l := make(Slice, 0, 10)
-	ConfirmReallocate(List(), 0, 10, &l)
-	ConfirmReallocate(List(0, 1, 2, 3, 4), 3, 10, List(0, 1, 2))
-	ConfirmReallocate(List(0, 1, 2, 3, 4), 5, 10, List(0, 1, 2, 3, 4))
-	ConfirmReallocate(List(0, 1, 2, 3, 4), 10, 10, List(0, 1, 2, 3, 4, nil, nil, nil, nil, nil))
-	ConfirmReallocate(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 1, 5, List(0))
-	ConfirmReallocate(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 5, List(0, 1, 2, 3, 4))
-	ConfirmReallocate(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 5, List(0, 1, 2, 3, 4))
+	ConfirmReallocate(Slice{}, 0, 10, make(Slice, 0, 10))
+	ConfirmReallocate(Slice{0, 1, 2, 3, 4}, 3, 10, Slice{0, 1, 2})
+	ConfirmReallocate(Slice{0, 1, 2, 3, 4}, 5, 10, Slice{0, 1, 2, 3, 4})
+	ConfirmReallocate(Slice{0, 1, 2, 3, 4}, 10, 10, Slice{0, 1, 2, 3, 4, nil, nil, nil, nil, nil})
+	ConfirmReallocate(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 1, 5, Slice{0})
+	ConfirmReallocate(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, 5, Slice{0, 1, 2, 3, 4})
+	ConfirmReallocate(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, 5, Slice{0, 1, 2, 3, 4})
 }
 
 func TestSliceExtend(t *testing.T) {
-	ConfirmExtend := func(s *Slice, n int, r *Slice) {
+	ConfirmExtend := func(s Slice, n int, r Slice) {
 		c := s.Cap()
 		s.Extend(n)
 		switch {
@@ -243,12 +242,12 @@ func TestSliceExtend(t *testing.T) {
 		}
 	}
 
-	ConfirmExtend(List(), 1, List(nil))
-	ConfirmExtend(List(), 2, List(nil, nil))
+	ConfirmExtend(Slice{}, 1, Slice{nil})
+	ConfirmExtend(Slice{}, 2, Slice{nil, nil})
 }
 
 func TestSliceExpand(t *testing.T) {
-	ConfirmExpand := func(s *Slice, i, n int, r *Slice) {
+	ConfirmExpand := func(s Slice, i, n int, r Slice) {
 		c := s.Cap()
 		s.Expand(i, n)
 		switch {
@@ -258,146 +257,146 @@ func TestSliceExpand(t *testing.T) {
 		}
 	}
 
-	ConfirmExpand(List(), -1, 1, List(nil))
-	ConfirmExpand(List(), 0, 1, List(nil))
-	ConfirmExpand(List(), 1, 1, List(nil))
-	ConfirmExpand(List(), 0, 2, List(nil, nil))
+	ConfirmExpand(Slice{}, -1, 1, Slice{nil})
+	ConfirmExpand(Slice{}, 0, 1, Slice{nil})
+	ConfirmExpand(Slice{}, 1, 1, Slice{nil})
+	ConfirmExpand(Slice{}, 0, 2, Slice{nil, nil})
 
-	ConfirmExpand(List(0, 1, 2), -1, 2, List(nil, nil, 0, 1, 2))
-	ConfirmExpand(List(0, 1, 2), 0, 2, List(nil, nil, 0, 1, 2))
-	ConfirmExpand(List(0, 1, 2), 1, 2, List(0, nil, nil, 1, 2))
-	ConfirmExpand(List(0, 1, 2), 2, 2, List(0, 1, nil, nil, 2))
-	ConfirmExpand(List(0, 1, 2), 3, 2, List(0, 1, 2, nil, nil))
-	ConfirmExpand(List(0, 1, 2), 4, 2, List(0, 1, 2, nil, nil))
+	ConfirmExpand(Slice{0, 1, 2}, -1, 2, Slice{nil, nil, 0, 1, 2})
+	ConfirmExpand(Slice{0, 1, 2}, 0, 2, Slice{nil, nil, 0, 1, 2})
+	ConfirmExpand(Slice{0, 1, 2}, 1, 2, Slice{0, nil, nil, 1, 2})
+	ConfirmExpand(Slice{0, 1, 2}, 2, 2, Slice{0, 1, nil, nil, 2})
+	ConfirmExpand(Slice{0, 1, 2}, 3, 2, Slice{0, 1, 2, nil, nil})
+	ConfirmExpand(Slice{0, 1, 2}, 4, 2, Slice{0, 1, 2, nil, nil})
 }
 
 func TestSliceDepth(t *testing.T) {
-	ConfirmDepth := func(s *Slice, i int) {
+	ConfirmDepth := func(s Slice, i int) {
 		if x := s.Depth(); x != i {
 			t.Fatalf("%v.Depth() should be %v but is %v", s, i, x)
 		}
 	}
-	ConfirmDepth(List(0, 1), 0)
-	ConfirmDepth(List(List(0, 1), 2), 1)
-	ConfirmDepth(List(0, List(1, 2)), 1)
-	ConfirmDepth(List(0, 1, List(2, List(3, 4, 5))), 2)
+	ConfirmDepth(Slice{0, 1}, 0)
+	ConfirmDepth(Slice{Slice{0, 1}, 2}, 1)
+	ConfirmDepth(Slice{0, Slice{1, 2}}, 1)
+	ConfirmDepth(Slice{0, 1, Slice{2, Slice{3, 4, 5}}}, 2)
 
-	sxp := List(0, 1,
-				List(2, List(3, 4, 5)),
-				List(6, List(7, List(8, List(9, 0)))),
-				List(2, List(3, 4, 5)))
+	sxp := Slice{0, 1,
+				Slice{2, Slice{3, 4, 5}},
+				Slice{6, Slice{7, Slice{8, Slice{9, 0}}}},
+				Slice{2, Slice{3, 4, 5}}}
 	ConfirmDepth(sxp, 4)
 
-	rxp := List(0, sxp, sxp)
+	rxp := Slice{0, sxp, sxp}
 	ConfirmDepth(rxp, 5)
-	ConfirmDepth(List(rxp, sxp), 6)
+	ConfirmDepth(Slice{rxp, sxp}, 6)
 	t.Log("Need tests for circular recursive Slice?")
 }
 
 func TestSliceReverse(t *testing.T) {
-	sxp := List(1, 2, 3, 4, 5)
-	rxp := List(5, 4, 3, 2, 1)
+	sxp := Slice{1, 2, 3, 4, 5}
+	rxp := Slice{5, 4, 3, 2, 1}
 	if sxp.Reverse(); !rxp.Equal(sxp) {
 		t.Fatalf("Reversal failed: %v", sxp)
 	}
 }
 
 func TestSliceAppend(t *testing.T) {
-	ConfirmAppend := func(s *Slice, v interface{}, r *Slice) {
+	ConfirmAppend := func(s Slice, v interface{}, r Slice) {
 		if s.Append(v); !r.Equal(s) {
 			t.Fatalf("Append(%v) should be %v but is %v", v, r, s)
 		}
 	}
 
-	ConfirmAppend(List(), 0, List(0))
-	ConfirmAppend(List(), List(0), List(0))
-	ConfirmAppend(List(), List(0, 1), List(0, 1))
-	ConfirmAppend(List(0, 1, 2), List(3, 4), List(0, 1, 2, 3, 4))
+	ConfirmAppend(Slice{}, 0, Slice{0})
+	ConfirmAppend(Slice{}, Slice{0}, Slice{0})
+	ConfirmAppend(Slice{}, Slice{0, 1}, Slice{0, 1})
+	ConfirmAppend(Slice{0, 1, 2}, Slice{3, 4}, Slice{0, 1, 2, 3, 4})
 }
 
 func TestSlicePrepend(t *testing.T) {
-	ConfirmPrepend := func(s *Slice, v interface{}, r *Slice) {
+	ConfirmPrepend := func(s Slice, v interface{}, r Slice) {
 		if s.Prepend(v); !r.Equal(s) {
 			t.Fatalf("Prepend(%v) should be %v but is %v", v, r, s)
 		}
 	}
 
-	ConfirmPrepend(List(), 0, List(0))
-	ConfirmPrepend(List(0), 1, List(1, 0))
+	ConfirmPrepend(Slice{}, 0, Slice{0})
+	ConfirmPrepend(Slice{0}, 1, Slice{1, 0})
 
-	ConfirmPrepend(List(), List(0), List(0))
-	ConfirmPrepend(List(), List(0, 1), List(0, 1))
-	ConfirmPrepend(List(0, 1, 2), List(3, 4), List(3, 4, 0, 1, 2))
+	ConfirmPrepend(Slice{}, Slice{0}, Slice{0})
+	ConfirmPrepend(Slice{}, Slice{0, 1}, Slice{0, 1})
+	ConfirmPrepend(Slice{0, 1, 2}, Slice{3, 4}, Slice{3, 4, 0, 1, 2})
 }
 
 func TestSliceAppendSlice(t *testing.T) {
-	ConfirmAppendSlice := func(s *Slice, v interface{}, r *Slice) {
+	ConfirmAppendSlice := func(s Slice, v interface{}, r Slice) {
 		if s.AppendSlice(v); !r.Equal(s) {
 			t.Fatalf("AppendSlice(%v) should be %v but is %v", v, r, s)
 		}
 	}
 
-	ConfirmAppendSlice(List(), List(0, 1), List(List(0, 1)))
-	ConfirmAppendSlice(List(0, 1, 2), List(3, 4), List(0, 1, 2, List(3, 4)))
+	ConfirmAppendSlice(Slice{}, Slice{0, 1}, Slice{Slice{0, 1}})
+	ConfirmAppendSlice(Slice{0, 1, 2}, Slice{3, 4}, Slice{0, 1, 2, Slice{3, 4}})
 }
 
 func TestSlicePrependSlice(t *testing.T) {
-	ConfirmPrependSlice := func(s *Slice, v interface{}, r *Slice) {
+	ConfirmPrependSlice := func(s Slice, v interface{}, r Slice) {
 		if s.PrependSlice(v); !r.Equal(s) {
 			t.Fatalf("PrependSlice(%v) should be %v but is %v", v, r, s)
 		}
 	}
 
-	ConfirmPrependSlice(List(), List(0, 1), List(List(0, 1)))
-	ConfirmPrependSlice(List(0, 1, 2), List(3, 4), List(List(3, 4), 0, 1, 2))
+	ConfirmPrependSlice(Slice{}, Slice{0, 1}, Slice{Slice{0, 1}})
+	ConfirmPrependSlice(Slice{0, 1, 2}, Slice{3, 4}, Slice{Slice{3, 4}, 0, 1, 2})
 }
 
 func TestSliceRepeat(t *testing.T) {
-	ConfirmRepeat := func(s *Slice, count int, r *Slice) {
+	ConfirmRepeat := func(s Slice, count int, r Slice) {
 		if x := s.Repeat(count); !x.Equal(r) {
 			t.Fatalf("%v.Repeat(%v) should be %v but is %v", s, count, r, x)
 		}
 	}
 
-	ConfirmRepeat(List(), 5, List())
-	ConfirmRepeat(List(0), 1, List(0))
-	ConfirmRepeat(List(0), 2, List(0, 0))
-	ConfirmRepeat(List(0), 3, List(0, 0, 0))
-	ConfirmRepeat(List(0), 4, List(0, 0, 0, 0))
-	ConfirmRepeat(List(0), 5, List(0, 0, 0, 0, 0))
+	ConfirmRepeat(Slice{}, 5, Slice{})
+	ConfirmRepeat(Slice{0}, 1, Slice{0})
+	ConfirmRepeat(Slice{0}, 2, Slice{0, 0})
+	ConfirmRepeat(Slice{0}, 3, Slice{0, 0, 0})
+	ConfirmRepeat(Slice{0}, 4, Slice{0, 0, 0, 0})
+	ConfirmRepeat(Slice{0}, 5, Slice{0, 0, 0, 0, 0})
 }
 
 func TestSliceFlatten(t *testing.T) {
-	ConfirmFlatten := func(s, r *Slice) {
+	ConfirmFlatten := func(s, r Slice) {
 		if s.Flatten(); !s.Equal(r) {
 			t.Fatalf("%v should be %v", s, r)
 		}
 	}
-	ConfirmFlatten(List(), List())
-	ConfirmFlatten(List(1), List(1))
-	ConfirmFlatten(List(1, List(2)), List(1, 2))
-	ConfirmFlatten(List(1, List(2, List(3))), List(1, 2, 3))
-	ConfirmFlatten(List(1, 2, List(3, List(4, 5), List(6, List(7, 8, 9), List(10, 11)))), List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
+	ConfirmFlatten(Slice{}, Slice{})
+	ConfirmFlatten(Slice{1}, Slice{1})
+	ConfirmFlatten(Slice{1, Slice{2}}, Slice{1, 2})
+	ConfirmFlatten(Slice{1, Slice{2, Slice{3}}}, Slice{1, 2, 3})
+	ConfirmFlatten(Slice{1, 2, Slice{3, Slice{4, 5}, Slice{6, Slice{7, 8, 9}, Slice{10, 11}}}}, Slice{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
 
-	ConfirmFlatten(List(0, lists.List(1, 2, List(3, 4))), List(0, lists.List(1, 2, List(3, 4))))
-	ConfirmFlatten(List(0, lists.List(1, 2, lists.List(3, 4))), List(0, lists.List(1, 2, 3, 4)))
+	ConfirmFlatten(Slice{0, lists.List(1, 2, Slice{3, 4})}, Slice{0, lists.List(1, 2, Slice{3, 4})})
+	ConfirmFlatten(Slice{0, lists.List(1, 2, lists.List(3, 4))}, Slice{0, lists.List(1, 2, 3, 4)})
 
-	ConfirmFlatten(List(0, lists.Loop(1, 2)), List(0, lists.Loop(1, 2)))
-	ConfirmFlatten(List(0, lists.List(1, lists.Loop(2, 3))), List(0, lists.List(1, 2, 3)))
+	ConfirmFlatten(Slice{0, lists.Loop(1, 2)}, Slice{0, lists.Loop(1, 2)})
+	ConfirmFlatten(Slice{0, lists.List(1, lists.Loop(2, 3))}, Slice{0, lists.List(1, 2, 3)})
 
-	ConfirmFlatten(List(0, lists.List(1, 2, lists.Loop(3, 4))), List(0, lists.List(1, 2, 3, 4)))
-	ConfirmFlatten(List(3, 4, List(5, 6, 7)), List(3, 4, 5, 6, 7))
-	ConfirmFlatten(List(0, lists.Loop(1, 2, List(3, 4, List(5, 6, 7)))), List(0, lists.Loop(1, 2, List(3, 4, 5, 6, 7))))
+	ConfirmFlatten(Slice{0, lists.List(1, 2, lists.Loop(3, 4))}, Slice{0, lists.List(1, 2, 3, 4)})
+	ConfirmFlatten(Slice{3, 4, Slice{5, 6, 7}}, Slice{3, 4, 5, 6, 7})
+	ConfirmFlatten(Slice{0, lists.Loop(1, 2, Slice{3, 4, Slice{5, 6, 7}})}, Slice{0, lists.Loop(1, 2, Slice{3, 4, 5, 6, 7})})
 
-	sxp := List(1, 2, List(3, List(4, 5), List(6, List(7, 8, 9), List(10, 11))))
-	rxp := List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+	sxp := Slice{1, 2, Slice{3, Slice{4, 5}, Slice{6, Slice{7, 8, 9}, Slice{10, 11}}}}
+	rxp := Slice{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 	sxp.Flatten()
 	if !rxp.Equal(sxp) {
 		t.Fatalf("Flatten failed: %v", sxp)
 	}
 
-	rxp = List(1, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-	sxp = List(1, 2, sxp, List(3, List(4, 5), List(6, List(7, 8, 9), List(10, 11), sxp)))
+	rxp = Slice{1, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
+	sxp = Slice{1, 2, sxp, Slice{3, Slice{4, 5}, Slice{6, Slice{7, 8, 9}, Slice{10, 11}, sxp}}}
 	sxp.Flatten()
 	if !rxp.Equal(sxp) {
 		t.Fatalf("Flatten failed with explicit expansions: %v", sxp)
@@ -405,7 +404,7 @@ func TestSliceFlatten(t *testing.T) {
 }
 
 func TestSliceCar(t *testing.T) {
-	ConfirmCar := func(s *Slice, r interface{}) {
+	ConfirmCar := func(s Slice, r interface{}) {
 		var ok bool
 		n := s.Car()
 		switch n := n.(type) {
@@ -416,166 +415,166 @@ func TestSliceCar(t *testing.T) {
 			t.Fatalf("head should be '%v' but is '%v'", r, n)
 		}
 	}
-	ConfirmCar(List(1, 2, 3), 1)
-	ConfirmCar(List(List(10, 20), 2, 3), List(10, 20))
+	ConfirmCar(Slice{1, 2, 3}, 1)
+	ConfirmCar(Slice{Slice{10, 20}, 2, 3}, Slice{10, 20})
 }
 
 func TestSliceCdr(t *testing.T) {
-	ConfirmCdr := func(s, r *Slice) {
+	ConfirmCdr := func(s, r Slice) {
 		if n := s.Cdr(); !n.Equal(r) {
 			t.Fatalf("tail should be '%v' but is '%v'", r, n)
 		}
 	}
-	ConfirmCdr(List(1, 2, 3), List(2, 3))
+	ConfirmCdr(Slice{1, 2, 3}, Slice{2, 3})
 }
 
 func TestSliceRplaca(t *testing.T) {
-	ConfirmRplaca := func(s *Slice, v interface{}, r *Slice) {
+	ConfirmRplaca := func(s Slice, v interface{}, r Slice) {
 		if s.Rplaca(v); !s.Equal(r) {
 			t.Fatalf("slice should be '%v' but is '%v'", r, s)
 		}
 	}
-	ConfirmRplaca(List(1, 2, 3, 4, 5), 0, List(0, 2, 3, 4, 5))
-	ConfirmRplaca(List(1, 2, 3, 4, 5), List(1, 2, 3), List(List(1, 2, 3), 2, 3, 4, 5))
+	ConfirmRplaca(Slice{1, 2, 3, 4, 5}, 0, Slice{0, 2, 3, 4, 5})
+	ConfirmRplaca(Slice{1, 2, 3, 4, 5}, Slice{1, 2, 3}, Slice{Slice{1, 2, 3}, 2, 3, 4, 5})
 }
 
 func TestSliceRplacd(t *testing.T) {
-	ConfirmRplacd := func(s *Slice, v interface{}, r *Slice) {
+	ConfirmRplacd := func(s Slice, v interface{}, r Slice) {
 		if s.Rplacd(v); !s.Equal(r) {
 			t.Fatalf("slice should be '%v' but is '%v'", r, s)
 		}
 	}
-	ConfirmRplacd(List(1, 2, 3, 4, 5), nil, List(1))
-	ConfirmRplacd(List(1, 2, 3, 4, 5), 10, List(1, 10))
-	ConfirmRplacd(List(1, 2, 3, 4, 5), List(5, 4, 3, 2), List(1, 5, 4, 3, 2))
-	ConfirmRplacd(List(1, 2, 3, 4, 5, 6), List(2, 4, 8, 16), List(1, 2, 4, 8, 16))
+	ConfirmRplacd(Slice{1, 2, 3, 4, 5}, nil, Slice{1})
+	ConfirmRplacd(Slice{1, 2, 3, 4, 5}, 10, Slice{1, 10})
+	ConfirmRplacd(Slice{1, 2, 3, 4, 5}, Slice{5, 4, 3, 2}, Slice{1, 5, 4, 3, 2})
+	ConfirmRplacd(Slice{1, 2, 3, 4, 5, 6}, Slice{2, 4, 8, 16}, Slice{1, 2, 4, 8, 16})
 }
 
 func TestSliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r *Slice) {
-		if x := s.SetIntersection(*o); !r.Equal(x) {
+	ConfirmSetIntersection := func(s, o, r Slice) {
+		if x := s.SetIntersection(o); !r.Equal(x) {
 			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
 
-	ConfirmSetIntersection(List(1, 2, 3), List(), List())
-	ConfirmSetIntersection(List(1, 2, 3), List(1), List(1))
-	ConfirmSetIntersection(List(1, 2, 3), List(1, 1), List(1))
-	ConfirmSetIntersection(List(1, 2, 3), List(1, 2, 1), List(1, 2))
+	ConfirmSetIntersection(Slice{1, 2, 3}, Slice{}, Slice{})
+	ConfirmSetIntersection(Slice{1, 2, 3}, Slice{1}, Slice{1})
+	ConfirmSetIntersection(Slice{1, 2, 3}, Slice{1, 1}, Slice{1})
+	ConfirmSetIntersection(Slice{1, 2, 3}, Slice{1, 2, 1}, Slice{1, 2})
 }
 
 func TestSliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r *Slice) {
-		if x := s.SetUnion(*o); !r.Equal(x) {
+	ConfirmSetUnion := func(s, o, r Slice) {
+		if x := s.SetUnion(o); !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
 
-	ConfirmSetUnion(List(1, 2, 3), List(), List(1, 2, 3))
-	ConfirmSetUnion(List(1, 2, 3), List(1), List(1, 2, 3))
-	ConfirmSetUnion(List(1, 2, 3), List(1, 1), List(1, 2, 3))
-	ConfirmSetUnion(List(1, 2, 3), List(1, 2, 1), List(1, 2, 3))
+	ConfirmSetUnion(Slice{1, 2, 3}, Slice{}, Slice{1, 2, 3})
+	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1}, Slice{1, 2, 3})
+	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1, 1}, Slice{1, 2, 3})
+	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1, 2, 1}, Slice{1, 2, 3})
 }
 
 func TestSliceSetDifference(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r *Slice) {
-		if x := s.SetDifference(*o); !r.Equal(x) {
+	ConfirmSetUnion := func(s, o, r Slice) {
+		if x := s.SetDifference(o); !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
 
-	ConfirmSetUnion(List(1, 2, 3), List(), List(1, 2, 3))
-	ConfirmSetUnion(List(1, 2, 3), List(1), List(2, 3))
-	ConfirmSetUnion(List(1, 2, 3), List(1, 1), List(2, 3))
-	ConfirmSetUnion(List(1, 2, 3), List(1, 2, 1), List(3))
+	ConfirmSetUnion(Slice{1, 2, 3}, Slice{}, Slice{1, 2, 3})
+	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1}, Slice{2, 3})
+	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1, 1}, Slice{2, 3})
+	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1, 2, 1}, Slice{3})
 }
 
 func TestSliceFind(t *testing.T) {
-	ConfirmFind := func(s *Slice, v interface{}, i int) {
+	ConfirmFind := func(s Slice, v interface{}, i int) {
 		if x, ok := s.Find(v); !ok || x != i {
 			t.Fatalf("%v.Find(%v) should be %v but is %v", s, v, i, x)
 		}
 	}
 
-	ConfirmFind(List(0, 1, 2, 3, 4), 0, 0)
-	ConfirmFind(List(0, 1, 2, 3, 4), 1, 1)
-	ConfirmFind(List(0, 1, 2, 4, 3), 2, 2)
-	ConfirmFind(List(0, 1, 2, 4, 3), 3, 4)
-	ConfirmFind(List(0, 1, 2, 4, 3), 4, 3)
+	ConfirmFind(Slice{0, 1, 2, 3, 4}, 0, 0)
+	ConfirmFind(Slice{0, 1, 2, 3, 4}, 1, 1)
+	ConfirmFind(Slice{0, 1, 2, 4, 3}, 2, 2)
+	ConfirmFind(Slice{0, 1, 2, 4, 3}, 3, 4)
+	ConfirmFind(Slice{0, 1, 2, 4, 3}, 4, 3)
 }
 
 func TestSliceFindN(t *testing.T) {
-	ConfirmFindN := func(s *Slice, v interface{}, n int, i *ISlice) {
+	ConfirmFindN := func(s Slice, v interface{}, n int, i ISlice) {
 		if x := s.FindN(v, n); !x.Equal(i) {
 			t.Fatalf("%v.Find(%v, %v) should be %v but is %v", s, v, n, i, x)
 		}
 	}
 
-	ConfirmFindN(List(1, 0, 1, 0, 1), 2, 3, IList())
-	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 0, IList(0, 2, 4))
-	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 1, IList(0))
-	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 2, IList(0, 2))
-	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 3, IList(0, 2, 4))
-	ConfirmFindN(List(1, 0, 1, 0, 1), 1, 4, IList(0, 2, 4))
+	ConfirmFindN(Slice{1, 0, 1, 0, 1}, 2, 3, ISlice{})
+	ConfirmFindN(Slice{1, 0, 1, 0, 1}, 1, 0, ISlice{0, 2, 4})
+	ConfirmFindN(Slice{1, 0, 1, 0, 1}, 1, 1, ISlice{0})
+	ConfirmFindN(Slice{1, 0, 1, 0, 1}, 1, 2, ISlice{0, 2})
+	ConfirmFindN(Slice{1, 0, 1, 0, 1}, 1, 3, ISlice{0, 2, 4})
+	ConfirmFindN(Slice{1, 0, 1, 0, 1}, 1, 4, ISlice{0, 2, 4})
 }
 
 func TestSliceKeepIf(t *testing.T) {
-	ConfirmKeepIf := func(s *Slice, f interface{}, r *Slice) {
+	ConfirmKeepIf := func(s Slice, f interface{}, r Slice) {
 		if s.KeepIf(f); !r.Equal(s) {
 			t.Fatalf("KeepIf(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmKeepIf(List(0, 1, 0, 3, 0, 5), 0, List(0, 0, 0))
-	ConfirmKeepIf(List(0, 1, 0, 3, 0, 5), 1, List(1))
-	ConfirmKeepIf(List(0, 1, 0, 3, 0, 5), 6, List())
+	ConfirmKeepIf(Slice{0, 1, 0, 3, 0, 5}, 0, Slice{0, 0, 0})
+	ConfirmKeepIf(Slice{0, 1, 0, 3, 0, 5}, 1, Slice{1})
+	ConfirmKeepIf(Slice{0, 1, 0, 3, 0, 5}, 6, Slice{})
 
-	ConfirmKeepIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 0 }, List(0, 0, 0))
-	ConfirmKeepIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 1 }, List(1))
-	ConfirmKeepIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 6 }, List())
+	ConfirmKeepIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 0 }, Slice{0, 0, 0})
+	ConfirmKeepIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 1 }, Slice{1})
+	ConfirmKeepIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 6 }, Slice{})
 
-	ConfirmKeepIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 0 }, List(0, 0, 0))
-	ConfirmKeepIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 1 }, List(1))
-	ConfirmKeepIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 6 }, List())
+	ConfirmKeepIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 0 }, Slice{0, 0, 0})
+	ConfirmKeepIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 1 }, Slice{1})
+	ConfirmKeepIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 6 }, Slice{})
 }
 
 func TestSliceReverseEach(t *testing.T) {
 	var count	int
 	count = 9
-	List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(i interface{}) {
 		if i != count {
 			t.Fatalf("0: element %v erroneously reported as %v", count, i)
 		}
 		count--
 	})
 
-	List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(index int, i interface{}) {
 		if index != i.(int) {
 			t.Fatalf("1: element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key, i interface{}) {
+	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(key, i interface{}) {
 		if interface{}(key.(int)) != i {
 			t.Fatalf("2: element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 9
-	List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
+	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(i interface{}) {
 		if i != count {
 			t.Fatalf("3: element %v erroneously reported as %v", count, i)
 		}
 		count--
 	})
 
-	List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(index int, i interface{}) {
+	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(index int, i interface{}) {
 		if i.(int) != index {
 			t.Fatalf("4: element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(key interface{}, i interface{}) {
+	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(key interface{}, i interface{}) {
 		if key.(int) != i.(int) {
 			t.Fatalf("5: element %v erroneously reported as %v", key, i)
 		}
@@ -583,63 +582,62 @@ func TestSliceReverseEach(t *testing.T) {
 }
 
 func TestSliceReplaceIf(t *testing.T) {
-	ConfirmReplaceIf := func(s *Slice, f, v interface{}, r *Slice) {
+	ConfirmReplaceIf := func(s Slice, f, v interface{}, r Slice) {
 		if s.ReplaceIf(f, v); !r.Equal(s) {
 			t.Fatalf("ReplaceIf(%v, %v) should be %v but is %v", f, v, r, s)
 		}
 	}
 
-	ConfirmReplaceIf(List(0, 1, 0, 3, 0, 5), 0, 1, List(1, 1, 1, 3, 1, 5))
-	ConfirmReplaceIf(List(0, 1, 0, 3, 0, 5), 1, 0, List(0, 0, 0, 3, 0, 5))
-	ConfirmReplaceIf(List(0, 1, 0, 3, 0, 5), 6, 0, List(0, 1, 0, 3, 0, 5))
+	ConfirmReplaceIf(Slice{0, 1, 0, 3, 0, 5}, 0, 1, Slice{1, 1, 1, 3, 1, 5})
+	ConfirmReplaceIf(Slice{0, 1, 0, 3, 0, 5}, 1, 0, Slice{0, 0, 0, 3, 0, 5})
+	ConfirmReplaceIf(Slice{0, 1, 0, 3, 0, 5}, 6, 0, Slice{0, 1, 0, 3, 0, 5})
 
-	ConfirmReplaceIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 0 }, 1, List(1, 1, 1, 3, 1, 5))
-	ConfirmReplaceIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 1 }, 0, List(0, 0, 0, 3, 0, 5))
-	ConfirmReplaceIf(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 6 }, 0, List(0, 1, 0, 3, 0, 5))
+	ConfirmReplaceIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 0 }, 1, Slice{1, 1, 1, 3, 1, 5})
+	ConfirmReplaceIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 1 }, 0, Slice{0, 0, 0, 3, 0, 5})
+	ConfirmReplaceIf(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 6 }, 0, Slice{0, 1, 0, 3, 0, 5})
 }
 
 func TestSliceReplace(t *testing.T) {
-	ConfirmReplace := func(s *Slice, v interface{}) {
+	ConfirmReplace := func(s Slice, v interface{}) {
 		if s.Replace(v); !s.Equal(v) {
 			t.Fatalf("Replace() should be %v but is %v", s, v)
 		}
 	}
 
-	ConfirmReplace(List(0, 1, 2, 3, 4, 5), List(9, 8, 7, 6, 5))
-	ConfirmReplace(List(0, 1, 2, 3, 4, 5), Slice{ 9, 8, 7, 6, 5 })
-	ConfirmReplace(List(0, 1, 2, 3, 4, 5), &[]interface{}{ 9, 8, 7, 6, 5 })
-	ConfirmReplace(List(0, 1, 2, 3, 4, 5), []interface{}{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(Slice{0, 1, 2, 3, 4, 5}, Slice{9, 8, 7, 6, 5})
+	ConfirmReplace(Slice{0, 1, 2, 3, 4, 5}, Slice{9, 8, 7, 6, 5})
+	ConfirmReplace(Slice{0, 1, 2, 3, 4, 5}, []interface{}{9, 8, 7, 6, 5})
 }
 
 func TestSliceSelect(t *testing.T) {
-	ConfirmSelect := func(s *Slice, f interface{}, r *Slice) {
+	ConfirmSelect := func(s Slice, f interface{}, r Slice) {
 		if x := s.Select(f); !r.Equal(x) {
 			t.Fatalf("Select(%v) should be %v but is %v", f, r, s)
 		}
 	}
 
-	ConfirmSelect(List(0, 1, 0, 3, 0, 5), 0, List(0, 0, 0))
-	ConfirmSelect(List(0, 1, 0, 3, 0, 5), 1, List(1))
-	ConfirmSelect(List(0, 1, 0, 3, 0, 5), 6, List())
+	ConfirmSelect(Slice{0, 1, 0, 3, 0, 5}, 0, Slice{0, 0, 0})
+	ConfirmSelect(Slice{0, 1, 0, 3, 0, 5}, 1, Slice{1})
+	ConfirmSelect(Slice{0, 1, 0, 3, 0, 5}, 6, Slice{})
 
-	ConfirmSelect(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 0 }, List(0, 0, 0))
-	ConfirmSelect(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 1 }, List(1))
-	ConfirmSelect(List(0, 1, 0, 3, 0, 5), func(x interface{}) bool { return x == 6 }, List())
+	ConfirmSelect(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 0 }, Slice{0, 0, 0})
+	ConfirmSelect(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 1 }, Slice{1})
+	ConfirmSelect(Slice{0, 1, 0, 3, 0, 5}, func(x interface{}) bool { return x == 6 }, Slice{})
 }
 
 func TestSliceUniq(t *testing.T) {
-	ConfirmUniq := func(s, r *Slice) {
+	ConfirmUniq := func(s, r Slice) {
 		if s.Uniq(); !r.Equal(s) {
 			t.Fatalf("Uniq() should be %v but is %v", r, s)
 		}
 	}
 
-	ConfirmUniq(List(0, 0, 0, 0, 0, 0), List(0))
-	ConfirmUniq(List(0, 1, 0, 3, 0, 5), List(0, 1, 3, 5))
+	ConfirmUniq(Slice{0, 0, 0, 0, 0, 0}, Slice{0})
+	ConfirmUniq(Slice{0, 1, 0, 3, 0, 5}, Slice{0, 1, 3, 5})
 }
 
 func TestSliceShuffle(t *testing.T) {
-	ConfirmShuffle := func(s, r *Slice) {
+	ConfirmShuffle := func(s, r Slice) {
 		if s.Shuffle(); s.Equal(r) {
 			t.Fatalf("%v.Shuffle() should change order of elements", s)
 		}
@@ -648,45 +646,45 @@ func TestSliceShuffle(t *testing.T) {
 //		}
 	}
 	t.Log("Implement Sort for Slice type")
-	ConfirmShuffle(List(0, 1, 2, 3, 4, 5), List(0, 1, 2, 3, 4, 5))
+	ConfirmShuffle(Slice{0, 1, 2, 3, 4, 5}, Slice{0, 1, 2, 3, 4, 5})
 }
 
 func TestSliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s *Slice, i []int, r *Slice) {
+	ConfirmValuesAt := func(s Slice, i []int, r Slice) {
 		if x := s.ValuesAt(i...); !r.Equal(x) {
 			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
 		}
 	}
 
-	ConfirmValuesAt(List(0, 1, 2, 3, 4, 5), []int{}, List())
-	ConfirmValuesAt(List(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, List(0, 1))
-	ConfirmValuesAt(List(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, List(0, 3))
-	ConfirmValuesAt(List(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, List(0, 3, 4, 3))
+	ConfirmValuesAt(Slice{0, 1, 2, 3, 4, 5}, []int{}, Slice{})
+	ConfirmValuesAt(Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, Slice{0, 1})
+	ConfirmValuesAt(Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, Slice{0, 3})
+	ConfirmValuesAt(Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, Slice{0, 3, 4, 3})
 }
 
 func TestSliceInsert(t *testing.T) {
-	ConfirmInsert := func(s *Slice, n int, v interface{}, r *Slice) {
+	ConfirmInsert := func(s Slice, n int, v interface{}, r Slice) {
 		if s.Insert(n, v); !r.Equal(s) {
 			t.Fatalf("Insert(%v, %v) should be %v but is %v", n, v, r, s)
 		}
 	}
 
-	ConfirmInsert(List(), 0, 0, List(0))
-	ConfirmInsert(List(), 0, List(0), List(0))
-	ConfirmInsert(List(), 0, List(0, 1), List(0, 1))
+	ConfirmInsert(Slice{}, 0, 0, Slice{0})
+	ConfirmInsert(Slice{}, 0, Slice{0}, Slice{0})
+	ConfirmInsert(Slice{}, 0, Slice{0, 1}, Slice{0, 1})
 
-	ConfirmInsert(List(0), 0, 1, List(1, 0))
-	ConfirmInsert(List(0), 0, List(1), List(1, 0))
-	ConfirmInsert(List(0), 1, 1, List(0, 1))
-	ConfirmInsert(List(0), 1, List(1), List(0, 1))
+	ConfirmInsert(Slice{0}, 0, 1, Slice{1, 0})
+	ConfirmInsert(Slice{0}, 0, Slice{1}, Slice{1, 0})
+	ConfirmInsert(Slice{0}, 1, 1, Slice{0, 1})
+	ConfirmInsert(Slice{0}, 1, Slice{1}, Slice{0, 1})
 
-	ConfirmInsert(List(0, 1, 2), 0, 3, List(3, 0, 1, 2))
-	ConfirmInsert(List(0, 1, 2), 1, 3, List(0, 3, 1, 2))
-	ConfirmInsert(List(0, 1, 2), 2, 3, List(0, 1, 3, 2))
-	ConfirmInsert(List(0, 1, 2), 3, 3, List(0, 1, 2, 3))
+	ConfirmInsert(Slice{0, 1, 2}, 0, 3, Slice{3, 0, 1, 2})
+	ConfirmInsert(Slice{0, 1, 2}, 1, 3, Slice{0, 3, 1, 2})
+	ConfirmInsert(Slice{0, 1, 2}, 2, 3, Slice{0, 1, 3, 2})
+	ConfirmInsert(Slice{0, 1, 2}, 3, 3, Slice{0, 1, 2, 3})
 
-	ConfirmInsert(List(0, 1, 2), 0, List(3, 4), List(3, 4, 0, 1, 2))
-	ConfirmInsert(List(0, 1, 2), 1, List(3, 4), List(0, 3, 4, 1, 2))
-	ConfirmInsert(List(0, 1, 2), 2, List(3, 4), List(0, 1, 3, 4, 2))
-	ConfirmInsert(List(0, 1, 2), 3, List(3, 4), List(0, 1, 2, 3, 4))
+	ConfirmInsert(Slice{0, 1, 2}, 0, Slice{3, 4}, Slice{3, 4, 0, 1, 2})
+	ConfirmInsert(Slice{0, 1, 2}, 1, Slice{3, 4}, Slice{0, 3, 4, 1, 2})
+	ConfirmInsert(Slice{0, 1, 2}, 2, Slice{3, 4}, Slice{0, 1, 3, 4, 2})
+	ConfirmInsert(Slice{0, 1, 2}, 3, Slice{3, 4}, Slice{0, 1, 2, 3, 4})
 }

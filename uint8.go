@@ -6,13 +6,6 @@ import (
 	"sort"
 )
 
-func U8List(n... uint8) *U8Slice {
-	if len(n) == 0 {
-		n = make(U8Slice, 0, 0)
-	}
-	return (*U8Slice)(&n)
-}
-
 type U8Slice	[]uint8
 
 func (s U8Slice) Len() int							{ return len(s) }
@@ -254,9 +247,7 @@ func (s *U8Slice) Append(v interface{}) {
 	switch v := v.(type) {
 	case uint8:				*s = append(*s, v)
 	case U8Slice:			*s = append(*s, v...)
-	case *U8Slice:			*s = append(*s, (*v)...)
 	case []uint8:			s.Append(U8Slice(v))
-	case *[]uint8:			s.Append(U8Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -275,9 +266,7 @@ func (s *U8Slice) Prepend(v interface{}) {
 							copy(n[len(v):], *s)
 							*s = n
 
-	case *U8Slice:			s.Prepend(*v)
 	case []uint8:			s.Prepend(U8Slice(v))
-	case *[]uint8:			s.Prepend(U8Slice(*v))
 	default:				panic(v)
 	}
 }
@@ -297,28 +286,21 @@ func (s U8Slice) Repeat(count int) U8Slice {
 	return destination
 }
 
-func (s *U8Slice) Flatten() {
-	//	Flatten is a non-op for the U8Slice as they cannot contain nested elements
-}
-
 func (s U8Slice) equal(o U8Slice) (r bool) {
-	switch {
-	case s == nil:				r = o == nil
-	case s.Len() == o.Len():	r = true
-								for i, v := range s {
-									if r = v == o[i]; !r {
-										return
-									}
-								}
+	if len(s) == len(o) {
+		r = true
+		for i, v := range s {
+			if r = v == o[i]; !r {
+				return
+			}
+		}
 	}
 	return
 }
 
 func (s U8Slice) Equal(o interface{}) (r bool) {
 	switch o := o.(type) {
-	case *U8Slice:			r = o != nil && s.equal(*o)
 	case U8Slice:			r = s.equal(o)
-	case *[]uint8:			r = o != nil && s.equal(*o)
 	case []uint8:			r = s.equal(o)
 	}
 	return
@@ -340,7 +322,7 @@ func (s U8Slice) Cdr() (t U8Slice) {
 
 func (s *U8Slice) Rplaca(v interface{}) {
 	switch {
-	case s == nil:			*s = *U8List(v.(uint8))
+	case s == nil:			*s = U8Slice{v.(uint8)}
 	case s.Len() == 0:		*s = append(*s, v.(uint8))
 	default:				(*s)[0] = v.(uint8)
 	}
@@ -348,7 +330,7 @@ func (s *U8Slice) Rplaca(v interface{}) {
 
 func (s *U8Slice) Rplacd(v interface{}) {
 	if s == nil {
-		*s = *U8List(v.(uint8))
+		*s = U8Slice{v.(uint8)}
 	} else {
 		ReplaceSlice := func(v U8Slice) {
 			if l := len(v); l < cap(*s) {
@@ -364,13 +346,12 @@ func (s *U8Slice) Rplacd(v interface{}) {
 		}
 
 		switch v := v.(type) {
-		case *U8Slice:		ReplaceSlice(*v)
+		case uint8:			(*s)[1] = v
+							*s = (*s)[:2]
 		case U8Slice:		ReplaceSlice(v)
-		case *[]uint8:		ReplaceSlice(U8Slice(*v))
 		case []uint8:		ReplaceSlice(U8Slice(v))
 		case nil:			*s = (*s)[:1]
-		default:			(*s)[1] = v.(uint8)
-							*s = (*s)[:2]
+		default:			panic(v)
 		}
 	}
 }
@@ -537,10 +518,9 @@ func (s U8Slice) ReplaceIf(f interface{}, r interface{}) {
 
 func (s *U8Slice) Replace(o interface{}) {
 	switch o := o.(type) {
+	case uint8:				*s = U8Slice{o}
 	case U8Slice:			*s = o
-	case *U8Slice:			*s = *o
 	case []uint8:			*s = U8Slice(o)
-	case *[]uint8:		*s = U8Slice(*o)
 	default:				panic(o)
 	}
 }
@@ -548,13 +528,13 @@ func (s *U8Slice) Replace(o interface{}) {
 func (s U8Slice) Select(f interface{}) interface{} {
 	r := make(U8Slice, 0, len(s) / 4)
 	switch f := f.(type) {
-	case uint8:					for _, v := range s {
+	case uint8:						for _, v := range s {
 										if v == f {
 											r = append(r, v)
 										}
 									}
 
-	case func(uint8) bool:		for _, v := range s {
+	case func(uint8) bool:			for _, v := range s {
 										if f(v) {
 											r = append(r, v)
 										}
@@ -617,9 +597,7 @@ func (s *U8Slice) Insert(i int, v interface{}) {
 							copy(n[i + len(v):], (*s)[i:])
 							*s = n
 
-	case *U8Slice:			s.Insert(i, *v)
 	case []uint8:			s.Insert(i, U8Slice(v))
-	case *[]uint8:		s.Insert(i, U8Slice(*v))
 	default:				panic(v)
 	}
 }
