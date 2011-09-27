@@ -1,6 +1,6 @@
 package slices
 
-//import "github.com/feyeleanor/lists"
+import "github.com/feyeleanor/lists"
 import "reflect"
 import "testing"
 
@@ -286,12 +286,8 @@ func TestRSliceExtend(t *testing.T) {
 
 func TestRSliceExpand(t *testing.T) {
 	ConfirmExpand := func(s RSlice, i, n int, r RSlice) {
-		c := s.Cap()
-		s.Expand(i, n)
-		switch {
-		case s.Len() != r.Len():	t.Fatalf("Expand(%v, %v) len should be %v but is %v", i, n, r.Len(), s.Len())
-		case s.Cap() != c + n:		t.Fatalf("Expand(%v, %v) cap should be %v but is %v", i, n, c + n, s.Cap())
-		case !r.Equal(s):			t.Fatalf("Expand(%v, %v) should be %v but is %v", i, n, r, s)
+		if s.Expand(i, n); !r.Equal(s) {
+			t.Fatalf("Expand(%v, %v) should be %v but is %v", i, n, r, s)
 		}
 	}
 
@@ -421,7 +417,7 @@ func TestRSliceFlatten(t *testing.T) {
 	ConfirmFlatten(RList(), RList())
 	ConfirmFlatten(RList(1), RList(1))
 	ConfirmFlatten(RList(1, RList(2)), RList(1, 2))
-/*	ConfirmFlatten(RList(1, RList(2, RList(3))), RList(1, 2, 3))
+	ConfirmFlatten(RList(1, RList(2, RList(3))), RList(1, 2, 3))
 	ConfirmFlatten(RList(1, 2, RList(3, RList(4, 5), RList(6, RList(7, 8, 9), RList(10, 11)))), RList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
 
 	ConfirmFlatten(RList(0, lists.List(1, 2, RList(3, 4))), RList(0, lists.List(1, 2, RList(3, 4))))
@@ -441,7 +437,7 @@ func TestRSliceFlatten(t *testing.T) {
 	rxp = RList(1, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
 	sxp = RList(1, 2, sxp, RList(3, RList(4, 5), RList(6, RList(7, 8, 9), RList(10, 11), sxp)))
 	ConfirmFlatten(sxp, rxp)
-*/}
+}
 
 func TestRSliceEqual(t *testing.T) {
 	ConfirmEqual := func(s RSlice, o interface{}) {

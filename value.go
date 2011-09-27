@@ -327,7 +327,7 @@ func (s *VSlice) Flatten() {
 										v.Flatten()
 									}
 									if (*s)[i].Kind() == reflect.Slice {
-										r := RSlice{(*s)[i]}
+										r := RSlice{&(*s)[i]}
 										r.Flatten()
 										ln := len(n)
 										l := r.Len() + ln
