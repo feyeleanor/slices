@@ -147,23 +147,78 @@ func TestSliceDeleteIf(t *testing.T) {
 
 func TestSliceEach(t *testing.T) {
 	count := 0
-	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(i interface{}) {
+	s := Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	s.Each(func(i interface{}) {
 		if i != count {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(index int, i interface{}) {
+	s.Each(func(index int, i interface{}) {
 		if i != index {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.Each(func(key, i interface{}) {
+	s.Each(func(key, i interface{}) {
 		if i != key {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
+	})
+}
+
+func TestSliceWhile(t *testing.T) {
+	ConfirmLimit := func(s Slice, l int, f interface{}) {
+		if count := s.While(f); count != l {
+			t.Fatalf("%v.While() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) != limit
+	})
+}
+
+func TestSliceUntil(t *testing.T) {
+	ConfirmLimit := func(s Slice, l int, f interface{}) {
+		if count := s.Until(f); count != l {
+			t.Fatalf("%v.Until() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) == limit
 	})
 }
 

@@ -147,6 +147,78 @@ func (s F64Slice) Each(f interface{}) {
 	}
 }
 
+func (s F64Slice) While(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for i, v := range s {
+													if !f(v) {
+														return i
+													}
+												}
+	case func(float64) bool:					for i, v := range s {
+													if !f(v) {
+														return i
+													}
+												}
+	case func(int, interface{}) bool:			for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	case func(int, float64) bool:				for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, interface{}) bool:	for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, float64) bool:		for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	}
+	return len(s)
+}
+
+func (s F64Slice) Until(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for i, v := range s {
+													if f(v) {
+														return i
+													}
+												}
+	case func(float64) bool:					for i, v := range s {
+													if f(v) {
+														return i
+													}
+												}
+	case func(int, interface{}) bool:			for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	case func(int, float64) bool:				for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, interface{}) bool:	for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, float64) bool:		for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	}
+	return len(s)
+}
+
 func (s F64Slice) String() (t string) {
 	for _, v := range s {
 		if len(t) > 0 {

@@ -161,6 +161,94 @@ func TestC128SliceEach(t *testing.T) {
 	})
 }
 
+func TestC128SliceWhile(t *testing.T) {
+	ConfirmLimit := func(s C128Slice, l int, f interface{}) {
+		if count := s.While(f); count != l {
+			t.Fatalf("%v.While() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := C128Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) != limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i complex128) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i complex128) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i complex128) bool {
+		return key.(int) != limit
+	})
+}
+
+func TestC128SliceUntil(t *testing.T) {
+	ConfirmLimit := func(s C128Slice, l int, f interface{}) {
+		if count := s.Until(f); count != l {
+			t.Fatalf("%v.Until() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := C128Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) == limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i complex128) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i complex128) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i complex128) bool {
+		return key.(int) == limit
+	})
+}
+
 func TestC128SliceBlockCopy(t *testing.T) {
 	ConfirmBlockCopy := func(s C128Slice, destination, source, count int, r C128Slice) {
 		s.BlockCopy(destination, source, count)

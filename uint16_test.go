@@ -194,6 +194,94 @@ func TestU16SliceEach(t *testing.T) {
 	})
 }
 
+func TestU16SliceWhile(t *testing.T) {
+	ConfirmLimit := func(s U16Slice, l int, f interface{}) {
+		if count := s.While(f); count != l {
+			t.Fatalf("%v.While() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) != limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i uint16) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i uint16) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i uint16) bool {
+		return key.(int) != limit
+	})
+}
+
+func TestU16SliceUntil(t *testing.T) {
+	ConfirmLimit := func(s U16Slice, l int, f interface{}) {
+		if count := s.Until(f); count != l {
+			t.Fatalf("%v.Until() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) == limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i uint16) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i uint16) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i uint16) bool {
+		return key.(int) == limit
+	})
+}
+
 func TestU16SliceBlockCopy(t *testing.T) {
 	ConfirmBlockCopy := func(s U16Slice, destination, source, count int, r U16Slice) {
 		s.BlockCopy(destination, source, count)

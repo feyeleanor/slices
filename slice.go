@@ -94,10 +94,52 @@ func (s *Slice) DeleteIf(f interface{}) {
 
 func (s Slice) Each(f interface{}) {
 	switch f := f.(type) {
-	case func(interface{}):					for _, v := range s { f(v) }
-	case func(int, interface{}):			for i, v := range s { f(i, v) }
-	case func(interface{}, interface{}):	for i, v := range s { f(i, v) }
+	case func(interface{}):						for _, v := range s { f(v) }
+	case func(int, interface{}):				for i, v := range s { f(i, v) }
+	case func(interface{}, interface{}):		for i, v := range s { f(i, v) }
 	}
+}
+
+func (s Slice) While(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for i, v := range s {
+													if !f(v) {
+														return i
+													}
+												}
+	case func(int, interface{}) bool:			for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, interface{}) bool:	for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	}
+	return len(s)
+}
+
+func (s Slice) Until(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for i, v := range s {
+													if f(v) {
+														return i
+													}
+												}
+	case func(int, interface{}) bool:			for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, interface{}) bool:	for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	}
+	return len(s)
 }
 
 func (s Slice) String() (t string) {

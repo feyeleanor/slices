@@ -154,6 +154,78 @@ func (s I32Slice) Each(f interface{}) {
 	}
 }
 
+func (s I32Slice) While(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for i, v := range s {
+													if !f(v) {
+														return i
+													}
+												}
+	case func(int32) bool:						for i, v := range s {
+													if !f(v) {
+														return i
+													}
+												}
+	case func(int, interface{}) bool:			for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	case func(int, int32) bool:					for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, interface{}) bool:	for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, int32) bool:			for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	}
+	return len(s)
+}
+
+func (s I32Slice) Until(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for i, v := range s {
+													if f(v) {
+														return i
+													}
+												}
+	case func(int32) bool:						for i, v := range s {
+													if f(v) {
+														return i
+													}
+												}
+	case func(int, interface{}) bool:			for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	case func(int, int32) bool:					for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, interface{}) bool:	for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, int32) bool:			for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	}
+	return len(s)
+}
+
 func (s I32Slice) String() (t string) {
 	for _, v := range s {
 		if len(t) > 0 {

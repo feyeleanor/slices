@@ -145,43 +145,132 @@ func TestSSliceDeleteIf(t *testing.T) {
 
 func TestSSliceEach(t *testing.T) {
 	count := 0
-	SSlice{"A", "B", "C", "D", "E", "F"}.Each(func(i interface{}) {
+	s := SSlice{"A", "B", "C", "D", "E", "F"}
+	s.Each(func(i interface{}) {
 		if i != string([]byte{ byte(count) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	SSlice{"A", "B", "C", "D", "E", "F"}.Each(func(index int, i interface{}) {
+	s.Each(func(index int, i interface{}) {
 		if i != string([]byte{ byte(index) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	SSlice{"A", "B", "C", "D", "E", "F"}.Each(func(key, i interface{}) {
+	s.Each(func(key, i interface{}) {
 		if i != string([]byte{ byte(key.(int)) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
 	})
 
 	count = 0
-	SSlice{"A", "B", "C", "D", "E", "F"}.Each(func(i string) {
+	s.Each(func(i string) {
 		if i != string([]byte{ byte(count) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", count, i)
 		}
 		count++
 	})
 
-	SSlice{"A", "B", "C", "D", "E", "F"}.Each(func(index int, i string) {
+	s.Each(func(index int, i string) {
 		if i != string([]byte{ byte(index) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	SSlice{"A", "B", "C", "D", "E", "F"}.Each(func(key interface{}, i string) {
+	s.Each(func(key interface{}, i string) {
 		if i != string([]byte{ byte(key.(int)) + "A"[0] }) {
 			t.Fatalf("element %v erroneously reported as %v", key, i)
 		}
+	})
+}
+
+func TestSSliceWhile(t *testing.T) {
+	ConfirmLimit := func(s SSlice, l int, f interface{}) {
+		if count := s.While(f); count != l {
+			t.Fatalf("%v.While() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := SSlice{"A", "B", "C", "D", "E", "F"}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) != limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i string) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i string) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i string) bool {
+		return key.(int) != limit
+	})
+}
+
+func TestSSliceUntil(t *testing.T) {
+	ConfirmLimit := func(s SSlice, l int, f interface{}) {
+		if count := s.Until(f); count != l {
+			t.Fatalf("%v.Until() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := SSlice{"A", "B", "C", "D", "E", "F"}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) == limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i string) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i string) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i string) bool {
+		return key.(int) == limit
 	})
 }
 

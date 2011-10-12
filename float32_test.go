@@ -194,6 +194,94 @@ func TestF32SliceEach(t *testing.T) {
 	})
 }
 
+func TestF32SliceWhile(t *testing.T) {
+	ConfirmLimit := func(s F32Slice, l int, f interface{}) {
+		if count := s.While(f); count != l {
+			t.Fatalf("%v.While() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := F32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) != limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i float32) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i float32) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i float32) bool {
+		return key.(int) != limit
+	})
+}
+
+func TestF32SliceUntil(t *testing.T) {
+	ConfirmLimit := func(s F32Slice, l int, f interface{}) {
+		if count := s.Until(f); count != l {
+			t.Fatalf("%v.Until() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := F32Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) == limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i float32) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i float32) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i float32) bool {
+		return key.(int) == limit
+	})
+}
+
 func TestF32SliceBlockCopy(t *testing.T) {
 	ConfirmBlockCopy := func(s F32Slice, destination, source, count int, r F32Slice) {
 		s.BlockCopy(destination, source, count)

@@ -194,6 +194,94 @@ func TestF64SliceEach(t *testing.T) {
 	})
 }
 
+func TestF64SliceWhile(t *testing.T) {
+	ConfirmLimit := func(s F64Slice, l int, f interface{}) {
+		if count := s.While(f); count != l {
+			t.Fatalf("%v.While() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := F64Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) != limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i float64) bool {
+		if count == limit {
+			return false
+		}
+		count++
+		return true
+	})
+
+	ConfirmLimit(s, limit, func(index int, i float64) bool {
+		return index != limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i float64) bool {
+		return key.(int) != limit
+	})
+}
+
+func TestF64SliceUntil(t *testing.T) {
+	ConfirmLimit := func(s F64Slice, l int, f interface{}) {
+		if count := s.Until(f); count != l {
+			t.Fatalf("%v.Until() should have iterated %v times not %v times", s, l, count)
+		}
+	}
+
+	s := F64Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	count := 0
+	limit := 5
+	ConfirmLimit(s, limit, func(i interface{}) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i interface{}) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key, i interface{}) bool {
+		return key.(int) == limit
+	})
+
+	count = 0
+	ConfirmLimit(s, limit, func(i float64) bool {
+		if count == limit {
+			return true
+		}
+		count++
+		return false
+	})
+
+	ConfirmLimit(s, limit, func(index int, i float64) bool {
+		return index == limit
+	})
+
+	ConfirmLimit(s, limit, func(key interface{}, i float64) bool {
+		return key.(int) == limit
+	})
+}
+
 func TestF64SliceBlockCopy(t *testing.T) {
 	ConfirmBlockCopy := func(s F64Slice, destination, source, count int, r F64Slice) {
 		s.BlockCopy(destination, source, count)

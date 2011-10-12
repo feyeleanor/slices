@@ -184,6 +184,78 @@ func (s RSlice) Each(f interface{}) {
 	}
 }
 
+func (s RSlice) While(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:					for i := 0; i < s.Len(); i++ {
+														if !f(s.At(i)) {
+															return i
+														}
+													}
+	case func(reflect.Value) bool:					for i := 0; i < s.Len(); i++ {
+														if !f(s.Index(i)) {
+															return i
+														}
+													}
+	case func(int, interface{}) bool:				for i := 0; i < s.Len(); i++ {
+														if !f(i, s.At(i)) {
+															return i
+														}
+													}
+	case func(int, reflect.Value) bool:				for i := 0; i < s.Len(); i++ {
+														if !f(i, s.Index(i)) {
+															return i
+														}
+													}
+	case func(interface{}, interface{}) bool:		for i := 0; i < s.Len(); i++ {
+														if !f(i, s.At(i)) {
+															return i
+														}
+													}
+	case func(interface{}, reflect.Value) bool:		for i := 0; i < s.Len(); i++ {
+														if !f(i, s.Index(i)) {
+															return i
+														}
+													}
+	}
+	return s.Len()
+}
+
+func (s RSlice) Until(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for i := 0; i < s.Len(); i++ {
+													if f(s.At(i)) {
+														return i
+													}
+												}
+	case func(reflect.Value) bool:				for i := 0; i < s.Len(); i++ {
+													if f(s.Index(i)) {
+														return i
+													}
+												}
+	case func(int, interface{}) bool:			for i := 0; i < s.Len(); i++ {
+													if f(i, s.At(i)) {
+														return i
+													}
+												}
+	case func(int, reflect.Value) bool:			for i := 0; i < s.Len(); i++ {
+													if f(i, s.Index(i)) {
+														return i
+													}
+												}
+	case func(interface{}, interface{}) bool:	for i := 0; i < s.Len(); i++ {
+													if f(i, s.At(i)) {
+														return i
+													}
+												}
+	case func(interface{}, reflect.Value) bool:	for i := 0; i < s.Len(); i++ {
+													if f(i, s.Index(i)) {
+														return i
+													}
+												}
+	}
+	return s.Len()
+}
+
 func (s RSlice) String() (t string) {
 	s.Each(func( v interface{}) {
 		if len(t) > 0 {

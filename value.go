@@ -131,6 +131,78 @@ func (s VSlice) Each(f interface{}) {
 	}
 }
 
+func (s VSlice) While(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for i, v := range s {
+													if !f(safeInterface(v)) {
+														return i
+													}
+												}
+	case func(reflect.Value) bool:				for i, v := range s {
+													if !f(v) {
+														return i
+													}
+												}
+	case func(int, interface{}) bool:			for i, v := range s {
+													if !f(i, safeInterface(v)) {
+														return i
+													}
+												}
+	case func(int, reflect.Value) bool:			for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, interface{}) bool:	for i, v := range s {
+													if !f(i, safeInterface(v)) {
+														return i
+													}
+												}
+	case func(interface{}, reflect.Value) bool:	for i, v := range s {
+													if !f(i, v) {
+														return i
+													}
+												}
+	}
+	return len(s)
+}
+
+func (s VSlice) Until(f interface{}) int {
+	switch f := f.(type) {
+	case func(interface{}) bool:				for i, v := range s {
+													if f(safeInterface(v)) {
+														return i
+													}
+												}
+	case func(reflect.Value) bool:				for i, v := range s {
+													if f(v) {
+														return i
+													}
+												}
+	case func(int, interface{}) bool:			for i, v := range s {
+													if f(i, safeInterface(v)) {
+														return i
+													}
+												}
+	case func(int, reflect.Value) bool:			for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	case func(interface{}, interface{}) bool:	for i, v := range s {
+													if f(i, safeInterface(v)) {
+														return i
+													}
+												}
+	case func(interface{}, reflect.Value) bool:	for i, v := range s {
+													if f(i, v) {
+														return i
+													}
+												}
+	}
+	return len(s)
+}
+
 func (s VSlice) String() (t string) {
 	for _, v := range s {
 		if len(t) > 0 {
