@@ -3,7 +3,7 @@ package slices
 import (
 	"fmt"
 	"github.com/feyeleanor/raw"
-	"rand"
+	"math/rand"
 	"reflect"
 )
 
@@ -566,7 +566,7 @@ func (s RSlice) SetIntersection(o RSlice) (r RSlice) {
 	results := []interface{}{}
 	o.Each(func(v interface{}) {
 		if _, ok := cache[v]; ok {
-			cache[v] = false, false
+			delete(cache, v)
 			results = append(results, v)
 		}
 	})
@@ -610,7 +610,7 @@ func (s RSlice) SetDifference(o RSlice) (r RSlice) {
 	results := []interface{}{}
 	for k, _ := range left {
 		if ok := right[k]; ok {
-			right[k] = false, false
+			delete(right, k)
 		} else {
 			results = append(results, k)
 		}

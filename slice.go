@@ -2,7 +2,7 @@ package slices
 
 import (
 	"fmt"
-	"rand"
+	"math/rand"
 	"reflect"
 )
 
@@ -392,7 +392,7 @@ func (s Slice) SetIntersection(o Slice) (r Slice) {
 	}
 	for _, v := range o {
 		if _, ok := cache[v]; ok {
-			cache[v] = false, false
+			delete(cache, v)
 			r = append(r, v)
 		}
 	}
@@ -432,7 +432,7 @@ func (s Slice) SetDifference(o Slice) (r Slice) {
 	}
 	for k, _ := range left {
 		if ok := right[k]; ok {
-			right[k] = false, false
+			delete(right, k)
 		} else {
 			r = append(r, k)
 		}

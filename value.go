@@ -2,7 +2,7 @@ package slices
 
 import (
 	"fmt"
-	"rand"
+	"math/rand"
 	"reflect"
 )
 
@@ -525,7 +525,7 @@ func (s VSlice) SetIntersection(o VSlice) (r VSlice) {
 	o.Each(func(v reflect.Value) {
 		vi := safeInterface(v)
 		if _, ok := cache[vi]; ok {
-			cache[vi] = false, false
+			delete(cache, vi)
 			r = append(r, v)
 		}
 	})
@@ -573,7 +573,7 @@ func (s VSlice) SetDifference(o VSlice) (r VSlice) {
 	r = make(VSlice, 0, (len(left) + len(right)) / 2)
 	for k, _ := range left {
 		if ok := right[k]; ok {
-			right[k] = false, false
+			delete(right, k)
 		} else {
 			r = append(r, reflect.ValueOf(k))
 		}

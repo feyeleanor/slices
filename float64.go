@@ -2,7 +2,7 @@ package slices
 
 import (
 	"fmt"
-	"rand"
+	"math/rand"
 	"sort"
 )
 
@@ -431,7 +431,7 @@ func (s F64Slice) SetIntersection(o F64Slice) (r F64Slice) {
 	}
 	for _, v := range o {
 		if _, ok := cache[v]; ok {
-			cache[v] = false, false
+			delete(cache, v)
 			r = append(r, v)
 		}
 	}
@@ -471,7 +471,7 @@ func (s F64Slice) SetDifference(o F64Slice) (r F64Slice) {
 	}
 	for k, _ := range left {
 		if ok := right[k]; ok {
-			right[k] = false, false
+			delete(right, k)
 		} else {
 			r = append(r, k)
 		}

@@ -2,7 +2,7 @@ package slices
 
 import (
 	"fmt"
-	"rand"
+	"math/rand"
 	"sort"
 	"strings"
 )
@@ -416,7 +416,7 @@ func (s SSlice) SetIntersection(o SSlice) (r SSlice) {
 	}
 	for _, v := range o {
 		if _, ok := cache[v]; ok {
-			cache[v] = false, false
+			delete(cache, v)
 			r = append(r, v)
 		}
 	}
@@ -456,7 +456,7 @@ func (s SSlice) SetDifference(o SSlice) (r SSlice) {
 	}
 	for k, _ := range left {
 		if ok := right[k]; ok {
-			right[k] = false, false
+			delete(right, k)
 		} else {
 			r = append(r, k)
 		}
