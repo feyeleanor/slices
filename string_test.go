@@ -282,7 +282,14 @@ func TestSSliceBlockCopy(t *testing.T) {
 		}
 	}
 
+	ConfirmBlockCopy(SSlice{}, 0, 0, 1, SSlice{})
+	ConfirmBlockCopy(SSlice{}, 1, 0, 1, SSlice{})
+	ConfirmBlockCopy(SSlice{}, 0, 1, 1, SSlice{})
+
 	ConfirmBlockCopy(SSlice{"A", "B", "C", "D", "E", "F"}, 0, 0, 4, SSlice{"A", "B", "C", "D", "E", "F"})
+	ConfirmBlockCopy(SSlice{"A", "B", "C", "D", "E", "F"}, 5, 0, 4, SSlice{"A", "B", "C", "D", "E", "A"})
+	ConfirmBlockCopy(SSlice{"A", "B", "C", "D", "E", "F"}, 6, 0, 4, SSlice{"A", "B", "C", "D", "E", "F"})
+	ConfirmBlockCopy(SSlice{"A", "B", "C", "D", "E", "F"}, 0, 6, 4, SSlice{"A", "B", "C", "D", "E", "F"})
 	ConfirmBlockCopy(SSlice{"A", "B", "C", "D", "E", "F"}, 6, 6, 4, SSlice{"A", "B", "C", "D", "E", "F"})
 	ConfirmBlockCopy(SSlice{"A", "B", "C", "D", "E", "F"}, 4, 2, 2, SSlice{"A", "B", "C", "D", "C", "D"})
 	ConfirmBlockCopy(SSlice{"A", "B", "C", "D", "E", "F"}, 2, 4, 4, SSlice{"A", "B", "E", "F", "E", "F"})

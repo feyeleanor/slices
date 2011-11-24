@@ -300,8 +300,15 @@ func TestRSliceBlockCopy(t *testing.T) {
 		}
 	}
 
+	ConfirmBlockCopy(RList(), 0, 0, 1, RList())
+	ConfirmBlockCopy(RList(), 1, 0, 1, RList())
+	ConfirmBlockCopy(RList(), 0, 1, 1, RList())
+
 	ConfirmBlockCopy(RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 0, 4, RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
 	ConfirmBlockCopy(RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 9, 9, 4, RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+	ConfirmBlockCopy(RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 9, 0, 4, RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 0))
+	ConfirmBlockCopy(RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 0, 4, RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+	ConfirmBlockCopy(RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10, 10, 4, RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
 	ConfirmBlockCopy(RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 5, 2, 4, RList(0, 1, 2, 3, 4, 2, 3, 4, 5, 9))
 	ConfirmBlockCopy(RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 2, 5, 4, RList(0, 1, 5, 6, 7, 8, 6, 7, 8, 9))
 }

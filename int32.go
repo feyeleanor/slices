@@ -237,11 +237,13 @@ func (s I32Slice) String() (t string) {
 }
 
 func (s I32Slice) BlockCopy(destination, source, count int) {
-	end := source + count
-	if end > len(s) {
-		end = len(s)
+	if destination < len(s) {
+		if end := destination + count; end >= len(s) {
+			copy(s[destination:], s[source:])
+		} else {
+			copy(s[destination : end], s[source:])
+		}
 	}
-	copy(s[destination:], s[source:end])
 }
 
 func (s I32Slice) BlockClear(start, count int) {

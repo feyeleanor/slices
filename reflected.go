@@ -267,11 +267,13 @@ func (s RSlice) String() (t string) {
 }
 
 func (s RSlice) BlockCopy(destination, source, count int) {
-	end := source + count
-	if end > s.Len() {
-		end = s.Len()
+	if destination < s.Len() {
+		end := destination + count
+		if end > s.Len() {
+			end = s.Len()
+		}
+		reflect.Copy(s.Slice(destination, end), s.Slice(source, s.Len()))
 	}
-	reflect.Copy(s.Slice(destination, s.Len()), s.Slice(source, end))
 }
 
 func (s RSlice) BlockClear(start, count int) {

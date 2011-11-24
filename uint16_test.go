@@ -290,8 +290,15 @@ func TestU16SliceBlockCopy(t *testing.T) {
 		}
 	}
 
+	ConfirmBlockCopy(U16Slice{}, 0, 0, 1, U16Slice{})
+	ConfirmBlockCopy(U16Slice{}, 1, 0, 1, U16Slice{})
+	ConfirmBlockCopy(U16Slice{}, 0, 1, 1, U16Slice{})
+
 	ConfirmBlockCopy(U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0, 0, 4, U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
 	ConfirmBlockCopy(U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 9, 9, 4, U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockCopy(U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 9, 0, 4, U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 0})
+	ConfirmBlockCopy(U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, 0, 4, U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockCopy(U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, 10, 4, U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
 	ConfirmBlockCopy(U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, 2, 4, U16Slice{0, 1, 2, 3, 4, 2, 3, 4, 5, 9})
 	ConfirmBlockCopy(U16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 2, 5, 4, U16Slice{0, 1, 5, 6, 7, 8, 6, 7, 8, 9})
 }

@@ -230,11 +230,13 @@ func (s C64Slice) String() (t string) {
 }
 
 func (s C64Slice) BlockCopy(destination, source, count int) {
-	end := source + count
-	if end > len(s) {
-		end = len(s)
+	if destination < len(s) {
+		if end := destination + count; end >= len(s) {
+			copy(s[destination:], s[source:])
+		} else {
+			copy(s[destination : end], s[source:])
+		}
 	}
-	copy(s[destination:], s[source:end])
 }
 
 func (s C64Slice) BlockClear(start, count int) {

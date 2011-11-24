@@ -230,8 +230,15 @@ func TestSliceBlockCopy(t *testing.T) {
 		}
 	}
 
+	ConfirmBlockCopy(Slice{}, 0, 0, 1, Slice{})
+	ConfirmBlockCopy(Slice{}, 1, 0, 1, Slice{})
+	ConfirmBlockCopy(Slice{}, 0, 1, 1, Slice{})
+
 	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0, 0, 4, Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
-	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 9, 9, 4, Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0, 9, 4, Slice{9, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 9, 0, 4, Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 0})
+	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, 0, 4, Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 10, 10, 4, Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
 	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 5, 2, 4, Slice{0, 1, 2, 3, 4, 2, 3, 4, 5, 9})
 	ConfirmBlockCopy(Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 2, 5, 4, Slice{0, 1, 5, 6, 7, 8, 6, 7, 8, 9})
 }
