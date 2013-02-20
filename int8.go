@@ -38,11 +38,11 @@ func (s I8Slice) AtLeast(i, j int) bool				{ return s[i] <= s[j] }
 func (s I8Slice) Same(i, j int) bool				{ return s[i] == s[j] }
 func (s I8Slice) AtMost(i, j int) bool				{ return s[i] >= s[j] }
 func (s I8Slice) More(i, j int) bool				{ return s[i] > s[j] }
-func (s I8Slice) ZeroLess(i int) bool				{ return 0 < s[i] }
-func (s I8Slice) ZeroAtLeast(i, j int) bool			{ return 0 <= s[j] }
-func (s I8Slice) ZeroSame(i int) bool				{ return 0 == s[i] }
-func (s I8Slice) ZeroAtMost(i, j int) bool			{ return 0 >= s[j] }
-func (s I8Slice) ZeroMore(i int) bool				{ return 0 > s[i] }
+func (s I8Slice) ZeroLessThan(i int) bool			{ return 0 < s[i] }
+func (s I8Slice) ZeroAtLeast(i int) bool			{ return 0 <= s[i] }
+func (s I8Slice) ZeroSameAs(i int) bool				{ return 0 == s[i] }
+func (s I8Slice) ZeroAtMost(i int) bool				{ return 0 >= s[i] }
+func (s I8Slice) ZeroMoreThan(i int) bool			{ return 0 > s[i] }
 
 func (s I8Slice) Sort()								{ sort.Sort(s) }
 

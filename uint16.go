@@ -38,11 +38,11 @@ func (s U16Slice) AtLeast(i, j int) bool			{ return s[i] <= s[j] }
 func (s U16Slice) Same(i, j int) bool				{ return s[i] == s[j] }
 func (s U16Slice) AtMost(i, j int) bool				{ return s[i] >= s[j] }
 func (s U16Slice) More(i, j int) bool				{ return s[i] > s[j] }
-func (s U16Slice) ZeroLess(i int) bool				{ return 0 < s[i] }
-func (s U16Slice) ZeroAtLeast(i, j int) bool		{ return true }
-func (s U16Slice) ZeroSame(i int) bool				{ return 0 == s[i] }
-func (s U16Slice) ZeroAtMost(i, j int) bool			{ return 0 == s[j] }
-func (s U16Slice) ZeroMore(i int) bool				{ return false }
+func (s U16Slice) ZeroLessThan(i int) bool			{ return 0 < s[i] }
+func (s U16Slice) ZeroAtLeast(i int) bool			{ return true }
+func (s U16Slice) ZeroSameAs(i int) bool			{ return 0 == s[i] }
+func (s U16Slice) ZeroAtMost(i int) bool			{ return 0 == s[i] }
+func (s U16Slice) ZeroMoreThan(i int) bool			{ return false }
 
 func (s U16Slice) Sort()							{ sort.Sort(s) }
 

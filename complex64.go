@@ -31,11 +31,11 @@ func (s C64Slice) Same(i, j int) bool				{ return real(s[i]) == real(s[j]) }
 func (s C64Slice) AtMost(i, j int) bool				{ return real(s[i]) >= real(s[j]) }
 func (s C64Slice) More(i, j int) bool				{ return real(s[i]) > real(s[j]) }
 
-func (s C64Slice) ZeroLess(i int) bool				{ return 0 < real(s[i]) }
-func (s C64Slice) ZeroAtLeast(i, j int) bool		{ return 0 <= real(s[j]) }
-func (s C64Slice) ZeroSame(i int) bool				{ return 0 == real(s[i]) }
-func (s C64Slice) ZeroAtMost(i, j int) bool			{ return 0 >= real(s[j]) }
-func (s C64Slice) ZeroMore(i int) bool				{ return 0 > real(s[i]) }
+func (s C64Slice) ZeroLessThan(i int) bool			{ return 0 < real(s[i]) }
+func (s C64Slice) ZeroAtLeast(i int) bool			{ return 0 <= real(s[i]) }
+func (s C64Slice) ZeroSameAs(i int) bool			{ return 0 == real(s[i]) }
+func (s C64Slice) ZeroAtMost(i int) bool			{ return 0 >= real(s[i]) }
+func (s C64Slice) ZeroMoreThan(i int) bool			{ return 0 > real(s[i]) }
 
 func (s C64Slice) Sort()							{ sort.Sort(s) }
 
