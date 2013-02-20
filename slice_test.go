@@ -539,16 +539,16 @@ func TestSliceSetUnion(t *testing.T) {
 }
 
 func TestSliceSetDifference(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r Slice) {
+	ConfirmSetDifference := func(s, o, r Slice) {
 		if x := s.SetDifference(o); !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
+			t.Fatalf("%v.SetDifference(%v) should be %v but is %v", s, o, r, x)
 		}
 	}
 
-	ConfirmSetUnion(Slice{1, 2, 3}, Slice{}, Slice{1, 2, 3})
-	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1}, Slice{2, 3})
-	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1, 1}, Slice{2, 3})
-	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1, 2, 1}, Slice{3})
+	ConfirmSetDifference(Slice{1, 2, 3}, Slice{}, Slice{1, 2, 3})
+	ConfirmSetDifference(Slice{1, 2, 3}, Slice{1}, Slice{2, 3})
+	ConfirmSetDifference(Slice{1, 2, 3}, Slice{1, 1}, Slice{2, 3})
+	ConfirmSetDifference(Slice{1, 2, 3}, Slice{1, 2, 1}, Slice{3})
 }
 
 func TestSliceFind(t *testing.T) {

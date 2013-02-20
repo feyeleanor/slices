@@ -1,9 +1,6 @@
 package slices
 
-import (
-	"fmt"
-	"sort"
-)
+import "fmt"
 
 type U8Slice	[]uint8
 
@@ -42,8 +39,6 @@ func (s U8Slice) ZeroAtLeast(i int) bool			{ return true }
 func (s U8Slice) ZeroSameAs(i int) bool				{ return 0 == s[i] }
 func (s U8Slice) ZeroAtMost(i int) bool				{ return 0 == s[i] }
 func (s U8Slice) ZeroMoreThan(i int) bool			{ return false }
-
-func (s U8Slice) Sort()								{ sort.Sort(s) }
 
 func (s *U8Slice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 

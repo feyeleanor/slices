@@ -3,6 +3,7 @@ package slices
 import (
 	"math/rand"
 	"reflect"
+	"sort"
 )
 
 const(
@@ -54,9 +55,11 @@ var(
 
 func CanFlatten(s interface{}) (ok bool) {
 	switch s := s.(type) {
-	case reflect.Value:			ok = s.Kind() == reflect.Slice || s.Type().Implements(FLATTENABLE)
-	default:					v := reflect.ValueOf(s)
-								ok = v.Kind() == reflect.Slice || v.Type().Implements(FLATTENABLE)
+	case reflect.Value:
+		ok = s.Kind() == reflect.Slice || s.Type().Implements(FLATTENABLE)
+	default:
+		v := reflect.ValueOf(s)
+		ok = v.Kind() == reflect.Slice || v.Type().Implements(FLATTENABLE)
 	}
 	return
 }
@@ -82,6 +85,14 @@ func Equal(e, o interface{}) (r bool) {
 		r = e.Equal(o)
 	} else if o, ok := o.(Equatable); ok {
 		r = o.Equal(e)
+	}
+	return
+}
+
+func Sort(i interface{}) (r bool) {
+	if i, ok := i.(sort.Interface); ok {
+		sort.Sort(i)
+		r = true
 	}
 	return
 }

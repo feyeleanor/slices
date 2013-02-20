@@ -1,9 +1,6 @@
 package slices
 
-import (
-	"fmt"
-	"sort"
-)
+import "fmt"
 
 type C64Slice	[]complex64
 
@@ -35,8 +32,6 @@ func (s C64Slice) ZeroAtLeast(i int) bool			{ return 0 <= real(s[i]) }
 func (s C64Slice) ZeroSameAs(i int) bool			{ return 0 == real(s[i]) }
 func (s C64Slice) ZeroAtMost(i int) bool			{ return 0 >= real(s[i]) }
 func (s C64Slice) ZeroMoreThan(i int) bool			{ return 0 > real(s[i]) }
-
-func (s C64Slice) Sort()							{ sort.Sort(s) }
 
 func (s *C64Slice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 

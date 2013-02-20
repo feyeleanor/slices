@@ -2,7 +2,6 @@ package slices
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 )
 
@@ -23,8 +22,6 @@ func (s SSlice) AtLeast(i, j int) bool				{ return s[i] <= s[j] }
 func (s SSlice) Same(i, j int) bool					{ return s[i] == s[j] }
 func (s SSlice) AtMost(i, j int) bool				{ return s[i] >= s[j] }
 func (s SSlice) More(i, j int) bool					{ return s[i] > s[j] }
-
-func (s SSlice) Sort()								{ sort.Sort(s) }
 
 func (s *SSlice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 

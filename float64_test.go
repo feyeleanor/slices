@@ -35,16 +35,6 @@ func TestF64SliceSwap(t *testing.T) {
 	ConfirmSwap(F64Slice{0, 1, 2}, 0, 2, F64Slice{2, 1, 0})
 }
 
-func TestF64SliceSort(t *testing.T) {
-	ConfirmSort := func(s, r F64Slice) {
-		if s.Sort(); !r.Equal(s) {
-			t.Fatalf("Sort() should be %v but is %v", r, s)
-		}
-	}
-
-	ConfirmSort(F64Slice{3, 2, 1, 4, 5, 0}, F64Slice{0, 1, 2, 3, 4, 5})
-}
-
 func TestF64SliceCompare(t *testing.T) {
 	ConfirmCompare := func(s F64Slice, i, j, r int) {
 		if x := s.Compare(i, j); x != r {
@@ -498,7 +488,7 @@ func TestF64SliceRplacd(t *testing.T) {
 func TestF64SliceSetIntersection(t *testing.T) {
 	ConfirmSetIntersection := func(s, o, r F64Slice) {
 		x := s.SetIntersection(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -513,7 +503,7 @@ func TestF64SliceSetIntersection(t *testing.T) {
 func TestF64SliceSetUnion(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r F64Slice) {
 		x := s.SetUnion(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -528,7 +518,7 @@ func TestF64SliceSetUnion(t *testing.T) {
 func TestF64SliceSetDifference(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r F64Slice) {
 		x := s.SetDifference(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}

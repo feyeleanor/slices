@@ -78,3 +78,26 @@ func TestShuffleWithoutSorting(t *testing.T) {
 	t.Log("Implement Sort for VSlice")
 	ConfirmShuffle(VList(0, 1, 2, 3, 4, 5), VList(0, 1, 2, 3, 4, 5))
 }
+
+func TestSort(t *testing.T) {
+	ConfirmSort := func(s, r interface{}) {
+		if ok := Sort(s); !ok || !Equal(s, r) {
+			t.Fatalf("Sort() should be %v but is %v", r, s)
+		}
+	}
+
+	ConfirmSort(F32Slice{3, 2, 1, 4, 5, 0}, F32Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(F64Slice{3, 2, 1, 4, 5, 0}, F64Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(I16Slice{3, 2, 1, 4, 5, 0}, I16Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(I32Slice{3, 2, 1, 4, 5, 0}, I32Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(I64Slice{3, 2, 1, 4, 5, 0}, I64Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(I8Slice{3, 2, 1, 4, 5, 0}, I8Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(ISlice{3, 2, 1, 4, 5, 0}, ISlice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(SSlice{"D", "C", "B", "E", "F", "A"}, SSlice{"A", "B", "C", "D", "E", "F"})
+	ConfirmSort(U16Slice{3, 2, 1, 4, 5, 0}, U16Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(U32Slice{3, 2, 1, 4, 5, 0}, U32Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(U64Slice{3, 2, 1, 4, 5, 0}, U64Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(U8Slice{3, 2, 1, 4, 5, 0}, U8Slice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(USlice{3, 2, 1, 4, 5, 0}, USlice{0, 1, 2, 3, 4, 5})
+	ConfirmSort(ASlice{3, 2, 1, 4, 5, 0}, ASlice{0, 1, 2, 3, 4, 5})
+}

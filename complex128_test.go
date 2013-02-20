@@ -411,7 +411,7 @@ func TestC128SliceRplacd(t *testing.T) {
 func TestC128SliceSetIntersection(t *testing.T) {
 	ConfirmSetIntersection := func(s, o, r C128Slice) {
 		x := s.SetIntersection(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -426,7 +426,7 @@ func TestC128SliceSetIntersection(t *testing.T) {
 func TestC128SliceSetUnion(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r C128Slice) {
 		x := s.SetUnion(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -441,7 +441,7 @@ func TestC128SliceSetUnion(t *testing.T) {
 func TestC128SliceSetDifference(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r C128Slice) {
 		x := s.SetDifference(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}

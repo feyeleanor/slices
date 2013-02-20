@@ -35,16 +35,6 @@ func TestASliceSwap(t *testing.T) {
 	ConfirmSwap(ASlice{0, 1, 2}, 0, 2, ASlice{2, 1, 0})
 }
 
-func TestASliceSort(t *testing.T) {
-	ConfirmSort := func(s, r ASlice) {
-		if s.Sort(); !r.Equal(s) {
-			t.Fatalf("Sort() should be %v but is %v", r, s)
-		}
-	}
-
-	ConfirmSort(ASlice{3, 2, 1, 4, 5, 0}, ASlice{0, 1, 2, 3, 4, 5})
-}
-
 func TestASliceCompare(t *testing.T) {
 	ConfirmCompare := func(s ASlice, i, j, r int) {
 		if x := s.Compare(i, j); x != r {
@@ -498,7 +488,7 @@ func TestASliceRplacd(t *testing.T) {
 func TestASliceSetIntersection(t *testing.T) {
 	ConfirmSetIntersection := func(s, o, r ASlice) {
 		x := s.SetIntersection(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -513,7 +503,7 @@ func TestASliceSetIntersection(t *testing.T) {
 func TestASliceSetUnion(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r ASlice) {
 		x := s.SetUnion(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -528,7 +518,7 @@ func TestASliceSetUnion(t *testing.T) {
 func TestASliceSetDifference(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r ASlice) {
 		x := s.SetDifference(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}

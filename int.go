@@ -1,9 +1,6 @@
 package slices
 
-import (
-	"fmt"
-	"sort"
-)
+import "fmt"
 
 type ISlice	[]int
 
@@ -42,8 +39,6 @@ func (s ISlice) ZeroAtLeast(i int) bool				{ return 0 <= s[i] }
 func (s ISlice) ZeroSameAs(i int) bool				{ return 0 == s[i] }
 func (s ISlice) ZeroAtMost(i int) bool				{ return 0 >= s[i] }
 func (s ISlice) ZeroMoreThan(i int) bool			{ return 0 > s[i] }
-
-func (s ISlice) Sort()								{ sort.Sort(s) }
 
 func (s *ISlice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 

@@ -35,16 +35,6 @@ func TestF32SliceSwap(t *testing.T) {
 	ConfirmSwap(F32Slice{0, 1, 2}, 0, 2, F32Slice{2, 1, 0})
 }
 
-func TestF32SliceSort(t *testing.T) {
-	ConfirmSort := func(s, r F32Slice) {
-		if s.Sort(); !r.Equal(s) {
-			t.Fatalf("Sort() should be %v but is %v", r, s)
-		}
-	}
-
-	ConfirmSort(F32Slice{3, 2, 1, 4, 5, 0}, F32Slice{0, 1, 2, 3, 4, 5})
-}
-
 func TestF32SliceCompare(t *testing.T) {
 	ConfirmCompare := func(s F32Slice, i, j, r int) {
 		if x := s.Compare(i, j); x != r {
@@ -498,7 +488,7 @@ func TestF32SliceRplacd(t *testing.T) {
 func TestF32SliceSetIntersection(t *testing.T) {
 	ConfirmSetIntersection := func(s, o, r F32Slice) {
 		x := s.SetIntersection(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -513,7 +503,7 @@ func TestF32SliceSetIntersection(t *testing.T) {
 func TestF32SliceSetUnion(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r F32Slice) {
 		x := s.SetUnion(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -528,7 +518,7 @@ func TestF32SliceSetUnion(t *testing.T) {
 func TestF32SliceSetDifference(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r F32Slice) {
 		x := s.SetDifference(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}

@@ -1,9 +1,6 @@
 package slices
 
-import (
-	"fmt"
-	"sort"
-)
+import "fmt"
 
 type U32Slice	[]uint32
 
@@ -42,8 +39,6 @@ func (s U32Slice) ZeroAtLeast(i int) bool			{ return true }
 func (s U32Slice) ZeroSameAs(i int) bool			{ return 0 == s[i] }
 func (s U32Slice) ZeroAtMost(i int) bool			{ return 0 == s[i] }
 func (s U32Slice) ZeroMoreThan(i int) bool			{ return false }
-
-func (s U32Slice) Sort()							{ sort.Sort(s) }
 
 func (s *U32Slice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 

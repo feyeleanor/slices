@@ -35,16 +35,6 @@ func TestU8SliceSwap(t *testing.T) {
 	ConfirmSwap(U8Slice{0, 1, 2}, 0, 2, U8Slice{2, 1, 0})
 }
 
-func TestU8SliceSort(t *testing.T) {
-	ConfirmSort := func(s, r U8Slice) {
-		if s.Sort(); !r.Equal(s) {
-			t.Fatalf("Sort() should be %v but is %v", r, s)
-		}
-	}
-
-	ConfirmSort(U8Slice{3, 2, 1, 4, 5, 0}, U8Slice{0, 1, 2, 3, 4, 5})
-}
-
 func TestU8SliceCompare(t *testing.T) {
 	ConfirmCompare := func(s U8Slice, i, j, r int) {
 		if x := s.Compare(i, j); x != r {
@@ -498,7 +488,7 @@ func TestU8SliceRplacd(t *testing.T) {
 func TestU8SliceSetIntersection(t *testing.T) {
 	ConfirmSetIntersection := func(s, o, r U8Slice) {
 		x := s.SetIntersection(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -513,7 +503,7 @@ func TestU8SliceSetIntersection(t *testing.T) {
 func TestU8SliceSetUnion(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r U8Slice) {
 		x := s.SetUnion(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
@@ -528,7 +518,7 @@ func TestU8SliceSetUnion(t *testing.T) {
 func TestU8SliceSetDifference(t *testing.T) {
 	ConfirmSetUnion := func(s, o, r U8Slice) {
 		x := s.SetDifference(o)
-		x.Sort()
+		Sort(x)
 		if !r.Equal(x) {
 			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
 		}
