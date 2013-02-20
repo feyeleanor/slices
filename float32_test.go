@@ -694,19 +694,6 @@ func TestF32SliceUniq(t *testing.T) {
 	ConfirmUniq(F32Slice{0, 1, 0, 3, 0, 5}, F32Slice{0, 1, 3, 5})
 }
 
-func TestF32SliceShuffle(t *testing.T) {
-	ConfirmShuffle := func(s, r F32Slice) {
-		if s.Shuffle(); s.Equal(r) {
-			t.Fatalf("%v.Shuffle() should change order of elements", s)
-		}
-		if s.Sort(); !s.Equal(r) {
-			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
-		}
-	}
-
-	ConfirmShuffle(F32Slice{0, 1, 2, 3, 4, 5}, F32Slice{0, 1, 2, 3, 4, 5})
-}
-
 func TestF32SliceValuesAt(t *testing.T) {
 	ConfirmValuesAt := func(s F32Slice, i []int, r F32Slice) {
 		if x := s.ValuesAt(i...); !r.Equal(x) {

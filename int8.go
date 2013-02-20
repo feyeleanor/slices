@@ -2,7 +2,6 @@ package slices
 
 import (
 	"fmt"
-	"math/rand"
 	"sort"
 )
 
@@ -638,14 +637,6 @@ func (s *I8Slice) Uniq() {
 			}
 		}
 		*s = a[:p]
-	}
-}
-
-func (s I8Slice) Shuffle() {
-	l := len(s) - 1
-	for i, _ := range s {
-		r := i + rand.Intn(l - i)
-		s.Swap(i, r)
 	}
 }
 

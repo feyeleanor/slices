@@ -3,7 +3,6 @@ package slices
 import (
 	"fmt"
 	"github.com/feyeleanor/raw"
-	"math/rand"
 	"reflect"
 )
 
@@ -807,13 +806,6 @@ func (s *RSlice) Uniq() {
 		}
 		s.MakeAddressable()
 		s.SetLen(p)
-	}
-}
-
-func (s RSlice) Shuffle() {
-	l := s.Len() - 1
-	for i := 0; i < s.Len(); i++ {
-		s.Swap(i, i + rand.Intn(l - i))
 	}
 }
 

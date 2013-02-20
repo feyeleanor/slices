@@ -1,6 +1,9 @@
 package slices
 
-import "reflect"
+import (
+	"math/rand"
+	"reflect"
+)
 
 const(
 	IS_LESS_THAN	= iota - 1
@@ -35,6 +38,11 @@ type Container interface {
 	Set(int, interface{})
 }
 
+type Deck interface {
+	Len() int
+	Swap(i, j int)
+}
+
 var(
 	NESTED = reflect.TypeOf((*Nested)(nil)).Elem()
 	FLATTENABLE = reflect.TypeOf((*Flattenable)(nil)).Elem()
@@ -59,4 +67,21 @@ func Prepend(i Insertable, value interface{}) {
 
 func Append(i Insertable, value interface{}) {
 	i.Insert(i.Len(), value)
+}
+
+func Shuffle(d Deck) {
+	for i, v := range rand.Perm(d.Len()) {
+		if v > i {
+			d.Swap(i, v)
+		}
+	}
+}
+
+func Equal(e, o interface{}) (r bool) {
+	if e, ok := e.(Equatable); ok {
+		r = e.Equal(o)
+	} else if o, ok := o.(Equatable); ok {
+		r = o.Equal(e)
+	}
+	return
 }

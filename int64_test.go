@@ -695,19 +695,6 @@ func TestI64SliceUniq(t *testing.T) {
 	ConfirmUniq(I64Slice{0, 1, 0, 3, 0, 5}, I64Slice{0, 1, 3, 5})
 }
 
-func TestI64SliceShuffle(t *testing.T) {
-	ConfirmShuffle := func(s, r I64Slice) {
-		if s.Shuffle(); s.Equal(r) {
-			t.Fatalf("%v.Shuffle() should change order of elements", s)
-		}
-		if s.Sort(); !s.Equal(r) {
-			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
-		}
-	}
-
-	ConfirmShuffle(I64Slice{0, 1, 2, 3, 4, 5}, I64Slice{0, 1, 2, 3, 4, 5})
-}
-
 func TestI64SliceValuesAt(t *testing.T) {
 	ConfirmValuesAt := func(s I64Slice, i []int, r I64Slice) {
 		if x := s.ValuesAt(i...); !r.Equal(x) {

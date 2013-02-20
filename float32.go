@@ -2,7 +2,6 @@ package slices
 
 import (
 	"fmt"
-	"math/rand"
 	"sort"
 )
 
@@ -630,14 +629,6 @@ func (s *F32Slice) Uniq() {
 			}
 		}
 		*s = a[:p]
-	}
-}
-
-func (s F32Slice) Shuffle() {
-	l := len(s) - 1
-	for i, _ := range s {
-		r := i + rand.Intn(l - i)
-		s.Swap(i, r)
 	}
 }
 

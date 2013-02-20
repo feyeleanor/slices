@@ -695,19 +695,6 @@ func TestI8SliceUniq(t *testing.T) {
 	ConfirmUniq(I8Slice{0, 1, 0, 3, 0, 5}, I8Slice{0, 1, 3, 5})
 }
 
-func TestI8SliceShuffle(t *testing.T) {
-	ConfirmShuffle := func(s, r I8Slice) {
-		if s.Shuffle(); s.Equal(r) {
-			t.Fatalf("%v.Shuffle() should change order of elements", s)
-		}
-		if s.Sort(); !s.Equal(r) {
-			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
-		}
-	}
-
-	ConfirmShuffle(I8Slice{0, 1, 2, 3, 4, 5}, I8Slice{0, 1, 2, 3, 4, 5})
-}
-
 func TestI8SliceValuesAt(t *testing.T) {
 	ConfirmValuesAt := func(s I8Slice, i []int, r I8Slice) {
 		if x := s.ValuesAt(i...); !r.Equal(x) {

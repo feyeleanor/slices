@@ -694,19 +694,6 @@ func TestUSliceUniq(t *testing.T) {
 	ConfirmUniq(USlice{0, 1, 0, 3, 0, 5}, USlice{0, 1, 3, 5})
 }
 
-func TestUSliceShuffle(t *testing.T) {
-	ConfirmShuffle := func(s, r USlice) {
-		if s.Shuffle(); s.Equal(r) {
-			t.Fatalf("%v.Shuffle() should change order of elements", s)
-		}
-		if s.Sort(); !s.Equal(r) {
-			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
-		}
-	}
-
-	ConfirmShuffle(USlice{0, 1, 2, 3, 4, 5}, USlice{0, 1, 2, 3, 4, 5})
-}
-
 func TestUSliceValuesAt(t *testing.T) {
 	ConfirmValuesAt := func(s USlice, i []int, r USlice) {
 		if x := s.ValuesAt(i...); !r.Equal(x) {

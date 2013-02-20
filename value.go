@@ -2,7 +2,6 @@ package slices
 
 import (
 	"fmt"
-	"math/rand"
 	"reflect"
 )
 
@@ -776,13 +775,6 @@ func (s *VSlice) Uniq() {
 			}
 		}
 		*s = a[:p]
-	}
-}
-
-func (s VSlice) Shuffle() {
-	l := s.Len() - 1
-	for i := 0; i < s.Len(); i++ {
-		s.Swap(i, i + rand.Intn(l - i))
 	}
 }
 
