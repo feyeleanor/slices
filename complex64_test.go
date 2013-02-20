@@ -713,3 +713,26 @@ func TestC64SliceInsert(t *testing.T) {
 	ConfirmInsert(C64Slice{0, 1, 2}, 2, C64Slice{3, 4}, C64Slice{0, 1, 3, 4, 2})
 	ConfirmInsert(C64Slice{0, 1, 2}, 3, C64Slice{3, 4}, C64Slice{0, 1, 2, 3, 4})
 }
+
+func TestC64SlicePop(t *testing.T) {
+	ConfirmPop := func(s C64Slice, x complex64, r C64Slice) {
+		switch v, ok := s.Pop(); {
+		case !ok:
+			t.Fatalf("%v.Pop() should succeed but failed", s)
+		case v != x:
+			t.Fatalf("%v.Pop() should yield %v but yielded %v", s, x, v)
+		case !r.Equal(s):
+			t.Fatalf("%v.Pop() should leave %v", s, r)
+		}
+	}
+
+	RefutePop := func(s C64Slice) {
+		if v, ok := s.Pop(); ok {
+			t.Fatalf("%v.Pop() should fail but succeeded yielding %v", s, v)
+		}
+	}
+
+	RefutePop(C64Slice{})
+	ConfirmPop(C64Slice{0}, 0, C64Slice{})
+	ConfirmPop(C64Slice{0, 1}, 1, C64Slice{0})
+}

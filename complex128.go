@@ -641,3 +641,12 @@ func (s *C128Slice) Insert(i int, v interface{}) {
 	default:				panic(v)
 	}
 }
+
+func (s *C128Slice) Pop() (r complex128, ok bool) {
+	if end := s.Len() - 1; end > -1 {
+		r = (*s)[end]
+		*s = (*s)[:end]
+		ok = true
+	}
+	return
+}

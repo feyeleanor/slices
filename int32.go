@@ -676,3 +676,12 @@ func (s *I32Slice) Insert(i int, v interface{}) {
 	default:				panic(v)
 	}
 }
+
+func (s *I32Slice) Pop() (r int32, ok bool) {
+	if end := s.Len() - 1; end > -1 {
+		r = (*s)[end]
+		*s = (*s)[:end]
+		ok = true
+	}
+	return
+}

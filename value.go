@@ -23,6 +23,11 @@ func safeInterface(v reflect.Value) (r interface{}) {
 	return
 }
 
+func (s VSlice) release_reference(i int) {
+	var zero reflect.Value
+	s[i] = zero
+}
+
 func (s VSlice) Len() int							{ return len(s) }
 func (s VSlice) Cap() int							{ return cap(s) }
 func (s VSlice) At(i int) interface{}				{ return safeInterface(s[i]) }
@@ -44,9 +49,10 @@ func (s *VSlice) Cut(i, j int) {
 	if j > i {
 		if m := n - (j - i); m > 0 && m <= n {
 			copy(a[i:m], a[j:n])
-			var zero reflect.Value
+//			var zero reflect.Value
 			for k := m; k < n; k++ {
-				a[k] = zero
+				a.release_reference(k)
+//				a[k] = zero
 			}
 			*s = a[:m]
 		}
@@ -64,9 +70,10 @@ func (s *VSlice) Trim(i, j int) {
 	}
 	if j > i {
 		copy(a, a[i:j])
-		var zero reflect.Value
+//		var zero reflect.Value
 		for k, base := n - 1, i + 1; k > base; k-- {
-			a[k] = zero
+//			a[k] = zero
+			a.release_reference(k)
 		}
 		*s = a[:j - i]
 	}
@@ -77,8 +84,9 @@ func (s *VSlice) Delete(i int) {
 	n := len(a)
 	if i > -1 && i < n {
 		copy(a[i:n - 1], a[i + 1:n])
-		var zero reflect.Value
-		a[n - 1] = zero
+//		var zero reflect.Value
+//		a[n - 1] = zero
+		a.release_reference(n - 1)
 		*s = a[:n - 1]
 	}
 }
@@ -811,4 +819,16 @@ func (s *VSlice) Insert(i int, v interface{}) {
 							copy(n[i + 1:], (*s)[i:])
 							*s = n
 	}
+}
+
+func (s *VSlice) Pop() (r interface{}, ok bool) {
+	if end := s.Len() - 1; end > -1 {
+		r = (*s)[end]
+//		var zero reflect.Value
+//		s[end] = zero
+		s.release_reference(end)
+		*s = (*s)[:end]
+		ok = true
+	}
+	return
 }

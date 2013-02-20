@@ -8,6 +8,11 @@ import (
 
 type Slice	[]interface{}
 
+func (s Slice) release_reference(i int) {
+	var zero interface{}
+	s[i] = zero
+}
+
 func (s Slice) Len() int					{ return len(s) }
 func (s Slice) Cap() int					{ return cap(s) }
 func (s Slice) At(i int) interface{}		{ return s[i] }
@@ -28,9 +33,10 @@ func (s *Slice) Cut(i, j int) {
 	if j > i {
 		if m := n - (j - i); m > 0 && m <= n {
 			copy(a[i:m], a[j:n])
-			var zero interface{}
+//			var zero interface{}
 			for k := m; k < n; k++ {
-				a[k] = zero
+//				a[k] = zero
+				a.release_reference(k)
 			}
 			*s = a[:m]
 		}
@@ -48,9 +54,10 @@ func (s *Slice) Trim(i, j int) {
 	}
 	if j > i {
 		copy(a, a[i:j])
-		var zero interface{}
+//		var zero interface{}
 		for k, base := n - 1, i + 1; k > base; k-- {
-			a[k] = zero
+//			a[k] = zero
+			a.release_reference(k)
 		}
 		*s = a[:j - i]
 	}
@@ -61,8 +68,9 @@ func (s *Slice) Delete(i int) {
 	n := len(a)
 	if i > -1 && i < n {
 		copy(a[i:n - 1], a[i + 1:n])
-		var zero interface{}
-		a[n - 1] = zero
+//		var zero interface{}
+//		a[n - 1] = zero
+		a.release_reference(n - 1)
 		*s = a[:n - 1]
 	}
 }
@@ -613,4 +621,13 @@ func (s *Slice) Insert(i int, v interface{}) {
 							copy(n[i + 1:], (*s)[i:])
 							*s = n
 	}
+}
+
+func (s *Slice) Pop() (r interface{}, ok bool) {
+	if end := s.Len() - 1; end > -1 {
+		r = (*s)[end]
+		*s = (*s)[:end]
+		ok = true
+	}
+	return
 }

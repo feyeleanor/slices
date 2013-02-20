@@ -677,3 +677,12 @@ func (s *I8Slice) Insert(i int, v interface{}) {
 	default:				panic(v)
 	}
 }
+
+func (s *I8Slice) Pop() (r int8, ok bool) {
+	if end := s.Len() - 1; end > -1 {
+		r = (*s)[end]
+		*s = (*s)[:end]
+		ok = true
+	}
+	return
+}

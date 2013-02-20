@@ -846,3 +846,12 @@ func (s *RSlice) Insert(i int, v interface{}) {
 	default:				s.Insert(i, reflect.ValueOf(v))
 	}
 }
+
+func (s *RSlice) Pop() (r interface{}, ok bool) {
+	if end := s.Len() - 1; end > -1 {
+		r = s.At(end)
+		s.SetLen(end)
+		ok = true
+	}
+	return
+}
