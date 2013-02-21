@@ -1,9 +1,6 @@
 package slices
 
-import (
-	"sort"
-	"testing"
-)
+import "testing"
 
 func TestPrepend(t *testing.T) {
 	ConfirmPrepend := func(c C128Slice, v interface{}, r Equatable) {
@@ -34,12 +31,45 @@ func TestAppend(t *testing.T) {
 
 }
 
+func TestClearAll(t *testing.T) {
+	ConfirmClearAll := func(s, r interface{}) {
+		if !ClearAll(s) {
+			t.Fatalf("ClearAll(%v) is not Wipeable", s)
+		}
+		if !Equal(s, r) {
+			t.Fatalf("ClearAll(%v) should be %v", s, r)
+		}
+	}
+
+	ConfirmClearAll(C64Slice{0, 1, 2, 3, 4, 5}, C64Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(C128Slice{0, 1, 2, 3, 4, 5}, C128Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(F64Slice{0, 1, 2, 3, 4, 5}, F64Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(F64Slice{0, 1, 2, 3, 4, 5}, F64Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(ISlice{0, 1, 2, 3, 4, 5}, ISlice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(I8Slice{0, 1, 2, 3, 4, 5}, I8Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(I16Slice{0, 1, 2, 3, 4, 5}, I16Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(I32Slice{0, 1, 2, 3, 4, 5}, I32Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(I64Slice{0, 1, 2, 3, 4, 5}, I64Slice{0, 0, 0, 0, 0, 0})
+
+	ConfirmClearAll(SSlice{"A", "B", "A", "B", "A"}, SSlice{"", "", "", "", ""})
+	ConfirmClearAll(USlice{0, 1, 2, 3, 4, 5}, USlice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(U8Slice{0, 1, 2, 3, 4, 5}, U8Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(U16Slice{0, 1, 2, 3, 4, 5}, U16Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(U32Slice{0, 1, 2, 3, 4, 5}, U32Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(U64Slice{0, 1, 2, 3, 4, 5}, U64Slice{0, 0, 0, 0, 0, 0})
+	ConfirmClearAll(ASlice{0, 1, 2, 3, 4, 5}, ASlice{0, 0, 0, 0, 0, 0})
+
+	ConfirmClearAll(RList(0, 1, 2, 3, 4, 5), RList(nil, nil, nil, nil, nil, nil))
+	ConfirmClearAll(Slice{0, 1, 2, 3, 4, 5}, Slice{nil, nil, nil, nil, nil, nil})
+	ConfirmClearAll(VList(0, 1, 2, 3, 4, 5), VList(nil, nil, nil, nil, nil, nil))
+}
+
 func TestShuffle(t *testing.T) {
 	ConfirmShuffle := func(s, r interface{}) {
 		if Shuffle(s.(Deck)); Equal(s, r) {
 			t.Fatalf("Shuffle(%v) should change order of elements", s)
 		}
-		if sort.Sort(s.(sort.Interface)); !Equal(s, r) {
+		if Sort(s); !Equal(s, r) {
 			t.Fatalf("Shuffle() when sorted should be %v but is %v", r, s)
 		}
 	}

@@ -44,6 +44,11 @@ type Deck interface {
 	Swap(i, j int)
 }
 
+type Wipeable interface {
+	Len() int
+	BlockClear(int, int)
+}
+
 var(
 	NESTED = reflect.TypeOf((*Nested)(nil)).Elem()
 	FLATTENABLE = reflect.TypeOf((*Flattenable)(nil)).Elem()
@@ -78,6 +83,14 @@ func Shuffle(d Deck) {
 			d.Swap(i, v)
 		}
 	}
+}
+
+func ClearAll(i interface{}) (r bool) {
+	if i, ok := i.(Wipeable); ok {
+		i.BlockClear(0, i.Len())
+		r = true
+	}
+	return
 }
 
 func Equal(e, o interface{}) (r bool) {
