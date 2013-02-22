@@ -685,17 +685,17 @@ func TestISliceUniq(t *testing.T) {
 	ConfirmUniq(ISlice{0, 1, 0, 3, 0, 5}, ISlice{0, 1, 3, 5})
 }
 
-func TestISliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s ISlice, i []int, r ISlice) {
-		if x := s.ValuesAt(i...); !r.Equal(x) {
-			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+func TestISlicePick(t *testing.T) {
+	ConfirmPick := func(s ISlice, i []int, r ISlice) {
+		if x := s.Pick(i...); !r.Equal(x) {
+			t.Fatalf("%v.Pick(%v) should be %v but is %v", s, i, r, x)
 		}
 	}
 
-	ConfirmValuesAt(ISlice{0, 1, 2, 3, 4, 5}, []int{}, ISlice{})
-	ConfirmValuesAt(ISlice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, ISlice{0, 1})
-	ConfirmValuesAt(ISlice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, ISlice{0, 3})
-	ConfirmValuesAt(ISlice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, ISlice{0, 3, 4, 3})
+	ConfirmPick(ISlice{0, 1, 2, 3, 4, 5}, []int{}, ISlice{})
+	ConfirmPick(ISlice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, ISlice{0, 1})
+	ConfirmPick(ISlice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, ISlice{0, 3})
+	ConfirmPick(ISlice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, ISlice{0, 3, 4, 3})
 }
 
 func TestISliceInsert(t *testing.T) {

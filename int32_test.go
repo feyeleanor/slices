@@ -689,17 +689,17 @@ func TestI32SliceUniq(t *testing.T) {
 	ConfirmUniq(I32Slice{0, 1, 0, 3, 0, 5}, I32Slice{0, 1, 3, 5})
 }
 
-func TestI32SliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s I32Slice, i []int, r I32Slice) {
-		if x := s.ValuesAt(i...); !r.Equal(x) {
-			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+func TestI32SlicePick(t *testing.T) {
+	ConfirmPick := func(s I32Slice, i []int, r I32Slice) {
+		if x := s.Pick(i...); !r.Equal(x) {
+			t.Fatalf("%v.Pick(%v) should be %v but is %v", s, i, r, x)
 		}
 	}
 
-	ConfirmValuesAt(I32Slice{0, 1, 2, 3, 4, 5}, []int{}, I32Slice{})
-	ConfirmValuesAt(I32Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, I32Slice{0, 1})
-	ConfirmValuesAt(I32Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, I32Slice{0, 3})
-	ConfirmValuesAt(I32Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, I32Slice{0, 3, 4, 3})
+	ConfirmPick(I32Slice{0, 1, 2, 3, 4, 5}, []int{}, I32Slice{})
+	ConfirmPick(I32Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, I32Slice{0, 1})
+	ConfirmPick(I32Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, I32Slice{0, 3})
+	ConfirmPick(I32Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, I32Slice{0, 3, 4, 3})
 }
 
 func TestI32SliceInsert(t *testing.T) {

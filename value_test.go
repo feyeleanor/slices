@@ -18,7 +18,7 @@ func TestVSliceVSlice(t *testing.T) {
 
 	for i := 0; i < g.Len(); i++ {
 		if g.At(i) != i {
-			t.Fatalf("g[%v] should contain %v but contains %v", 0, g.At(0))
+			t.Fatalf("g[%v] should contain %v but contains %v", i, g.At(i))
 		}
 	}
 }
@@ -769,17 +769,17 @@ func TestVSliceUniq(t *testing.T) {
 	ConfirmUniq(VList(0, 1, 0, 3, 0, 5), VList(0, 1, 3, 5))
 }
 
-func TestVSliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s VSlice, i []int, r VSlice) {
-		if x := s.ValuesAt(i...); !r.Equal(x) {
-			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+func TestVSlicePick(t *testing.T) {
+	ConfirmPick := func(s VSlice, i []int, r VSlice) {
+		if x := s.Pick(i...); !r.Equal(x) {
+			t.Fatalf("%v.Pick(%v) should be %v but is %v", s, i, r, x)
 		}
 	}
 
-	ConfirmValuesAt(VList(0, 1, 2, 3, 4, 5), []int{}, VList())
-	ConfirmValuesAt(VList(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, VList(0, 1))
-	ConfirmValuesAt(VList(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, VList(0, 3))
-	ConfirmValuesAt(VList(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, VList(0, 3, 4, 3))
+	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{}, VList())
+	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, VList(0, 1))
+	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, VList(0, 3))
+	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, VList(0, 3, 4, 3))
 }
 
 func TestVSliceInsert(t *testing.T) {

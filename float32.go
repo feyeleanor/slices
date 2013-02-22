@@ -627,7 +627,7 @@ func (s *F32Slice) Uniq() {
 	}
 }
 
-func (s F32Slice) ValuesAt(n ...int) interface{} {
+func (s F32Slice) Pick(n ...int) interface{} {
 	r := make(F32Slice, 0, len(n))
 	for _, v := range n {
 		r = append(r, s[v])

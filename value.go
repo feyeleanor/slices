@@ -778,7 +778,7 @@ func (s *VSlice) Uniq() {
 	}
 }
 
-func (s VSlice) ValuesAt(n ...int) (r VSlice) {
+func (s VSlice) Pick(n ...int) (r VSlice) {
 	r = make(VSlice, 0, len(n))
 	for _, v := range n {
 		r = append(r, s[v])

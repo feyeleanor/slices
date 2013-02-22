@@ -765,17 +765,17 @@ func TestRSliceUniq(t *testing.T) {
 	ConfirmUniq(RList(0, 1, 0, 3, 0, 5), RList(0, 1, 3, 5))
 }
 
-func TestRSliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s RSlice, i []int, r RSlice) {
-		if x := s.ValuesAt(i...); !r.Equal(x) {
-			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+func TestRSlicePick(t *testing.T) {
+	ConfirmPick := func(s RSlice, i []int, r RSlice) {
+		if x := s.Pick(i...); !r.Equal(x) {
+			t.Fatalf("%v.Pick(%v) should be %v but is %v", s, i, r, x)
 		}
 	}
 
-	ConfirmValuesAt(RList(0, 1, 2, 3, 4, 5), []int{}, RList())
-	ConfirmValuesAt(RList(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, RList(0, 1))
-	ConfirmValuesAt(RList(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, RList(0, 3))
-	ConfirmValuesAt(RList(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, RList(0, 3, 4, 3))
+	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{}, RList())
+	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, RList(0, 1))
+	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, RList(0, 3))
+	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, RList(0, 3, 4, 3))
 }
 
 func TestRSliceInsert(t *testing.T) {

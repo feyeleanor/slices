@@ -633,7 +633,7 @@ func (s *U64Slice) Uniq() {
 	}
 }
 
-func (s U64Slice) ValuesAt(n ...int) interface{} {
+func (s U64Slice) Pick(n ...int) interface{} {
 	r := make(U64Slice, 0, len(n))
 	for _, v := range n {
 		r = append(r, s[v])

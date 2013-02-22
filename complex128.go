@@ -599,7 +599,7 @@ func (s *C128Slice) Uniq() {
 	}
 }
 
-func (s C128Slice) ValuesAt(n ...int) interface{} {
+func (s C128Slice) Pick(n ...int) interface{} {
 	r := make(C128Slice, 0, len(n))
 	for _, v := range n {
 		r = append(r, s[v])

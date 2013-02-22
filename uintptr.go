@@ -631,7 +631,7 @@ func (s *ASlice) Uniq() {
 	}
 }
 
-func (s ASlice) ValuesAt(n ...int) interface{} {
+func (s ASlice) Pick(n ...int) interface{} {
 	r := make(ASlice, 0, len(n))
 	for _, v := range n {
 		r = append(r, s[v])

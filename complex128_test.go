@@ -612,17 +612,17 @@ func TestC128SliceUniq(t *testing.T) {
 	ConfirmUniq(C128Slice{0, 1, 0, 3, 0, 5}, C128Slice{0, 1, 3, 5})
 }
 
-func TestC128SliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s C128Slice, i []int, r C128Slice) {
-		if x := s.ValuesAt(i...); !r.Equal(x) {
-			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+func TestC128SlicePick(t *testing.T) {
+	ConfirmPick := func(s C128Slice, i []int, r C128Slice) {
+		if x := s.Pick(i...); !r.Equal(x) {
+			t.Fatalf("%v.Pick(%v) should be %v but is %v", s, i, r, x)
 		}
 	}
 
-	ConfirmValuesAt(C128Slice{0, 1, 2, 3, 4, 5}, []int{}, C128Slice{})
-	ConfirmValuesAt(C128Slice{0, 1, 2, 3, 4, 5}, []int{0, 1}, C128Slice{0, 1})
-	ConfirmValuesAt(C128Slice{0, 1, 2, 3, 4, 5}, []int{0, 3}, C128Slice{0, 3})
-	ConfirmValuesAt(C128Slice{0, 1, 2, 3, 4, 5}, []int{0, 3, 4, 3}, C128Slice{0, 3, 4, 3})
+	ConfirmPick(C128Slice{0, 1, 2, 3, 4, 5}, []int{}, C128Slice{})
+	ConfirmPick(C128Slice{0, 1, 2, 3, 4, 5}, []int{0, 1}, C128Slice{0, 1})
+	ConfirmPick(C128Slice{0, 1, 2, 3, 4, 5}, []int{0, 3}, C128Slice{0, 3})
+	ConfirmPick(C128Slice{0, 1, 2, 3, 4, 5}, []int{0, 3, 4, 3}, C128Slice{0, 3, 4, 3})
 }
 
 func TestC128SliceInsert(t *testing.T) {

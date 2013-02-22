@@ -809,7 +809,7 @@ func (s *RSlice) Uniq() {
 	}
 }
 
-func (s RSlice) ValuesAt(n ...int) interface{} {
+func (s RSlice) Pick(n ...int) interface{} {
 	r := s.MakeSlice(0, len(n))
 	for _, v := range n {
 		n := s.Index(v)

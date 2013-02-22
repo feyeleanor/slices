@@ -688,17 +688,17 @@ func TestU8SliceUniq(t *testing.T) {
 	ConfirmUniq(U8Slice{0, 1, 0, 3, 0, 5}, U8Slice{0, 1, 3, 5})
 }
 
-func TestU8SliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s U8Slice, i []int, r U8Slice) {
-		if x := s.ValuesAt(i...); !r.Equal(x) {
-			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+func TestU8SlicePick(t *testing.T) {
+	ConfirmPick := func(s U8Slice, i []int, r U8Slice) {
+		if x := s.Pick(i...); !r.Equal(x) {
+			t.Fatalf("%v.Pick(%v) should be %v but is %v", s, i, r, x)
 		}
 	}
 
-	ConfirmValuesAt(U8Slice{0, 1, 2, 3, 4, 5}, []int{}, U8Slice{})
-	ConfirmValuesAt(U8Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, U8Slice{0, 1})
-	ConfirmValuesAt(U8Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, U8Slice{0, 3})
-	ConfirmValuesAt(U8Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, U8Slice{0, 3, 4, 3})
+	ConfirmPick(U8Slice{0, 1, 2, 3, 4, 5}, []int{}, U8Slice{})
+	ConfirmPick(U8Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, U8Slice{0, 1})
+	ConfirmPick(U8Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, U8Slice{0, 3})
+	ConfirmPick(U8Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, U8Slice{0, 3, 4, 3})
 }
 
 func TestU8SliceInsert(t *testing.T) {

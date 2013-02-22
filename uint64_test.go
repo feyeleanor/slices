@@ -688,17 +688,17 @@ func TestU64SliceUniq(t *testing.T) {
 	ConfirmUniq(U64Slice{0, 1, 0, 3, 0, 5}, U64Slice{0, 1, 3, 5})
 }
 
-func TestU64SliceValuesAt(t *testing.T) {
-	ConfirmValuesAt := func(s U64Slice, i []int, r U64Slice) {
-		if x := s.ValuesAt(i...); !r.Equal(x) {
-			t.Fatalf("%v.ValuesAt(%v) should be %v but is %v", s, i, r, x)
+func TestU64SlicePick(t *testing.T) {
+	ConfirmPick := func(s U64Slice, i []int, r U64Slice) {
+		if x := s.Pick(i...); !r.Equal(x) {
+			t.Fatalf("%v.Pick(%v) should be %v but is %v", s, i, r, x)
 		}
 	}
 
-	ConfirmValuesAt(U64Slice{0, 1, 2, 3, 4, 5}, []int{}, U64Slice{})
-	ConfirmValuesAt(U64Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, U64Slice{0, 1})
-	ConfirmValuesAt(U64Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, U64Slice{0, 3})
-	ConfirmValuesAt(U64Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, U64Slice{0, 3, 4, 3})
+	ConfirmPick(U64Slice{0, 1, 2, 3, 4, 5}, []int{}, U64Slice{})
+	ConfirmPick(U64Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 1 }, U64Slice{0, 1})
+	ConfirmPick(U64Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3 }, U64Slice{0, 3})
+	ConfirmPick(U64Slice{0, 1, 2, 3, 4, 5}, []int{ 0, 3, 4, 3 }, U64Slice{0, 3, 4, 3})
 }
 
 func TestU64SliceInsert(t *testing.T) {
