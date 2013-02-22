@@ -384,12 +384,16 @@ func TestSSliceDepth(t *testing.T) {
 }
 
 func TestSSliceReverse(t *testing.T) {
-	sxp := SSlice{"A", "B", "C", "D", "E", "F"}
-	rxp := SSlice{"F", "E", "D", "C", "B", "A"}
-	sxp.Reverse()
-	if !rxp.Equal(sxp) {
-		t.Fatalf("Reversal failed: %v", sxp)
+	ConfirmReverse := func(s, r SSlice) {
+		if s.Reverse(); !Equal(s, r) {
+			t.Fatalf("Reverse() should be %v but is %v", r, s)
+		}
 	}
+	ConfirmReverse(SSlice{}, SSlice{})
+	ConfirmReverse(SSlice{"A"}, SSlice{"A"})
+	ConfirmReverse(SSlice{"A", "B"}, SSlice{"B", "A"})
+	ConfirmReverse(SSlice{"A", "B", "C"}, SSlice{"C", "B", "A"})
+	ConfirmReverse(SSlice{"A", "B", "C", "D"}, SSlice{"D", "C", "B", "A"})
 }
 
 func TestSSliceAppend(t *testing.T) {

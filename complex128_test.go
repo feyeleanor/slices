@@ -360,12 +360,16 @@ func TestC128SliceExpand(t *testing.T) {
 }
 
 func TestC128SliceReverse(t *testing.T) {
-	sxp := C128Slice{1, 2, 3, 4, 5}
-	rxp := C128Slice{5, 4, 3, 2, 1}
-	sxp.Reverse()
-	if !rxp.Equal(sxp) {
-		t.Fatalf("Reversal failed: %v", sxp)
+	ConfirmReverse := func(s, r C128Slice) {
+		if s.Reverse(); !Equal(s, r) {
+			t.Fatalf("Reverse() should be %v but is %v", r, s)
+		}
 	}
+	ConfirmReverse(C128Slice{}, C128Slice{})
+	ConfirmReverse(C128Slice{1}, C128Slice{1})
+	ConfirmReverse(C128Slice{1, 2}, C128Slice{2, 1})
+	ConfirmReverse(C128Slice{1, 2, 3}, C128Slice{3, 2, 1})
+	ConfirmReverse(C128Slice{1, 2, 3, 4}, C128Slice{4, 3, 2, 1})
 }
 
 func TestC128SliceCar(t *testing.T) {

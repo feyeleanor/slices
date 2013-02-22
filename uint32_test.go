@@ -392,12 +392,16 @@ func TestU32SliceDepth(t *testing.T) {
 }
 
 func TestU32SliceReverse(t *testing.T) {
-	sxp := U32Slice{1, 2, 3, 4, 5}
-	rxp := U32Slice{5, 4, 3, 2, 1}
-	sxp.Reverse()
-	if !rxp.Equal(sxp) {
-		t.Fatalf("Reversal failed: %v", sxp)
+	ConfirmReverse := func(s, r U32Slice) {
+		if s.Reverse(); !Equal(s, r) {
+			t.Fatalf("Reverse() should be %v but is %v", r, s)
+		}
 	}
+	ConfirmReverse(U32Slice{}, U32Slice{})
+	ConfirmReverse(U32Slice{1}, U32Slice{1})
+	ConfirmReverse(U32Slice{1, 2}, U32Slice{2, 1})
+	ConfirmReverse(U32Slice{1, 2, 3}, U32Slice{3, 2, 1})
+	ConfirmReverse(U32Slice{1, 2, 3, 4}, U32Slice{4, 3, 2, 1})
 }
 
 func TestU32SliceAppend(t *testing.T) {

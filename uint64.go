@@ -300,7 +300,7 @@ func (s *U64Slice) Expand(i, n int) {
 }
 
 func (s U64Slice) Reverse() {
-	end := s.Len() - 1
+	end := len(s) - 1
 	for i := 0; i < end; i++ {
 		s[i], s[end] = s[end], s[i]
 		end--

@@ -392,12 +392,16 @@ func TestASliceDepth(t *testing.T) {
 }
 
 func TestASliceReverse(t *testing.T) {
-	sxp := ASlice{1, 2, 3, 4, 5}
-	rxp := ASlice{5, 4, 3, 2, 1}
-	sxp.Reverse()
-	if !rxp.Equal(sxp) {
-		t.Fatalf("Reversal failed: %v", sxp)
+	ConfirmReverse := func(s, r ASlice) {
+		if s.Reverse(); !Equal(s, r) {
+			t.Fatalf("Reverse() should be %v but is %v", r, s)
+		}
 	}
+	ConfirmReverse(ASlice{}, ASlice{})
+	ConfirmReverse(ASlice{1}, ASlice{1})
+	ConfirmReverse(ASlice{1, 2}, ASlice{2, 1})
+	ConfirmReverse(ASlice{1, 2, 3}, ASlice{3, 2, 1})
+	ConfirmReverse(ASlice{1, 2, 3, 4}, ASlice{4, 3, 2, 1})
 }
 
 func TestASliceAppend(t *testing.T) {

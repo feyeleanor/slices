@@ -435,13 +435,15 @@ func TestVSliceDepth(t *testing.T) {
 
 func TestVSliceReverse(t *testing.T) {
 	ConfirmReverse := func(s, r VSlice) {
-		if s.Reverse(); !r.Equal(s) {
+		if s.Reverse(); !Equal(s, r) {
 			t.Fatalf("Reverse() should be %v but is %v", r, s)
 		}
 	}
-
-	ConfirmReverse(VList(1, 2, 3, 4, 5), VList(5, 4, 3, 2, 1))
-	ConfirmReverse(VList(1, 3, 2, 5, 4), VList(4, 5, 2, 3, 1))
+	ConfirmReverse(VList(), VList())
+	ConfirmReverse(VList(1), VList(1))
+	ConfirmReverse(VList(1, 2), VList(2, 1))
+	ConfirmReverse(VList(1, 2, 3), VList(3, 2, 1))
+	ConfirmReverse(VList(1, 2, 3, 4), VList(4, 3, 2, 1))
 }
 
 func TestVSliceAppend(t *testing.T) {

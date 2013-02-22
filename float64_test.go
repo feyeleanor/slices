@@ -392,12 +392,16 @@ func TestF64SliceDepth(t *testing.T) {
 }
 
 func TestF64SliceReverse(t *testing.T) {
-	sxp := F64Slice{1, 2, 3, 4, 5}
-	rxp := F64Slice{5, 4, 3, 2, 1}
-	sxp.Reverse()
-	if !rxp.Equal(sxp) {
-		t.Fatalf("Reversal failed: %v", sxp)
+	ConfirmReverse := func(s, r F64Slice) {
+		if s.Reverse(); !Equal(s, r) {
+			t.Fatalf("Reverse() should be %v but is %v", r, s)
+		}
 	}
+	ConfirmReverse(F64Slice{}, F64Slice{})
+	ConfirmReverse(F64Slice{1}, F64Slice{1})
+	ConfirmReverse(F64Slice{1, 2}, F64Slice{2, 1})
+	ConfirmReverse(F64Slice{1, 2, 3}, F64Slice{3, 2, 1})
+	ConfirmReverse(F64Slice{1, 2, 3, 4}, F64Slice{4, 3, 2, 1})
 }
 
 func TestF64SliceAppend(t *testing.T) {

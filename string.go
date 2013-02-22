@@ -275,7 +275,7 @@ func (s *SSlice) Expand(i, n int) {
 }
 
 func (s SSlice) Reverse() {
-	end := s.Len() - 1
+	end := len(s) - 1
 	for i := 0; i < end; i++ {
 		s[i], s[end] = s[end], s[i]
 		end--
