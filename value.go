@@ -225,7 +225,9 @@ func (s VSlice) BlockCopy(destination, source, count int) {
 }
 
 func (s VSlice) BlockClear(start, count int) {
-	copy(s[start:], make(VSlice, count, count))
+	if start > -1 && start < len(s) {
+		copy(s[start:], make(VSlice, count, count))
+	}
 }
 
 func (s VSlice) Overwrite(offset int, source interface{}) {

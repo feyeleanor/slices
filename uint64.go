@@ -252,7 +252,9 @@ func (s U64Slice) BlockCopy(destination, source, count int) {
 }
 
 func (s U64Slice) BlockClear(start, count int) {
-	copy(s[start:], make(U64Slice, count, count))
+	if start > -1 && start < len(s) {
+		copy(s[start:], make(U64Slice, count, count))
+	}
 }
 
 func (s U64Slice) Overwrite(offset int, container interface{}) {

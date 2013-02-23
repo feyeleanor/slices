@@ -246,7 +246,9 @@ func (s C128Slice) BlockCopy(destination, source, count int) {
 }
 
 func (s C128Slice) BlockClear(start, count int) {
-	copy(s[start:], make(C128Slice, count, count))
+	if start > -1 && start < len(s) {
+		copy(s[start:], make(C128Slice, count, count))
+	}
 }
 
 func (s C128Slice) Overwrite(offset int, container interface{}) {

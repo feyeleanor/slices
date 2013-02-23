@@ -253,7 +253,9 @@ func (s ISlice) BlockCopy(destination, source, count int) {
 }
 
 func (s ISlice) BlockClear(start, count int) {
-	copy(s[start:], make(ISlice, count, count))
+	if start > -1 && start < len(s) {
+		copy(s[start:], make(ISlice, count, count))
+	}
 }
 
 func (s ISlice) Overwrite(offset int, container interface{}) {
