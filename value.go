@@ -22,9 +22,12 @@ func safeInterface(v reflect.Value) (r interface{}) {
 	return
 }
 
-func (s VSlice) release_reference(i int) {
+func (s VSlice) release_references(i, n int) {
 	var zero reflect.Value
-	s[i] = zero
+	for ; n > 0; n-- {
+		s[i] = zero
+		i++
+	}
 }
 
 func (s VSlice) Len() int							{ return len(s) }
@@ -38,43 +41,36 @@ func (s *VSlice) RestrictTo(i, j int)				{ *s = (*s)[i:j] }
 
 func (s *VSlice) Cut(i, j int) {
 	a := *s
-	n := len(a)
+	l := len(a)
 	if i < 0 {
 		i = 0
 	}
-	if j > n {
-		j = n
+	if j > l {
+		j = l
 	}
 	if j > i {
-		if m := n - (j - i); m > 0 && m <= n {
-			copy(a[i:m], a[j:n])
-//			var zero reflect.Value
-			for k := m; k < n; k++ {
-				a.release_reference(k)
-//				a[k] = zero
-			}
-			*s = a[:m]
-		}
+		n := j - i
+		l -= n
+		copy(a[i:], a[j:])
+		a.release_references(l, n)
+		*s = a[:l]
 	}
 }
 
 func (s *VSlice) Trim(i, j int) {
 	a := *s
-	n := len(a)
+	l := len(a)
 	if i < 0 {
 		i = 0
 	}
-	if j > n {
-		j = n
+	if j > l {
+		j = l
 	}
 	if j > i {
 		copy(a, a[i:j])
-//		var zero reflect.Value
-		for k, base := n - 1, i + 1; k > base; k-- {
-//			a[k] = zero
-			a.release_reference(k)
-		}
-		*s = a[:j - i]
+		n := j - i
+		a.release_references(n, l - n)
+		*s = a[:n]
 	}
 }
 
@@ -83,9 +79,7 @@ func (s *VSlice) Delete(i int) {
 	n := len(a)
 	if i > -1 && i < n {
 		copy(a[i:n - 1], a[i + 1:n])
-//		var zero reflect.Value
-//		a[n - 1] = zero
-		a.release_reference(n - 1)
+		a.release_references(n - 1, 1)
 		*s = a[:n - 1]
 	}
 }
@@ -124,6 +118,7 @@ func (s *VSlice) DeleteIf(f interface{}) {
 	default:						s.DeleteIf(reflect.ValueOf(f))
 									return
 	}
+	s.release_references(p, len(a) - p)
 	*s = a[:p]
 }
 
@@ -659,6 +654,7 @@ func (s *VSlice) KeepIf(f interface{}) {
 										}
 									}
 	}
+	s.release_references(p, len(a) - p)
 	*s = a[:p]
 }
 
@@ -816,9 +812,7 @@ func (s *VSlice) Insert(i int, v interface{}) {
 func (s *VSlice) Pop() (r interface{}, ok bool) {
 	if end := s.Len() - 1; end > -1 {
 		r = (*s)[end]
-//		var zero reflect.Value
-//		s[end] = zero
-		s.release_reference(end)
+		s.release_references(end, 1)
 		*s = (*s)[:end]
 		ok = true
 	}

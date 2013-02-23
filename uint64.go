@@ -69,10 +69,9 @@ func (s *U64Slice) Cut(i, j int) {
 		j = l
 	}
 	if j > i {
-		if m := l - (j - i); m > 0 && l > m {
-			copy(a[i:m], a[j:l])
-			*s = a[:m]
-		}
+		l -= j - i
+		copy(a[i:], a[j:])
+		*s = a[:l]
 	}
 }
 

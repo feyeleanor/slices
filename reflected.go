@@ -50,6 +50,14 @@ func (s *RSlice) setValue(v reflect.Value) {
 	s.Value.Set(v)
 }
 
+func (s RSlice) release_references(i, n int) {
+	zero := reflect.Zero(s.Type().Elem())
+	for ; n > 0; n-- {
+		s.Index(i).Set(zero)
+		i++
+	}
+}
+
 func (s *RSlice) SetValue(i interface{})			{ s.setValue(reflect.ValueOf(i)) }
 func (s *RSlice) At(i int) interface{}				{ return s.Index(i).Interface() }
 func (s *RSlice) Set(i int, value interface{})		{ s.Index(i).Set(reflect.ValueOf(value)) }
@@ -75,32 +83,29 @@ func (s *RSlice) Cut(i, j int) {
 		j = l
 	}
 	if j > i {
-		if m := l - (j - i); m > 0 && l > m {
-			reflect.Copy(s.Slice(i, m), s.Slice(j, l))
-			for k := m; k < l; k++ {
-				s.Clear(k)
-			}
-			s.MakeAddressable()
-			s.SetLen(m)
-		}
+		n := j - i
+		m := l - n
+		reflect.Copy(s.Slice(i, m), s.Slice(j, l))
+		s.release_references(m, n)
+		s.MakeAddressable()
+		s.SetLen(m)
 	}
 }
 
 func (s *RSlice) Trim(i, j int) {
-	n := s.Len()
+	l := s.Len()
 	if i < 0 {
 		i = 0
 	}
-	if j > n {
-		j = n
+	if j > l {
+		j = l
 	}
 	if j > i {
 		reflect.Copy(*s.Value, s.Slice(i, j))
-		for k, base := n - 1, i + 1; k > base; k-- {
-			s.Clear(k)
-		}
+		n := j - i
+		s.release_references(n, l - n)
 		s.MakeAddressable()
-		s.SetLen(j - i)
+		s.SetLen(n)
 	}
 }
 
@@ -169,6 +174,7 @@ func (s *RSlice) DeleteIf(f interface{}) {
 									return
 	}
 	s.MakeAddressable()
+	s.release_references(p, s.Len() - p)
 	s.SetLen(p)
 }
 
@@ -693,6 +699,7 @@ func (s *RSlice) KeepIf(f interface{}) {
 									}
 	}
 	s.MakeAddressable()
+	s.release_references(p, s.Len() - p)
 	s.SetLen(p)
 }
 
@@ -842,6 +849,7 @@ func (s *RSlice) Insert(i int, v interface{}) {
 func (s *RSlice) Pop() (r interface{}, ok bool) {
 	if end := s.Len() - 1; end > -1 {
 		r = s.At(end)
+		s.Clear(end)
 		s.SetLen(end)
 		ok = true
 	}
