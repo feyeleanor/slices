@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type SSlice	[]string
+type SSlice		[]string
 
 func (s SSlice) Len() int							{ return len(s) }
 func (s SSlice) Cap() int							{ return cap(s) }
@@ -16,6 +16,16 @@ func (s SSlice) Clear(i int)						{ s[i] = "" }
 func (s SSlice) Swap(i, j int)						{ s[i], s[j] = s[j], s[i] }
 
 func (s SSlice) Add(i, j int)						{ s[i] += s[j] }
+
+func (s SSlice) Sum() {
+	for _, v := range s[1:] {
+		s[0] += v
+	}
+}
+
+func (s SSlice) Join(separator string) {
+	strings.Join(([]string)(s), separator)
+}
 
 func (s SSlice) Less(i, j int) bool					{ return s[i] < s[j] }
 func (s SSlice) AtLeast(i, j int) bool				{ return s[i] <= s[j] }
@@ -194,13 +204,7 @@ func (s SSlice) Until(f interface{}) int {
 }
 
 func (s SSlice) String() (t string) {
-	for _, v := range s {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", v)
-	}
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(([]string)(s), " "))
 }
 
 func (s SSlice) BlockCopy(destination, source, count int) {

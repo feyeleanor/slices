@@ -1,8 +1,11 @@
 package slices
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-type USlice	[]uint
+type USlice		[]uint
 
 func (s USlice) Len() int							{ return len(s) }
 func (s USlice) Cap() int							{ return cap(s) }
@@ -21,6 +24,18 @@ func (s USlice) Subtract(i, j int)					{ s[i] -= s[j] }
 func (s USlice) Multiply(i, j int)					{ s[i] *= s[j] }
 func (s USlice) Divide(i, j int)					{ s[i] /= s[j] }
 func (s USlice) Remainder(i, j int)					{ s[i] %= s[j] }
+
+func (s USlice) Sum() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] += s[x]
+	}
+}
+
+func (s USlice) Product() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] *= s[x]
+	}
+}
 
 func (s USlice) And(i, j int)						{ s[i] &= s[j] }
 func (s USlice) Or(i, j int)						{ s[i] |= s[j] }
@@ -219,13 +234,11 @@ func (s USlice) Until(f interface{}) int {
 }
 
 func (s USlice) String() (t string) {
+	elements := []string{}
 	for _, v := range s {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", v)
+		elements = append(elements, fmt.Sprintf("%v", v))
 	}
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(elements, " "))
 }
 
 func (s USlice) BlockCopy(destination, source, count int) {

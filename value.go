@@ -3,6 +3,7 @@ package slices
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 func VList(n... interface{}) (s VSlice) {
@@ -13,7 +14,7 @@ func VList(n... interface{}) (s VSlice) {
 	return
 }
 
-type VSlice []reflect.Value
+type VSlice 	[]reflect.Value
 
 func safeInterface(v reflect.Value) (r interface{}) {
 	if v.IsValid() {
@@ -206,13 +207,11 @@ func (s VSlice) Until(f interface{}) int {
 }
 
 func (s VSlice) String() (t string) {
+	elements := []string{}
 	for _, v := range s {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", safeInterface(v))
+		elements = append(elements, fmt.Sprintf("%v", safeInterface(v)))
 	}
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(elements, " "))
 }
 
 func (s VSlice) BlockCopy(destination, source, count int) {

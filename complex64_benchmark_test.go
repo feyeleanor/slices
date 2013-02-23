@@ -191,6 +191,40 @@ func BenchmarkC64SliceDivide(b *testing.B) {
 	}
 }
 
+func BenchmarkC64Slice_sum(b *testing.B) {
+	sC64 := C64Slice{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    for i := 0; i < b.N; i++ {
+		var x complex64
+		for _, v := range sC64 {
+			x += v
+		}
+	}
+}
+
+func BenchmarkC64SliceSum(b *testing.B) {
+	sC64 := C64Slice{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    for i := 0; i < b.N; i++ {
+		sC64.Sum()
+	}
+}
+
+func BenchmarkC64Slice_product(b *testing.B) {
+	sC64 := C64Slice{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    for i := 0; i < b.N; i++ {
+		x := complex64(1)
+		for _, v := range sC64 {
+			x *= v
+		}
+	}
+}
+
+func BenchmarkC64SliceProduct(b *testing.B) {
+	sC64 := C64Slice{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    for i := 0; i < b.N; i++ {
+		sC64.Product()
+	}
+}
+
 func BenchmarkC64Slice_less(b *testing.B) {
 	sC64 := C64Slice{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
     for i := 0; i < b.N; i++ {

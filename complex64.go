@@ -1,6 +1,9 @@
 package slices
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type C64Slice	[]complex64
 
@@ -20,6 +23,18 @@ func (s C64Slice) Add(i, j int)						{ s[i] += s[j] }
 func (s C64Slice) Subtract(i, j int)				{ s[i] -= s[j] }
 func (s C64Slice) Multiply(i, j int)				{ s[i] *= s[j] }
 func (s C64Slice) Divide(i, j int)					{ s[i] /= s[j] }
+
+func (s C64Slice) Sum() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] += s[x]
+	}
+}
+
+func (s C64Slice) Product() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] *= s[x]
+	}
+}
 
 func (s C64Slice) Less(i, j int) bool				{ return real(s[i]) < real(s[j]) }
 func (s C64Slice) AtLeast(i, j int) bool			{ return real(s[i]) <= real(s[j]) }
@@ -213,13 +228,11 @@ func (s C64Slice) Until(f interface{}) int {
 }
 
 func (s C64Slice) String() (t string) {
+	elements := []string{}
 	for _, v := range s {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", v)
+		elements = append(elements, fmt.Sprintf("%v", v))
 	}
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(elements, " "))
 }
 
 func (s C64Slice) BlockCopy(destination, source, count int) {

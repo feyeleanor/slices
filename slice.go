@@ -3,9 +3,10 @@ package slices
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
-type Slice	[]interface{}
+type Slice		[]interface{}
 
 func (s Slice) release_references(i, n int) {
 	var zero interface{}
@@ -145,13 +146,11 @@ func (s Slice) Until(f interface{}) int {
 }
 
 func (s Slice) String() (t string) {
+	elements := []string{}
 	for _, v := range s {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", v)
+		elements = append(elements, fmt.Sprintf("%v", v))
 	}
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(elements, " "))
 }
 
 func (s Slice) BlockCopy(destination, source, count int) {

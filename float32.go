@@ -1,6 +1,9 @@
 package slices
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type F32Slice	[]float32
 
@@ -20,6 +23,18 @@ func (s F32Slice) Add(i, j int)						{ s[i] += s[j] }
 func (s F32Slice) Subtract(i, j int)				{ s[i] -= s[j] }
 func (s F32Slice) Multiply(i, j int)				{ s[i] *= s[j] }
 func (s F32Slice) Divide(i, j int)					{ s[i] /= s[j] }
+
+func (s F32Slice) Sum() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] += s[x]
+	}
+}
+
+func (s F32Slice) Product() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] *= s[x]
+	}
+}
 
 func (s F32Slice) Less(i, j int) bool				{ return s[i] < s[j] }
 func (s F32Slice) AtLeast(i, j int) bool			{ return s[i] <= s[j] }
@@ -213,13 +228,11 @@ func (s F32Slice) Until(f interface{}) int {
 }
 
 func (s F32Slice) String() (t string) {
+	elements := []string{}
 	for _, v := range s {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", v)
+		elements = append(elements, fmt.Sprintf("%v", v))
 	}
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(elements, " "))
 }
 
 func (s F32Slice) BlockCopy(destination, source, count int) {

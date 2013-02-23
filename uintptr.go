@@ -1,8 +1,11 @@
 package slices
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-type ASlice	[]uintptr
+type ASlice		[]uintptr
 
 func (s ASlice) Len() int							{ return len(s) }
 func (s ASlice) Cap() int							{ return cap(s) }
@@ -217,13 +220,11 @@ func (s ASlice) Until(f interface{}) int {
 }
 
 func (s ASlice) String() (t string) {
+	elements := []string{}
 	for _, v := range s {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", v)
+		elements = append(elements, fmt.Sprintf("%v", v))
 	}
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(elements, " "))
 }
 
 func (s ASlice) BlockCopy(destination, source, count int) {

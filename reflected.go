@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/feyeleanor/raw"
 	"reflect"
+	"strings"
 )
 
 func RWrap(i interface{}) (s RSlice) {
@@ -30,7 +31,7 @@ func RList(n... interface{}) (s RSlice) {
 	return
 }
 
-type RSlice struct {
+type RSlice	struct {
 	*reflect.Value
 }
 
@@ -262,13 +263,11 @@ func (s RSlice) Until(f interface{}) int {
 }
 
 func (s RSlice) String() (t string) {
+	elements := []string{}
 	s.Each(func( v interface{}) {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", v)
+		elements = append(elements, fmt.Sprintf("%v", v))
 	})
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(elements, " "))
 }
 
 func (s RSlice) BlockCopy(destination, source, count int) {

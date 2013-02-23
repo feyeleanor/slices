@@ -1,6 +1,9 @@
 package slices
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type I8Slice	[]int8
 
@@ -21,6 +24,18 @@ func (s I8Slice) Subtract(i, j int)					{ s[i] -= s[j] }
 func (s I8Slice) Multiply(i, j int)					{ s[i] *= s[j] }
 func (s I8Slice) Divide(i, j int)					{ s[i] /= s[j] }
 func (s I8Slice) Remainder(i, j int)				{ s[i] %= s[j] }
+
+func (s I8Slice) Sum() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] += s[x]
+	}
+}
+
+func (s I8Slice) Product() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] *= s[x]
+	}
+}
 
 func (s I8Slice) And(i, j int)						{ s[i] &= s[j] }
 func (s I8Slice) Or(i, j int)						{ s[i] |= s[j] }
@@ -220,13 +235,11 @@ func (s I8Slice) Until(f interface{}) int {
 }
 
 func (s I8Slice) String() (t string) {
+	elements := []string{}
 	for _, v := range s {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", v)
+		elements = append(elements, fmt.Sprintf("%v", v))
 	}
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(elements, " "))
 }
 
 func (s I8Slice) BlockCopy(destination, source, count int) {

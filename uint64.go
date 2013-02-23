@@ -1,6 +1,9 @@
 package slices
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type U64Slice	[]uint64
 
@@ -21,6 +24,18 @@ func (s U64Slice) Subtract(i, j int)				{ s[i] -= s[j] }
 func (s U64Slice) Multiply(i, j int)				{ s[i] *= s[j] }
 func (s U64Slice) Divide(i, j int)					{ s[i] /= s[j] }
 func (s U64Slice) Remainder(i, j int)				{ s[i] %= s[j] }
+
+func (s U64Slice) Sum() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] += s[x]
+	}
+}
+
+func (s U64Slice) Product() {
+	for x := len(s) - 1; x > 0; x-- {
+		s[0] *= s[x]
+	}
+}
 
 func (s U64Slice) And(i, j int)						{ s[i] &= s[j] }
 func (s U64Slice) Or(i, j int)						{ s[i] |= s[j] }
@@ -219,13 +234,11 @@ func (s U64Slice) Until(f interface{}) int {
 }
 
 func (s U64Slice) String() (t string) {
+	elements := []string{}
 	for _, v := range s {
-		if len(t) > 0 {
-			t += " "
-		}
-		t += fmt.Sprintf("%v", v)
+		elements = append(elements, fmt.Sprintf("%v", v))
 	}
-	return fmt.Sprintf("(%v)", t)
+	return fmt.Sprintf("(%v)", strings.Join(elements, " "))
 }
 
 func (s U64Slice) BlockCopy(destination, source, count int) {
