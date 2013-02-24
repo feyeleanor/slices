@@ -131,6 +131,7 @@ func (s VSlice) Each(f interface{}) {
 	case func(interface{}):					for _, v := range s { f(safeInterface(v)) }
 	case func(int, interface{}):			for i, v := range s { f(i, safeInterface(v)) }
 	case func(interface{}, interface{}):	for i, v := range s { f(i, safeInterface(v)) }
+	default:								panic(f)
 	}
 }
 
@@ -166,6 +167,7 @@ func (s VSlice) While(f interface{}) int {
 														return i
 													}
 												}
+	default:									panic(f)
 	}
 	return len(s)
 }
@@ -202,6 +204,7 @@ func (s VSlice) Until(f interface{}) int {
 														return i
 													}
 												}
+	default:									panic(f)
 	}
 	return len(s)
 }
@@ -230,10 +233,11 @@ func (s VSlice) BlockClear(start, count int) {
 	}
 }
 
-func (s VSlice) Overwrite(offset int, source interface{}) {
-	switch source := source.(type) {
-	case VSlice:			copy(s[offset:], source)
-	case []reflect.Value:	s.Overwrite(offset, VSlice(source))
+func (s VSlice) Overwrite(offset int, container interface{}) {
+	switch container := container.(type) {
+	case VSlice:			copy(s[offset:], container)
+	case []reflect.Value:	s.Overwrite(offset, VSlice(container))
+	default:				panic(container)
 	}
 }
 
@@ -667,6 +671,7 @@ func (s VSlice) ReverseEach(f interface{}) {
 	case func(interface{}):						for i := s.Len() - 1; i > -1; i-- { f(safeInterface(s[i])) }
 	case func(int, interface{}):				for i := s.Len() - 1; i > -1; i-- { f(i, safeInterface(s[i])) }
 	case func(interface{}, interface{}):		for i := s.Len() - 1; i > -1; i-- { f(i, safeInterface(s[i])) }
+	default:									panic(f)
 	}
 }
 

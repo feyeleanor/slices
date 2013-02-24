@@ -592,7 +592,7 @@ func TestSSliceKeepIf(t *testing.T) {
 func TestSSliceReverseEach(t *testing.T) {
 	var count	int
 	count = 9
-	Slice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(i interface{}) {
+	SSlice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(i interface{}) {
 		v, _ := strconv.Atoi(i.(string))
 		if v != count {
 			t.Fatalf("0: element %v erroneously reported as %v", count, i)
@@ -600,14 +600,14 @@ func TestSSliceReverseEach(t *testing.T) {
 		count--
 	})
 
-	Slice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(index int, i interface{}) {
+	SSlice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(index int, i interface{}) {
 		v, _ := strconv.Atoi(i.(string))
 		if index != v {
 			t.Fatalf("1: element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	Slice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(key, i interface{}) {
+	SSlice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(key, i interface{}) {
 		v, _ := strconv.Atoi(i.(string))
 		if key.(int) != v {
 			t.Fatalf("2: element %v erroneously reported as %v", key, i)
@@ -615,7 +615,7 @@ func TestSSliceReverseEach(t *testing.T) {
 	})
 
 	count = 9
-	Slice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(i string) {
+	SSlice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(i string) {
 		v, _ := strconv.Atoi(i)
 		if v != count {
 			t.Fatalf("3: element %v erroneously reported as %v", count, i)
@@ -623,14 +623,14 @@ func TestSSliceReverseEach(t *testing.T) {
 		count--
 	})
 
-	Slice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(index int, i string) {
+	SSlice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(index int, i string) {
 		v, _ := strconv.Atoi(i)
 		if v != index {
 			t.Fatalf("4: element %v erroneously reported as %v", index, i)
 		}
 	})
 
-	Slice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(key interface{}, i string) {
+	SSlice{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}.ReverseEach(func(key interface{}, i string) {
 		v, _ := strconv.Atoi(i)
 		if key.(int) != v {
 			t.Fatalf("5: element %v erroneously reported as %v", key, i)

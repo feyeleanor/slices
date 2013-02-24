@@ -146,7 +146,7 @@ func (s *ISlice) DeleteIf(f interface{}) {
 										}
 									}
 
-	default:						p = len(a)
+	default:						panic(f)
 	}
 	*s = a[:p]
 }
@@ -159,6 +159,7 @@ func (s ISlice) Each(f interface{}) {
 	case func(interface{}):					for _, v := range s { f(v) }
 	case func(int, interface{}):			for i, v := range s { f(i, v) }
 	case func(interface{}, interface{}):	for i, v := range s { f(i, v) }
+	default:								panic(f)
 	}
 }
 
@@ -194,6 +195,7 @@ func (s ISlice) While(f interface{}) int {
 														return i
 													}
 												}
+	default:									panic(f)
 	}
 	return len(s)
 }
@@ -230,6 +232,7 @@ func (s ISlice) Until(f interface{}) int {
 														return i
 													}
 												}
+	default:									panic(f)
 	}
 	return len(s)
 }
@@ -262,6 +265,7 @@ func (s ISlice) Overwrite(offset int, container interface{}) {
 	switch container := container.(type) {
 	case ISlice:			copy(s[offset:], container)
 	case []int:				copy(s[offset:], container)
+	default:				panic(container)
 	}
 }
 
@@ -560,7 +564,7 @@ func (s *ISlice) KeepIf(f interface{}) {
 										}
 									}
 
-	default:						p = len(a)
+	default:						panic(f)
 	}
 	*s = a[:p]
 }
@@ -573,6 +577,7 @@ func (s ISlice) ReverseEach(f interface{}) {
 	case func(interface{}):					for i := len(s) - 1; i > -1; i-- { f(s[i]) }
 	case func(int, interface{}):			for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
 	case func(interface{}, interface{}):	for i := len(s) - 1; i > -1; i-- { f(i, s[i]) }
+	default:								panic(f)
 	}
 }
 
@@ -596,6 +601,8 @@ func (s ISlice) ReplaceIf(f interface{}, r interface{}) {
 											s[i] = replacement
 										}
 									}
+
+	default:						panic(f)
 	}
 }
 
@@ -627,6 +634,8 @@ func (s ISlice) Select(f interface{}) interface{} {
 											r = append(r, v)
 										}
 									}
+
+	default:						panic(f)
 	}
 	return r
 }

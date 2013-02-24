@@ -606,15 +606,15 @@ func TestI16SliceReverseEach(t *testing.T) {
 	})
 
 	count = 9
-	I16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(i int) {
-		if i != int(count) {
+	I16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(i int16) {
+		if i != count {
 			t.Fatalf("3: element %v erroneously reported as %v", count, i)
 		}
 		count--
 	})
 
-	I16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(index int, i int) {
-		if i != index {
+	I16Slice{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.ReverseEach(func(index int, i int16) {
+		if int(i) != index {
 			t.Fatalf("4: element %v erroneously reported as %v", index, i)
 		}
 	})

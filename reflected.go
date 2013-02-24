@@ -187,6 +187,7 @@ func (s RSlice) Each(f interface{}) {
 	case func(interface{}):					for i := 0; i < s.Len(); i++ { f(s.At(i)) }
 	case func(int, interface{}):			for i := 0; i < s.Len(); i++ { f(i, s.At(i)) }
 	case func(interface{}, interface{}):	for i := 0; i < s.Len(); i++ { f(i, s.At(i)) }
+	default:								panic(f)
 	}
 }
 
@@ -222,6 +223,7 @@ func (s RSlice) While(f interface{}) int {
 															return i
 														}
 													}
+	default:										panic(f)
 	}
 	return s.Len()
 }
@@ -258,6 +260,7 @@ func (s RSlice) Until(f interface{}) int {
 														return i
 													}
 												}
+	default:									panic(f)
 	}
 	return s.Len()
 }
@@ -710,6 +713,7 @@ func (s RSlice) ReverseEach(f interface{}) {
 	case func(interface{}):						for i := s.Len() - 1; i > -1; i-- { f(s.At(i)) }
 	case func(int, interface{}):				for i := s.Len() - 1; i > -1; i-- { f(i, s.At(i)) }
 	case func(interface{}, interface{}):		for i := s.Len() - 1; i > -1; i-- { f(i, s.At(i)) }
+	default:									panic(f)
 	}
 }
 
