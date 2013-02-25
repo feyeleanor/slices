@@ -25,16 +25,19 @@ func (s USlice) Multiply(i, j int)					{ s[i] *= s[j] }
 func (s USlice) Divide(i, j int)					{ s[i] /= s[j] }
 func (s USlice) Remainder(i, j int)					{ s[i] %= s[j] }
 
-func (s USlice) Sum() {
-	for x := len(s) - 1; x > 0; x-- {
-		s[0] += s[x]
+func (s USlice) Sum() (r uint) {
+	for x := len(s) - 1; x > -1; x-- {
+		r += s[x]
 	}
+	return
 }
 
-func (s USlice) Product() {
-	for x := len(s) - 1; x > 0; x-- {
-		s[0] *= s[x]
+func (s USlice) Product() (r uint) {
+	r = 1
+	for x := len(s) - 1; x > -1; x-- {
+		r *= s[x]
 	}
+	return
 }
 
 func (s USlice) And(i, j int)						{ s[i] &= s[j] }

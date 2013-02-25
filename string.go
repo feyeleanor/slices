@@ -18,9 +18,7 @@ func (s SSlice) Swap(i, j int)						{ s[i], s[j] = s[j], s[i] }
 func (s SSlice) Add(i, j int)						{ s[i] += s[j] }
 
 func (s SSlice) Sum() {
-	for _, v := range s[1:] {
-		s[0] += v
-	}
+	s.Join("")
 }
 
 func (s SSlice) Join(separator string) {

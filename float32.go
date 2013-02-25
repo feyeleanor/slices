@@ -24,16 +24,19 @@ func (s F32Slice) Subtract(i, j int)				{ s[i] -= s[j] }
 func (s F32Slice) Multiply(i, j int)				{ s[i] *= s[j] }
 func (s F32Slice) Divide(i, j int)					{ s[i] /= s[j] }
 
-func (s F32Slice) Sum() {
-	for x := len(s) - 1; x > 0; x-- {
-		s[0] += s[x]
+func (s F32Slice) Sum() (r float32) {
+	for x := len(s) - 1; x > -1; x-- {
+		r += s[x]
 	}
+	return
 }
 
-func (s F32Slice) Product() {
-	for x := len(s) - 1; x > 0; x-- {
-		s[0] *= s[x]
+func (s F32Slice) Product() (r float32) {
+	r = 1
+	for x := len(s) - 1; x > -1; x-- {
+		r *= s[x]
 	}
+	return
 }
 
 func (s F32Slice) Less(i, j int) bool				{ return s[i] < s[j] }

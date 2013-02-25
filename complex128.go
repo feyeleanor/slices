@@ -24,16 +24,19 @@ func (s C128Slice) Subtract(i, j int)				{ s[i] -= s[j] }
 func (s C128Slice) Multiply(i, j int)				{ s[i] *= s[j] }
 func (s C128Slice) Divide(i, j int)					{ s[i] /= s[j] }
 
-func (s C128Slice) Sum() {
-	for x := len(s) - 1; x > 0; x-- {
-		s[0] += s[x]
+func (s C128Slice) Sum() (r complex128) {
+	for x := len(s) - 1; x > -1; x-- {
+		r += s[x]
 	}
+	return
 }
 
-func (s C128Slice) Product() {
-	for x := len(s) - 1; x > 0; x-- {
-		s[0] *= s[x]
+func (s C128Slice) Product() (r complex128) {
+	r = 1
+	for x := len(s) - 1; x > -1; x-- {
+		r *= s[x]
 	}
+	return
 }
 
 func (s C128Slice) Less(i, j int) bool				{ return real(s[i]) < real(s[j]) }
