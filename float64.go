@@ -436,68 +436,6 @@ func (s *F64Slice) Rplacd(v interface{}) {
 	}
 }
 
-func (s F64Slice) SetIntersection(o F64Slice) (r F64Slice) {
-	cache := make(map[float64]bool)
-	for _, v := range s {
-		if ok := cache[v]; !ok {
-			cache[v] = true
-		}
-	}
-	for _, v := range o {
-		if _, ok := cache[v]; ok {
-			delete(cache, v)
-			r = append(r, v)
-		}
-	}
-	return
-}
-
-func (s F64Slice) SetUnion(o F64Slice) (r F64Slice) {
-	cache := make(map[float64]bool)
-	for _, v := range s {
-		if ok := cache[v]; !ok {
-			cache[v] = true
-		}
-	}
-	for _, v := range o {
-		if ok := cache[v]; !ok {
-			cache[v] = true
-		}
-	}
-	for k, _ := range cache {
-		r = append(r, k)
-	}
-	return
-}
-
-func (s F64Slice) SetDifference(o F64Slice) (r F64Slice) {
-	left := make(map[float64]bool)
-	right := make(map[float64]bool)
-	for _, v := range s {
-		if ok := left[v]; !ok {
-			left[v] = true
-		}
-	}
-	for _, v := range o {
-		if ok := right[v]; !ok {
-			right[v] = true
-		}
-	}
-	for k, _ := range left {
-		if ok := right[k]; ok {
-			delete(right, k)
-		} else {
-			r = append(r, k)
-		}
-	}
-	for k, _ := range right {
-		if ok := left[k]; !ok {
-			r = append(r, k)
-		}
-	}
-	return
-}
-
 func (s F64Slice) Find(v interface{}) (i int, found bool) {
 	if v, ok := v.(float64); ok {
 		for j, x := range s {

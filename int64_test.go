@@ -489,51 +489,6 @@ func TestI64SliceRplacd(t *testing.T) {
 	ConfirmRplacd(I64Slice{1, 2, 3, 4, 5, 6}, I64Slice{2, 4, 8, 64}, I64Slice{1, 2, 4, 8, 64})
 }
 
-func TestI64SliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r I64Slice) {
-		x := s.SetIntersection(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetIntersection(I64Slice{1, 2, 3}, I64Slice{}, I64Slice{})
-	ConfirmSetIntersection(I64Slice{1, 2, 3}, I64Slice{1}, I64Slice{1})
-	ConfirmSetIntersection(I64Slice{1, 2, 3}, I64Slice{1, 1}, I64Slice{1})
-	ConfirmSetIntersection(I64Slice{1, 2, 3}, I64Slice{1, 2, 1}, I64Slice{1, 2})
-}
-
-func TestI64SliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r I64Slice) {
-		x := s.SetUnion(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(I64Slice{1, 2, 3}, I64Slice{}, I64Slice{1, 2, 3})
-	ConfirmSetUnion(I64Slice{1, 2, 3}, I64Slice{1}, I64Slice{1, 2, 3})
-	ConfirmSetUnion(I64Slice{1, 2, 3}, I64Slice{1, 1}, I64Slice{1, 2, 3})
-	ConfirmSetUnion(I64Slice{1, 2, 3}, I64Slice{1, 2, 1}, I64Slice{1, 2, 3})
-}
-
-func TestI64SliceSetDifference(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r I64Slice) {
-		x := s.SetDifference(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(I64Slice{1, 2, 3}, I64Slice{}, I64Slice{1, 2, 3})
-	ConfirmSetUnion(I64Slice{1, 2, 3}, I64Slice{1}, I64Slice{2, 3})
-	ConfirmSetUnion(I64Slice{1, 2, 3}, I64Slice{1, 1}, I64Slice{2, 3})
-	ConfirmSetUnion(I64Slice{1, 2, 3}, I64Slice{1, 2, 1}, I64Slice{3})
-}
-
 func TestI64SliceFind(t *testing.T) {
 	ConfirmFind := func(s I64Slice, v int64, i int) {
 		if x, ok := s.Find(v); !ok || x != i {

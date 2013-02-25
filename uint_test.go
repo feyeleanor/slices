@@ -489,51 +489,6 @@ func TestUSliceRplacd(t *testing.T) {
 	ConfirmRplacd(USlice{1, 2, 3, 4, 5, 6}, USlice{2, 4, 8, 16}, USlice{1, 2, 4, 8, 16})
 }
 
-func TestUSliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r USlice) {
-		x := s.SetIntersection(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetIntersection(USlice{1, 2, 3}, USlice{}, USlice{})
-	ConfirmSetIntersection(USlice{1, 2, 3}, USlice{1}, USlice{1})
-	ConfirmSetIntersection(USlice{1, 2, 3}, USlice{1, 1}, USlice{1})
-	ConfirmSetIntersection(USlice{1, 2, 3}, USlice{1, 2, 1}, USlice{1, 2})
-}
-
-func TestUSliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r USlice) {
-		x := s.SetUnion(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(USlice{1, 2, 3}, USlice{}, USlice{1, 2, 3})
-	ConfirmSetUnion(USlice{1, 2, 3}, USlice{1}, USlice{1, 2, 3})
-	ConfirmSetUnion(USlice{1, 2, 3}, USlice{1, 1}, USlice{1, 2, 3})
-	ConfirmSetUnion(USlice{1, 2, 3}, USlice{1, 2, 1}, USlice{1, 2, 3})
-}
-
-func TestUSliceSetDifference(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r USlice) {
-		x := s.SetDifference(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(USlice{1, 2, 3}, USlice{}, USlice{1, 2, 3})
-	ConfirmSetUnion(USlice{1, 2, 3}, USlice{1}, USlice{2, 3})
-	ConfirmSetUnion(USlice{1, 2, 3}, USlice{1, 1}, USlice{2, 3})
-	ConfirmSetUnion(USlice{1, 2, 3}, USlice{1, 2, 1}, USlice{3})
-}
-
 func TestUSliceFind(t *testing.T) {
 	ConfirmFind := func(s USlice, v uint, i int) {
 		if x, ok := s.Find(v); !ok || x != i {

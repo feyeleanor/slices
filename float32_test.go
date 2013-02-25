@@ -489,51 +489,6 @@ func TestF32SliceRplacd(t *testing.T) {
 	ConfirmRplacd(F32Slice{1, 2, 3, 4, 5, 6}, F32Slice{2, 4, 8, 16}, F32Slice{1, 2, 4, 8, 16})
 }
 
-func TestF32SliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r F32Slice) {
-		x := s.SetIntersection(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetIntersection(F32Slice{1, 2, 3}, F32Slice{}, F32Slice{})
-	ConfirmSetIntersection(F32Slice{1, 2, 3}, F32Slice{1}, F32Slice{1})
-	ConfirmSetIntersection(F32Slice{1, 2, 3}, F32Slice{1, 1}, F32Slice{1})
-	ConfirmSetIntersection(F32Slice{1, 2, 3}, F32Slice{1, 2, 1}, F32Slice{1, 2})
-}
-
-func TestF32SliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r F32Slice) {
-		x := s.SetUnion(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(F32Slice{1, 2, 3}, F32Slice{}, F32Slice{1, 2, 3})
-	ConfirmSetUnion(F32Slice{1, 2, 3}, F32Slice{1}, F32Slice{1, 2, 3})
-	ConfirmSetUnion(F32Slice{1, 2, 3}, F32Slice{1, 1}, F32Slice{1, 2, 3})
-	ConfirmSetUnion(F32Slice{1, 2, 3}, F32Slice{1, 2, 1}, F32Slice{1, 2, 3})
-}
-
-func TestF32SliceSetDifference(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r F32Slice) {
-		x := s.SetDifference(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(F32Slice{1, 2, 3}, F32Slice{}, F32Slice{1, 2, 3})
-	ConfirmSetUnion(F32Slice{1, 2, 3}, F32Slice{1}, F32Slice{2, 3})
-	ConfirmSetUnion(F32Slice{1, 2, 3}, F32Slice{1, 1}, F32Slice{2, 3})
-	ConfirmSetUnion(F32Slice{1, 2, 3}, F32Slice{1, 2, 1}, F32Slice{3})
-}
-
 func TestF32SliceFind(t *testing.T) {
 	ConfirmFind := func(s F32Slice, v float32, i int) {
 		if x, ok := s.Find(v); !ok || x != i {

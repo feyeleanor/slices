@@ -412,51 +412,6 @@ func TestC128SliceRplacd(t *testing.T) {
 	ConfirmRplacd(C128Slice{1, 2, 3, 4, 5, 6}, C128Slice{2, 4, 8, 16}, C128Slice{1, 2, 4, 8, 16})
 }
 
-func TestC128SliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r C128Slice) {
-		x := s.SetIntersection(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetIntersection(C128Slice{1, 2, 3}, C128Slice{}, C128Slice{})
-	ConfirmSetIntersection(C128Slice{1, 2, 3}, C128Slice{1}, C128Slice{1})
-	ConfirmSetIntersection(C128Slice{1, 2, 3}, C128Slice{1, 1}, C128Slice{1})
-	ConfirmSetIntersection(C128Slice{1, 2, 3}, C128Slice{1, 2, 1}, C128Slice{1, 2})
-}
-
-func TestC128SliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r C128Slice) {
-		x := s.SetUnion(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(C128Slice{1, 2, 3}, C128Slice{}, C128Slice{1, 2, 3})
-	ConfirmSetUnion(C128Slice{1, 2, 3}, C128Slice{1}, C128Slice{1, 2, 3})
-	ConfirmSetUnion(C128Slice{1, 2, 3}, C128Slice{1, 1}, C128Slice{1, 2, 3})
-	ConfirmSetUnion(C128Slice{1, 2, 3}, C128Slice{1, 2, 1}, C128Slice{1, 2, 3})
-}
-
-func TestC128SliceSetDifference(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r C128Slice) {
-		x := s.SetDifference(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(C128Slice{1, 2, 3}, C128Slice{}, C128Slice{1, 2, 3})
-	ConfirmSetUnion(C128Slice{1, 2, 3}, C128Slice{1}, C128Slice{2, 3})
-	ConfirmSetUnion(C128Slice{1, 2, 3}, C128Slice{1, 1}, C128Slice{2, 3})
-	ConfirmSetUnion(C128Slice{1, 2, 3}, C128Slice{1, 2, 1}, C128Slice{3})
-}
-
 func TestC128SliceFind(t *testing.T) {
 	ConfirmFind := func(s C128Slice, v complex128, i int) {
 		if x, ok := s.Find(v); !ok || x != i {

@@ -517,45 +517,6 @@ func TestSliceRplacd(t *testing.T) {
 	ConfirmRplacd(Slice{1, 2, 3, 4, 5, 6}, Slice{2, 4, 8, 16}, Slice{1, 2, 4, 8, 16})
 }
 
-func TestSliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r Slice) {
-		if x := s.SetIntersection(o); !r.Equal(x) {
-			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetIntersection(Slice{1, 2, 3}, Slice{}, Slice{})
-	ConfirmSetIntersection(Slice{1, 2, 3}, Slice{1}, Slice{1})
-	ConfirmSetIntersection(Slice{1, 2, 3}, Slice{1, 1}, Slice{1})
-	ConfirmSetIntersection(Slice{1, 2, 3}, Slice{1, 2, 1}, Slice{1, 2})
-}
-
-func TestSliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r Slice) {
-		if x := s.SetUnion(o); !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(Slice{1, 2, 3}, Slice{}, Slice{1, 2, 3})
-	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1}, Slice{1, 2, 3})
-	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1, 1}, Slice{1, 2, 3})
-	ConfirmSetUnion(Slice{1, 2, 3}, Slice{1, 2, 1}, Slice{1, 2, 3})
-}
-
-func TestSliceSetDifference(t *testing.T) {
-	ConfirmSetDifference := func(s, o, r Slice) {
-		if x := s.SetDifference(o); !r.Equal(x) {
-			t.Fatalf("%v.SetDifference(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetDifference(Slice{1, 2, 3}, Slice{}, Slice{1, 2, 3})
-	ConfirmSetDifference(Slice{1, 2, 3}, Slice{1}, Slice{2, 3})
-	ConfirmSetDifference(Slice{1, 2, 3}, Slice{1, 1}, Slice{2, 3})
-	ConfirmSetDifference(Slice{1, 2, 3}, Slice{1, 2, 1}, Slice{3})
-}
-
 func TestSliceFind(t *testing.T) {
 	ConfirmFind := func(s Slice, v interface{}, i int) {
 		if x, ok := s.Find(v); !ok || x != i {

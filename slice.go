@@ -392,68 +392,6 @@ func (s *Slice) Rplacd(v interface{}) {
 	}
 }
 
-func (s Slice) SetIntersection(o Slice) (r Slice) {
-	cache := make(map[interface{}]bool)
-	for _, v := range s {
-		if ok := cache[v]; !ok {
-			cache[v] = true
-		}
-	}
-	for _, v := range o {
-		if _, ok := cache[v]; ok {
-			delete(cache, v)
-			r = append(r, v)
-		}
-	}
-	return
-}
-
-func (s Slice) SetUnion(o Slice) (r Slice) {
-	cache := make(map[interface{}]bool)
-	for _, v := range s {
-		if ok := cache[v]; !ok {
-			cache[v] = true
-		}
-	}
-	for _, v := range o {
-		if ok := cache[v]; !ok {
-			cache[v] = true
-		}
-	}
-	for k, _ := range cache {
-		r = append(r, k)
-	}
-	return
-}
-
-func (s Slice) SetDifference(o Slice) (r Slice) {
-	left := make(map[interface{}]bool)
-	right := make(map[interface{}]bool)
-	for _, v := range s {
-		if ok := left[v]; !ok {
-			left[v] = true
-		}
-	}
-	for _, v := range o {
-		if ok := right[v]; !ok {
-			right[v] = true
-		}
-	}
-	for k, _ := range left {
-		if ok := right[k]; ok {
-			delete(right, k)
-		} else {
-			r = append(r, k)
-		}
-	}
-	for k, _ := range right {
-		if ok := left[k]; !ok {
-			r = append(r, k)
-		}
-	}
-	return
-}
-
 func (s Slice) Find(v interface{}) (i int, found bool) {
 	for j, x := range s {
 		if x == v {

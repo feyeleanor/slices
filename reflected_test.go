@@ -603,45 +603,6 @@ func TestRSliceRplacd(t *testing.T) {
 	ConfirmRplacd(RList(1, 2, 3, 4, 5, 6), RList(2, 4, 8, 16), RList(1, 2, 4, 8, 16))
 }
 
-func TestRSliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r RSlice) {
-		if x := s.SetIntersection(o); !r.Equal(x) {
-			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetIntersection(RList(1, 2, 3), RList(), RList())
-	ConfirmSetIntersection(RList(1, 2, 3), RList(1), RList(1))
-	ConfirmSetIntersection(RList(1, 2, 3), RList(1, 1), RList(1))
-	ConfirmSetIntersection(RList(1, 2, 3), RList(1, 2, 1), RList(1, 2))
-}
-
-func TestRSliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r RSlice) {
-		if x := s.SetUnion(o); !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(RList(1, 2, 3), RList(), RList(1, 2, 3))
-	ConfirmSetUnion(RList(1, 2, 3), RList(1), RList(1, 2, 3))
-	ConfirmSetUnion(RList(1, 2, 3), RList(1, 1), RList(1, 2, 3))
-	ConfirmSetUnion(RList(1, 2, 3), RList(1, 2, 1), RList(1, 2, 3))
-}
-
-func TestRSliceSetDifference(t *testing.T) {
-	ConfirmSetDifference := func(s, o, r RSlice) {
-		if x := s.SetDifference(o); !r.Equal(x) {
-			t.Fatalf("%v.SetDifference(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetDifference(RList(1, 2, 3), RList(), RList(1, 2, 3))
-	ConfirmSetDifference(RList(1, 2, 3), RList(1), RList(2, 3))
-	ConfirmSetDifference(RList(1, 2, 3), RList(1, 1), RList(2, 3))
-	ConfirmSetDifference(RList(1, 2, 3), RList(1, 2, 1), RList(3))
-}
-
 func TestRSliceFind(t *testing.T) {
 	ConfirmFind := func(s RSlice, v interface{}, i int) {
 		if x, ok := s.Find(v); !ok || x != i {

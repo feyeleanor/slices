@@ -442,68 +442,6 @@ func (s *U32Slice) Rplacd(v interface{}) {
 	}
 }
 
-func (s U32Slice) SetIntersection(o U32Slice) (r U32Slice) {
-	cache := make(map[uint32]bool)
-	for _, v := range s {
-		if ok := cache[v]; !ok {
-			cache[v] = true
-		}
-	}
-	for _, v := range o {
-		if _, ok := cache[v]; ok {
-			delete(cache, v)
-			r = append(r, v)
-		}
-	}
-	return
-}
-
-func (s U32Slice) SetUnion(o U32Slice) (r U32Slice) {
-	cache := make(map[uint32]bool)
-	for _, v := range s {
-		if ok := cache[v]; !ok {
-			cache[v] = true
-		}
-	}
-	for _, v := range o {
-		if ok := cache[v]; !ok {
-			cache[v] = true
-		}
-	}
-	for k, _ := range cache {
-		r = append(r, k)
-	}
-	return
-}
-
-func (s U32Slice) SetDifference(o U32Slice) (r U32Slice) {
-	left := make(map[uint32]bool)
-	right := make(map[uint32]bool)
-	for _, v := range s {
-		if ok := left[v]; !ok {
-			left[v] = true
-		}
-	}
-	for _, v := range o {
-		if ok := right[v]; !ok {
-			right[v] = true
-		}
-	}
-	for k, _ := range left {
-		if ok := right[k]; ok {
-			delete(right, k)
-		} else {
-			r = append(r, k)
-		}
-	}
-	for k, _ := range right {
-		if ok := left[k]; !ok {
-			r = append(r, k)
-		}
-	}
-	return
-}
-
 func (s U32Slice) Find(v interface{}) (i int, found bool) {
 	if v, ok := v.(uint32); ok {
 		for j, x := range s {

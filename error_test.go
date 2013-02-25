@@ -422,52 +422,6 @@ func TestESliceRplacd(t *testing.T) {
 	ConfirmRplacd(ESlice{E0, E1, E2, E3, E4}, ESlice{E2, E4}, ESlice{E0, E2, E4})
 }
 
-func TestESliceSetIntersection(t *testing.T) {
-	ConfirmSetIntersection := func(s, o, r ESlice) {
-		x := s.SetIntersection(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetIntersection(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetIntersection(ESlice{E1, E2, E3}, ESlice{}, ESlice{})
-	ConfirmSetIntersection(ESlice{E1, E2, E3}, ESlice{E1}, ESlice{E1})
-	ConfirmSetIntersection(ESlice{E1, E2, E3}, ESlice{E1, E1}, ESlice{E1})
-	ConfirmSetIntersection(ESlice{E1, E2, E3}, ESlice{E1, E2, E1}, ESlice{E1, E2})
-}
-
-func TestESliceSetUnion(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r ESlice) {
-		x := s.SetUnion(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetUnion(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(ESlice{E1, E2, E3}, ESlice{}, ESlice{E1, E2, E3})
-	ConfirmSetUnion(ESlice{E1, E2, E3}, ESlice{E1}, ESlice{E1, E2, E3})
-	ConfirmSetUnion(ESlice{E1, E2, E3}, ESlice{E1, E1}, ESlice{E1, E2, E3})
-	ConfirmSetUnion(ESlice{E1, E2, E3}, ESlice{E1, E2, E1}, ESlice{E1, E2, E3})
-	ConfirmSetUnion(ESlice{E1, E2, E3}, ESlice{E4}, ESlice{E1, E2, E3, E4})
-}
-
-func TestESliceSetDifference(t *testing.T) {
-	ConfirmSetUnion := func(s, o, r ESlice) {
-		x := s.SetDifference(o)
-		Sort(x)
-		if !r.Equal(x) {
-			t.Fatalf("%v.SetDifference(%v) should be %v but is %v", s, o, r, x)
-		}
-	}
-
-	ConfirmSetUnion(ESlice{E1, E2, E3}, ESlice{}, ESlice{E1, E2, E3})
-	ConfirmSetUnion(ESlice{E1, E2, E3}, ESlice{E1}, ESlice{E2, E3})
-	ConfirmSetUnion(ESlice{E1, E2, E3}, ESlice{E1, E1}, ESlice{E2, E3})
-	ConfirmSetUnion(ESlice{E1, E2, E3}, ESlice{E1, E2, E1}, ESlice{E3})
-}
-
 func TestESliceFind(t *testing.T) {
 	ConfirmFind := func(s ESlice, v error, i int) {
 		if x, ok := s.Find(v); !ok || x != i {
