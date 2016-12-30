@@ -43,7 +43,7 @@ func (s RSlice) MakeSlice(length, capacity int) (r RSlice) {
 
 func (s *RSlice) MakeAddressable() {
 	n := raw.MakeAddressable(*s.Value)
-	s.Value = &n
+	*s.Value = reflect.Indirect(n)
 }
 
 func (s *RSlice) setValue(v reflect.Value) {
