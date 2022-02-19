@@ -1,8 +1,11 @@
 package slices
 
-import "github.com/feyeleanor/lists"
-import "reflect"
-import "testing"
+import (
+	"reflect"
+	"testing"
+
+	"github.com/feyeleanor/lists"
+)
 
 func TestVSliceMakeSlice(t *testing.T) {}
 
@@ -18,7 +21,7 @@ func TestVSliceVSlice(t *testing.T) {
 
 	for i := 0; i < g.Len(); i++ {
 		if g.At(i) != i {
-			t.Fatalf("g[%v] should contain %v but contains %v", i, g.At(i))
+			t.Fatalf("g[%v] should contain %v but contains %v", i, i, g.At(i))
 		}
 	}
 }
@@ -41,7 +44,7 @@ func TestVSliceLen(t *testing.T) {
 			t.Fatalf("%v.Len() should be %v but is %v", s, i, x)
 		}
 	}
-	
+
 	ConfirmLength(VList(0), 1)
 	ConfirmLength(VList(0, 1), 2)
 }
@@ -340,10 +343,14 @@ func TestVSliceReallocate(t *testing.T) {
 			el = c
 		}
 		switch s.Reallocate(l, c); {
-		case s == nil:				t.Fatalf("%v.Reallocate(%v, %v) created a nil value for Slice", o, l, c)
-		case s.Cap() != c:			t.Fatalf("%v.Reallocate(%v, %v) capacity should be %v but is %v", o, l, c, c, s.Cap())
-		case s.Len() != el:			t.Fatalf("%v.Reallocate(%v, %v) length should be %v but is %v", o, l, c, el, s.Len())
-		case !r.Equal(s):			t.Fatalf("%v.Reallocate(%v, %v) should be %v but is %v", o, l, c, r, s)
+		case s == nil:
+			t.Fatalf("%v.Reallocate(%v, %v) created a nil value for Slice", o, l, c)
+		case s.Cap() != c:
+			t.Fatalf("%v.Reallocate(%v, %v) capacity should be %v but is %v", o, l, c, c, s.Cap())
+		case s.Len() != el:
+			t.Fatalf("%v.Reallocate(%v, %v) length should be %v but is %v", o, l, c, el, s.Len())
+		case !r.Equal(s):
+			t.Fatalf("%v.Reallocate(%v, %v) should be %v but is %v", o, l, c, r, s)
 		}
 	}
 
@@ -361,9 +368,12 @@ func TestVSliceExtend(t *testing.T) {
 		c := s.Cap()
 		s.Extend(n)
 		switch {
-		case s.Len() != r.Len():	t.Fatalf("Extend(%v) len should be %v but is %v", n, r.Len(), s.Len())
-		case s.Cap() != c + n:		t.Fatalf("Extend(%v) cap should be %v but is %v", n, c + n, s.Cap())
-		case !r.Equal(s):			t.Fatalf("Extend(%v) should be %v but is %v", n, r, s)
+		case s.Len() != r.Len():
+			t.Fatalf("Extend(%v) len should be %v but is %v", n, r.Len(), s.Len())
+		case s.Cap() != c+n:
+			t.Fatalf("Extend(%v) cap should be %v but is %v", n, c+n, s.Cap())
+		case !r.Equal(s):
+			t.Fatalf("Extend(%v) should be %v but is %v", n, r, s)
 		}
 	}
 
@@ -376,9 +386,12 @@ func TestVSliceExpand(t *testing.T) {
 		c := s.Cap()
 		s.Expand(i, n)
 		switch {
-		case s.Len() != r.Len():	t.Fatalf("Expand(%v, %v) len should be %v but is %v", i, n, r.Len(), s.Len())
-		case s.Cap() != c + n:		t.Fatalf("Expand(%v, %v) cap should be %v but is %v", i, n, c + n, s.Cap())
-		case !r.Equal(s):			t.Fatalf("Expand(%v, %v) should be %v but is %v", i, n, r, s)
+		case s.Len() != r.Len():
+			t.Fatalf("Expand(%v, %v) len should be %v but is %v", i, n, r.Len(), s.Len())
+		case s.Cap() != c+n:
+			t.Fatalf("Expand(%v, %v) cap should be %v but is %v", i, n, c+n, s.Cap())
+		case !r.Equal(s):
+			t.Fatalf("Expand(%v, %v) should be %v but is %v", i, n, r, s)
 		}
 	}
 
@@ -408,9 +421,9 @@ func TestVSliceDepth(t *testing.T) {
 	ConfirmDepth(VList(0, 1, VList(2, VList(3, 4, 5))), 2)
 
 	sxp := VList(0, 1,
-				VList(2, VList(3, 4, 5)),
-				VList(6, VList(7, VList(8, VList(9, 0)))),
-				VList(2, VList(3, 4, 5)))
+		VList(2, VList(3, 4, 5)),
+		VList(6, VList(7, VList(8, VList(9, 0)))),
+		VList(2, VList(3, 4, 5)))
 	ConfirmDepth(sxp, 4)
 
 	rxp := VList(0, sxp, sxp)
@@ -423,9 +436,9 @@ func TestVSliceDepth(t *testing.T) {
 	ConfirmDepth(VList(0, 1, Slice{2, Slice{3, 4, 5}}), 2)
 
 	sxp = VList(0, 1,
-				Slice{2, Slice{3, 4, 5}},
-				Slice{6, Slice{7, Slice{8, Slice{9, 0}}}},
-				Slice{2, Slice{3, 4, 5}})
+		Slice{2, Slice{3, 4, 5}},
+		Slice{6, Slice{7, Slice{8, Slice{9, 0}}}},
+		Slice{2, Slice{3, 4, 5}})
 	ConfirmDepth(sxp, 4)
 
 	rxp = VList(0, sxp, sxp)
@@ -498,7 +511,7 @@ func TestVSliceRepeat(t *testing.T) {
 	}
 
 	ConfirmRepeat(VList(), 5, VList())
-	ConfirmRepeat(VList(0), 1,VList(0))
+	ConfirmRepeat(VList(0), 1, VList(0))
 	ConfirmRepeat(VList(0), 2, VList(0, 0))
 	ConfirmRepeat(VList(0), 3, VList(0, 0, 0))
 	ConfirmRepeat(VList(0), 4, VList(0, 0, 0, 0))
@@ -549,20 +562,21 @@ func TestVSliceEqual(t *testing.T) {
 		}
 	}
 
-	ConfirmEqual(VList(0), []reflect.Value{ reflect.ValueOf(0) })
+	ConfirmEqual(VList(0), []reflect.Value{reflect.ValueOf(0)})
 	RefuteEqual(VList(0), VList(uint(0)))
-	RefuteEqual(VList(0), []reflect.Value{ reflect.ValueOf(uint(0)) })
+	RefuteEqual(VList(0), []reflect.Value{reflect.ValueOf(uint(0))})
 	RefuteEqual(VList(0), VList(1))
 }
-
 
 func TestVSliceCar(t *testing.T) {
 	ConfirmCar := func(s VSlice, r interface{}) {
 		var ok bool
 		n := s.Car()
 		switch n := n.(type) {
-		case Equatable:		ok = n.Equal(r)
-		default:			ok = n == r
+		case Equatable:
+			ok = n.Equal(r)
+		default:
+			ok = n == r
 		}
 		if !ok {
 			t.Fatalf("%s.Car() should be %v but is %v", s, r, n)
@@ -578,7 +592,7 @@ func TestVSliceCdr(t *testing.T) {
 			t.Fatalf("%v.Cdr() should be %v but is %v", s, r, n)
 		}
 	}
-//	ConfirmCdr(VList(), VList())
+	//	ConfirmCdr(VList(), VList())
 	ConfirmCdr(VList(1), VList())
 	ConfirmCdr(VList(1, 2, 3), VList(2, 3))
 }
@@ -651,7 +665,7 @@ func TestVSliceKeepIf(t *testing.T) {
 }
 
 func TestVSliceReverseEach(t *testing.T) {
-	var count	int
+	var count int
 	count = 9
 	VList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
 		if i != count {
@@ -699,8 +713,8 @@ func TestVSliceReplace(t *testing.T) {
 	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), 9, VList(9))
 	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), reflect.ValueOf(9), VList(9))
 	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), VList(9, 8, 7, 6, 5), VList(9, 8, 7, 6, 5))
-	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), []int{ 9, 8, 7, 6, 5 }, VList(9, 8, 7, 6, 5))
-	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), []float64{ 9, 8, 7, 6, 5 }, VList(9.0, 8.0, 7.0, 6.0, 5.0))
+	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), []int{9, 8, 7, 6, 5}, VList(9, 8, 7, 6, 5))
+	ConfirmReplace(VList(0, 1, 2, 3, 4, 5), []float64{9, 8, 7, 6, 5}, VList(9.0, 8.0, 7.0, 6.0, 5.0))
 }
 
 func TestVSliceSelect(t *testing.T) {
@@ -738,9 +752,9 @@ func TestVSlicePick(t *testing.T) {
 	}
 
 	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{}, VList())
-	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, VList(0, 1))
-	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, VList(0, 3))
-	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, VList(0, 3, 4, 3))
+	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{0, 1}, VList(0, 1))
+	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{0, 3}, VList(0, 3))
+	ConfirmPick(VList(0, 1, 2, 3, 4, 5), []int{0, 3, 4, 3}, VList(0, 3, 4, 3))
 }
 
 func TestVSliceInsert(t *testing.T) {

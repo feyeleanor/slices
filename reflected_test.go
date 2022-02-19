@@ -1,19 +1,22 @@
 package slices
 
-import "github.com/feyeleanor/lists"
-import "reflect"
-import "testing"
+import (
+	"reflect"
+	"testing"
+
+	"github.com/feyeleanor/lists"
+)
 
 func TestRSliceMakeSlice(t *testing.T) {}
 
 func TestRSliceRSlice(t *testing.T) {
-	g := RWrap([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
+	g := RWrap([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
 	if g.Len() != 10 {
 		t.Fatalf("Slice length should be %v not %v", 10, g.Len())
 	}
 	for i := 0; i < g.Len(); i++ {
 		if g.At(i) != i {
-			t.Fatalf("g[%v] should contain %v but contains %v", 0, g.At(0))
+			t.Fatalf("g[%v] should contain %v but contains %v", i, i, g.At(0))
 		}
 	}
 }
@@ -36,7 +39,7 @@ func TestRSliceLen(t *testing.T) {
 			t.Fatalf("%v.Len() should be %v but is %v", s, i, x)
 		}
 	}
-	
+
 	ConfirmLength(RList(0), 1)
 	ConfirmLength(RList(0, 1), 2)
 }
@@ -331,7 +334,7 @@ func TestRSliceBlockClear(t *testing.T) {
 }
 
 func TestRSliceOverwrite(t *testing.T) {
-	g := RWrap([]int{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
+	g := RWrap([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
 	c := RWrap(make([]int, g.Len(), g.Cap()))
 	c.Overwrite(0, g)
 	for i := 0; i < g.Len(); i++ {
@@ -349,9 +352,12 @@ func TestRSliceReallocate(t *testing.T) {
 			el = c
 		}
 		switch s.Reallocate(l, c); {
-		case s.Cap() != c:			t.Fatalf("%v.Reallocate(%v, %v) capacity should be %v but is %v", o, l, c, c, s.Cap())
-		case s.Len() != el:			t.Fatalf("%v.Reallocate(%v, %v) length should be %v but is %v", o, l, c, el, s.Len())
-		case !r.Equal(s):			t.Fatalf("%v.Reallocate(%v, %v) should be %v but is %v", o, l, c, r, s)
+		case s.Cap() != c:
+			t.Fatalf("%v.Reallocate(%v, %v) capacity should be %v but is %v", o, l, c, c, s.Cap())
+		case s.Len() != el:
+			t.Fatalf("%v.Reallocate(%v, %v) length should be %v but is %v", o, l, c, el, s.Len())
+		case !r.Equal(s):
+			t.Fatalf("%v.Reallocate(%v, %v) should be %v but is %v", o, l, c, r, s)
 		}
 	}
 
@@ -369,9 +375,12 @@ func TestRSliceExtend(t *testing.T) {
 		c := s.Cap()
 		s.Extend(n)
 		switch {
-		case s.Len() != r.Len():	t.Fatalf("Extend(%v) len should be %v but is %v", n, r.Len(), s.Len())
-		case s.Cap() != c + n:		t.Fatalf("Extend(%v) cap should be %v but is %v", n, c + n, s.Cap())
-		case !r.Equal(s):			t.Fatalf("Extend(%v) should be %v but is %v", n, r, s)
+		case s.Len() != r.Len():
+			t.Fatalf("Extend(%v) len should be %v but is %v", n, r.Len(), s.Len())
+		case s.Cap() != c+n:
+			t.Fatalf("Extend(%v) cap should be %v but is %v", n, c+n, s.Cap())
+		case !r.Equal(s):
+			t.Fatalf("Extend(%v) should be %v but is %v", n, r, s)
 		}
 	}
 
@@ -419,9 +428,9 @@ func TestRSliceDepth(t *testing.T) {
 	ConfirmDepth(RList(0, 1, RList(2, RList(3, 4, 5))), 2)
 
 	sxp := RList(0, 1,
-				RList(2, RList(3, 4, 5)),
-				RList(6, RList(7, RList(8, RList(9, 0)))),
-				RList(2, RList(3, 4, 5)))
+		RList(2, RList(3, 4, 5)),
+		RList(6, RList(7, RList(8, RList(9, 0)))),
+		RList(2, RList(3, 4, 5)))
 	ConfirmDepth(sxp, 4)
 
 	rxp := RList(0, sxp, sxp)
@@ -434,9 +443,9 @@ func TestRSliceDepth(t *testing.T) {
 	ConfirmDepth(RList(0, 1, Slice{2, Slice{3, 4, 5}}), 2)
 
 	sxp = RList(0, 1,
-				Slice{2, Slice{3, 4, 5}},
-				Slice{6, Slice{7, Slice{8, Slice{9, 0}}}},
-				Slice{2, Slice{3, 4, 5}})
+		Slice{2, Slice{3, 4, 5}},
+		Slice{6, Slice{7, Slice{8, Slice{9, 0}}}},
+		Slice{2, Slice{3, 4, 5}})
 	ConfirmDepth(sxp, 4)
 
 	rxp = RList(0, sxp, sxp)
@@ -497,7 +506,7 @@ func TestRSliceRepeat(t *testing.T) {
 	}
 
 	ConfirmRepeat(RList(), 5, RList())
-	ConfirmRepeat(RList(0), 1,RList(0))
+	ConfirmRepeat(RList(0), 1, RList(0))
 	ConfirmRepeat(RList(0), 2, RList(0, 0))
 	ConfirmRepeat(RList(0), 3, RList(0, 0, 0))
 	ConfirmRepeat(RList(0), 4, RList(0, 0, 0, 0))
@@ -548,19 +557,20 @@ func TestRSliceEqual(t *testing.T) {
 		}
 	}
 
-	ConfirmEqual(RList(0), RWrap([]int{ 0 }))
-	RefuteEqual(RList(0), RWrap([]uint{ 0 }))
-	RefuteEqual(RList(0), RWrap([]int{ 1 }))
+	ConfirmEqual(RList(0), RWrap([]int{0}))
+	RefuteEqual(RList(0), RWrap([]uint{0}))
+	RefuteEqual(RList(0), RWrap([]int{1}))
 }
-
 
 func TestRSliceCar(t *testing.T) {
 	ConfirmCar := func(s RSlice, r interface{}) {
 		var ok bool
 		n := s.Car()
 		switch n := n.(type) {
-		case Equatable:		ok = n.Equal(r)
-		default:			ok = n == r
+		case Equatable:
+			ok = n.Equal(r)
+		default:
+			ok = n == r
 		}
 		if !ok {
 			t.Fatalf("%s.Car() should be %v but is %v", s, r, n)
@@ -576,7 +586,7 @@ func TestRSliceCdr(t *testing.T) {
 			t.Fatalf("%v.Cdr() should be %v but is %v", s, r, n)
 		}
 	}
-//	ConfirmCdr(RList(), RList())
+	//	ConfirmCdr(RList(), RList())
 	ConfirmCdr(RList(1), RList())
 	ConfirmCdr(RList(1, 2, 3), RList(2, 3))
 }
@@ -649,7 +659,7 @@ func TestRSliceKeepIf(t *testing.T) {
 }
 
 func TestRSliceReverseEach(t *testing.T) {
-	var count	int
+	var count int
 	count = 9
 	RList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).ReverseEach(func(i interface{}) {
 		if i != count {
@@ -695,8 +705,8 @@ func TestRSliceReplace(t *testing.T) {
 	}
 
 	ConfirmReplace(RList(0, 1, 2, 3, 4, 5), RList(9, 8, 7, 6, 5))
-	ConfirmReplace(RList(0, 1, 2, 3, 4, 5), RWrap([]int{ 9, 8, 7, 6, 5 }))
-	ConfirmReplace(RList(0, 1, 2, 3, 4, 5), []float64{ 9, 8, 7, 6, 5 })
+	ConfirmReplace(RList(0, 1, 2, 3, 4, 5), RWrap([]int{9, 8, 7, 6, 5}))
+	ConfirmReplace(RList(0, 1, 2, 3, 4, 5), []float64{9, 8, 7, 6, 5})
 }
 
 func TestRSliceSelect(t *testing.T) {
@@ -734,9 +744,9 @@ func TestRSlicePick(t *testing.T) {
 	}
 
 	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{}, RList())
-	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{ 0, 1 }, RList(0, 1))
-	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{ 0, 3 }, RList(0, 3))
-	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{ 0, 3, 4, 3 }, RList(0, 3, 4, 3))
+	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{0, 1}, RList(0, 1))
+	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{0, 3}, RList(0, 3))
+	ConfirmPick(RList(0, 1, 2, 3, 4, 5), []int{0, 3, 4, 3}, RList(0, 3, 4, 3))
 }
 
 func TestRSliceInsert(t *testing.T) {
